@@ -77,7 +77,7 @@ func seedInitialData() {
 	DB.Model(&models.User{}).Count(&userCount)
 
 	if userCount == 0 {
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin1122"), bcrypt.DefaultCost)
 
 		adminUser := models.User{
 			Username: "admin",
