@@ -28,7 +28,7 @@ newapp
 # OS Files
 .DS_Store
 Thumbs.db
-desktop.ini
+desktop.iniss
 
 # Logs
 *.log

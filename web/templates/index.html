@@ -1,4 +1,3 @@
-{{define "index.html"}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🛕 Temple Management</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
@@ -96,6 +99,14 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <button class="btn btn-outline-dark w-100 py-3" id="installBtn" onclick="installApp()"
+                style="display:none;">
+                <i class="bi bi-download fs-4 d-block"></i>
+                Install App
+            </button>
         </div>
 
         <!-- Quick Actions -->
@@ -294,7 +305,39 @@
             loadRecentExpenses();
         });
     </script>
+    <!-- PWA Install & Service Worker -->
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+
+        // Install Prompt
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBtn) installBtn.style.display = 'block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((result) => {
+                    if (result.outcome === 'accepted') {
+                        console.log('App installed');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+    </script>
 </body>
 
 </html>
-{{end}}
