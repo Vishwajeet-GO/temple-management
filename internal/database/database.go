@@ -5,6 +5,7 @@ import (
 	"log"
 	"newapp/internal/config"
 	"newapp/internal/models"
+	"os"
 
 	"github.com/glebarez/sqlite"
 	"golang.org/x/crypto/bcrypt"
@@ -19,19 +20,25 @@ func InitDatabase(cfg *config.Config) {
 	var err error
 	var dialector gorm.Dialector
 
-	if cfg.DBType == "postgres" {
+	// Check for DATABASE_URL first (Render provides this)
+	databaseURL := os.Getenv("DATABASE_URL")
+
+	if databaseURL != "" {
+		// Use PostgreSQL from DATABASE_URL
+		log.Println("Using PostgreSQL from DATABASE_URL")
+		dialector = postgres.Open(databaseURL)
+	} else if cfg.DBType == "postgres" {
+		// Use PostgreSQL from individual config
 		dsn := fmt.Sprintf(
 			"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 			cfg.DBHost, cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBPort,
 		)
+		log.Println("Using PostgreSQL from config")
 		dialector = postgres.Open(dsn)
 	} else {
-		// For production, use data directory
-		dbPath := cfg.DBName
-		if cfg.AppEnv == "production" {
-			dbPath = "/root/" + cfg.DBName
-		}
-		dialector = sqlite.Open(dbPath)
+		// Use SQLite for local development
+		log.Println("Using SQLite for local development")
+		dialector = sqlite.Open(cfg.DBName)
 	}
 
 	DB, err = gorm.Open(dialector, &gorm.Config{
@@ -70,7 +77,7 @@ func seedInitialData() {
 	DB.Model(&models.User{}).Count(&userCount)
 
 	if userCount == 0 {
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin1122"), bcrypt.DefaultCost)
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
 
 		adminUser := models.User{
 			Username: "admin",
@@ -94,16 +101,16 @@ func seedInitialData() {
 
 	if templeCount == 0 {
 		temple := models.Temple{
-			Name:            "Gauri Shankar Mandir",
-			Address:         "Poisar, Kandivali (East)",
-			City:            "Mumbai",
-			State:           "Maharashtra",
-			PinCode:         "400101",
-			Phone:           "8097890684",
-			Email:           "[EMAIL_ADDRESS]",
-			Description:     "A beautiful temple dedicated to Lord Shiva",
-			MainDeity:       "Lord Shiva",
-			EstablishedYear: 1985,
+			Name:            "Shri Ram Mandir",
+			Address:         "Main Temple Road",
+			City:            "Your City",
+			State:           "Your State",
+			PinCode:         "123456",
+			Phone:           "9876543210",
+			Email:           "temple@example.com",
+			Description:     "A beautiful temple dedicated to Lord Ram",
+			MainDeity:       "Lord Ram",
+			EstablishedYear: 1950,
 		}
 		DB.Create(&temple)
 		log.Println("Initial temple data seeded!")

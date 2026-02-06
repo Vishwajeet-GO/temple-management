@@ -9,25 +9,112 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
+        body {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+                url('/static/images/temple-bg.jpg') center/cover fixed no-repeat;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #dc3545, #c82333) !important;
+        }
+
         .table-container {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             border-radius: 12px;
             padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .stats-card {
             transition: transform 0.2s;
+            border: none;
+            border-radius: 12px;
         }
 
         .stats-card:hover {
             transform: translateY(-3px);
         }
+
+        /* Fix Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #eee;
+            padding: 15px 20px;
+        }
+
+        /* Fix Label Visibility */
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control,
+        .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 15px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: #aaa;
+        }
+
+        /* Fix Button Styles */
+        .btn {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .modal-footer .btn {
+            min-width: 120px;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+            border-color: #545b62;
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333, #bd2130);
+            color: white;
+        }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-dark navbar-expand-lg sticky-top"
-        style="background: linear-gradient(135deg, #dc3545, #c82333) !important;">
+    <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">🛕 Temple Management</a>
             <div class="navbar-nav ms-auto flex-row">
@@ -84,11 +171,11 @@
 
         <!-- Expenses Table -->
         <div class="table-container">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5><i class="bi bi-list-ul"></i> All Expenses</h5>
-                <div>
-                    <select class="form-select form-select-sm d-inline-block w-auto me-2" id="categoryFilter"
-                        onchange="filterByCategory()">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h5 class="mb-0"><i class="bi bi-list-ul"></i> All Expenses</h5>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm" id="categoryFilter" onchange="filterByCategory()"
+                        style="width: auto;">
                         <option value="">All Categories</option>
                         <option value="decoration">Decoration</option>
                         <option value="food">Food/Prasad</option>
@@ -98,13 +185,13 @@
                         <option value="salary">Salary</option>
                         <option value="other">Other</option>
                     </select>
-                    <input type="text" class="form-control form-control-sm d-inline-block w-auto" id="searchInput"
-                        placeholder="Search..." onkeyup="filterTable()">
+                    <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Search..."
+                        onkeyup="filterTable()" style="width: 150px;">
                 </div>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover" id="expensesTable">
+                <table class="table table-hover">
                     <thead class="table-danger">
                         <tr>
                             <th>Date</th>
@@ -119,7 +206,7 @@
                         <tr>
                             <td colspan="6" class="text-center">
                                 <div class="spinner-border text-danger" role="status"></div>
-                                Loading...
+                                <span class="ms-2">Loading...</span>
                             </td>
                         </tr>
                     </tbody>
@@ -129,30 +216,39 @@
     </div>
 
     <!-- Add/Edit Modal -->
-    <div class="modal fade" id="expenseModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="expenseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title" id="modalTitle">
                         <i class="bi bi-plus-circle"></i> Add Expense
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
-                <form id="expenseForm">
+                <form id="expenseForm" onsubmit="saveExpense(event)">
                     <div class="modal-body">
                         <input type="hidden" id="expenseId">
 
                         <div class="mb-3">
-                            <label class="form-label">Title *</label>
+                            <label class="form-label">Title <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="title" required
                                 placeholder="e.g., Flowers for Pooja">
                         </div>
 
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label class="form-label">Amount (₹) *</label>
-                                <input type="number" class="form-control" id="amount" required min="1">
+                                <label class="form-label">Amount (₹) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="amount" required min="1"
+                                    placeholder="Enter amount">
                             </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="expenseDate" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
                             <div class="col-6 mb-3">
                                 <label class="form-label">Category</label>
                                 <select class="form-select" id="category">
@@ -165,18 +261,6 @@
                                     <option value="other">Other</option>
                                 </select>
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Vendor Name</label>
-                            <input type="text" class="form-control" id="vendorName" placeholder="Shop/Person name">
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label">Bill Number</label>
-                                <input type="text" class="form-control" id="billNo">
-                            </div>
                             <div class="col-6 mb-3">
                                 <label class="form-label">Payment Mode</label>
                                 <select class="form-select" id="paymentMode">
@@ -188,12 +272,26 @@
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label">Vendor Name</label>
+                            <input type="text" class="form-control" id="vendorName" placeholder="Shop or person name">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Bill Number</label>
+                            <input type="text" class="form-control" id="billNo"
+                                placeholder="Bill/Invoice number (optional)">
+                        </div>
+
+                        <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea class="form-control" id="description" rows="2"></textarea>
+                            <textarea class="form-control" id="description" rows="2"
+                                placeholder="Additional details (optional)"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </button>
                         <button type="submit" class="btn btn-danger">
                             <i class="bi bi-check-circle"></i> Save Expense
                         </button>
@@ -204,20 +302,26 @@
     </div>
 
     <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog modal-sm">
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title"><i class="bi bi-trash"></i> Delete</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title"><i class="bi bi-trash"></i> Delete Expense</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p>Are you sure you want to delete this expense?</p>
+                    <i class="bi bi-exclamation-triangle text-danger fs-1"></i>
+                    <p class="mt-3 mb-0">Are you sure you want to delete this expense?</p>
                     <input type="hidden" id="deleteId">
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
                 </div>
             </div>
         </div>
@@ -227,10 +331,17 @@
     <script>
         const API_BASE = '/api/v1';
         let expensesData = [];
+        let expenseModal = null;
+        let deleteModalInstance = null;
 
-        function getToken() {
-            return localStorage.getItem('token');
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            expenseModal = new bootstrap.Modal(document.getElementById('expenseModal'));
+            deleteModalInstance = new bootstrap.Modal(document.getElementById('deleteModal'));
+            document.getElementById('expenseDate').valueAsDate = new Date();
+            loadExpenses();
+        });
+
+        function getToken() { return localStorage.getItem('token'); }
 
         function formatCurrency(amount) {
             return '₹' + Number(amount).toLocaleString('en-IN');
@@ -251,7 +362,7 @@
                 'electricity': 'info',
                 'maintenance': 'secondary',
                 'salary': 'dark',
-                'other': 'light'
+                'other': 'light text-dark'
             };
             return `<span class="badge bg-${colors[category] || 'secondary'}">${category || 'Other'}</span>`;
         }
@@ -276,7 +387,13 @@
             const tbody = document.getElementById('expensesBody');
 
             if (expensesData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No expenses found.</td></tr>';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            No expenses found. Click "Add Expense" to add one.
+                        </td>
+                    </tr>`;
                 return;
             }
 
@@ -288,10 +405,10 @@
                     <td>${e.vendor_name || '-'}</td>
                     <td class="text-danger fw-bold">${formatCurrency(e.amount)}</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editExpense(${e.ID})">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editExpense(${e.ID})" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteExpense(${e.ID})">
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteExpense(${e.ID})" title="Delete">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
@@ -319,7 +436,12 @@
             document.getElementById('modalTitle').innerHTML = '<i class="bi bi-plus-circle"></i> Add Expense';
             document.getElementById('expenseForm').reset();
             document.getElementById('expenseId').value = '';
-            new bootstrap.Modal(document.getElementById('expenseModal')).show();
+            document.getElementById('expenseDate').valueAsDate = new Date();
+            expenseModal.show();
+        }
+
+        function closeModal() {
+            expenseModal.hide();
         }
 
         function editExpense(id) {
@@ -330,18 +452,19 @@
             document.getElementById('expenseId').value = id;
             document.getElementById('title').value = expense.title || '';
             document.getElementById('amount').value = expense.amount || '';
+            document.getElementById('expenseDate').value = expense.date ? expense.date.split('T')[0] : '';
             document.getElementById('category').value = expense.category || 'other';
             document.getElementById('vendorName').value = expense.vendor_name || '';
             document.getElementById('billNo').value = expense.bill_no || '';
             document.getElementById('paymentMode').value = expense.payment_mode || 'cash';
             document.getElementById('description').value = expense.description || '';
 
-            new bootstrap.Modal(document.getElementById('expenseModal')).show();
+            expenseModal.show();
         }
 
         function deleteExpense(id) {
             document.getElementById('deleteId').value = id;
-            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+            deleteModalInstance.show();
         }
 
         async function confirmDelete() {
@@ -350,7 +473,7 @@
 
             if (!token) {
                 showAlert('Please login first', 'warning');
-                window.location.href = '/login';
+                setTimeout(() => window.location.href = '/login', 1500);
                 return;
             }
 
@@ -360,10 +483,10 @@
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
 
-                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+                deleteModalInstance.hide();
 
                 if (response.ok) {
-                    showAlert('Expense deleted!', 'success');
+                    showAlert('Expense deleted successfully!', 'success');
                     loadExpenses();
                 } else {
                     showAlert('Failed to delete', 'danger');
@@ -373,13 +496,13 @@
             }
         }
 
-        document.getElementById('expenseForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
+        async function saveExpense(event) {
+            event.preventDefault();
 
             const token = getToken();
             if (!token) {
                 showAlert('Please login first', 'warning');
-                window.location.href = '/login';
+                setTimeout(() => window.location.href = '/login', 1500);
                 return;
             }
 
@@ -389,12 +512,12 @@
             const expenseData = {
                 title: document.getElementById('title').value,
                 amount: parseFloat(document.getElementById('amount').value),
+                date: new Date(document.getElementById('expenseDate').value).toISOString(),
                 category: document.getElementById('category').value,
                 vendor_name: document.getElementById('vendorName').value,
                 bill_no: document.getElementById('billNo').value,
                 payment_mode: document.getElementById('paymentMode').value,
-                description: document.getElementById('description').value,
-                date: new Date().toISOString()
+                description: document.getElementById('description').value
             };
 
             try {
@@ -407,7 +530,7 @@
                     body: JSON.stringify(expenseData)
                 });
 
-                bootstrap.Modal.getInstance(document.getElementById('expenseModal')).hide();
+                expenseModal.hide();
 
                 if (response.ok) {
                     showAlert(isEdit ? 'Expense updated!' : 'Expense added!', 'success');
@@ -419,42 +542,34 @@
             } catch (error) {
                 showAlert('Error saving expense', 'danger');
             }
-        });
+        }
 
         function filterTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const rows = document.querySelectorAll('#expensesBody tr');
-
             rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(search) ? '' : 'none';
+                row.style.display = row.textContent.toLowerCase().includes(search) ? '' : 'none';
             });
         }
 
         function filterByCategory() {
             const category = document.getElementById('categoryFilter').value.toLowerCase();
             const rows = document.querySelectorAll('#expensesBody tr');
-
             rows.forEach(row => {
-                if (!category) {
-                    row.style.display = '';
-                } else {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(category) ? '' : 'none';
-                }
+                if (!category) row.style.display = '';
+                else row.style.display = row.textContent.toLowerCase().includes(category) ? '' : 'none';
             });
         }
 
         function showAlert(message, type) {
+            document.querySelectorAll('.floating-alert').forEach(el => el.remove());
             const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
-            alert.style.zIndex = '9999';
-            alert.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+            alert.className = `alert alert-${type} alert-dismissible fade show floating-alert position-fixed`;
+            alert.style.cssText = 'top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;';
+            alert.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
             document.body.appendChild(alert);
-            setTimeout(() => alert.remove(), 3000);
+            setTimeout(() => alert.remove(), 4000);
         }
-
-        document.addEventListener('DOMContentLoaded', loadExpenses);
     </script>
 </body>
 
