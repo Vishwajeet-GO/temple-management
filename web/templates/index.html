@@ -3,201 +3,445 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛕 Temple Management</title>
-    <!-- PWA Support -->
-    <link rel="manifest" href="/static/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#FF6B35">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Temple App">
+    <title>🛕 Temple Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
+    <style>
+        /* ========== NAVBAR - Orange Color ========== */
+        .navbar {
+            background: linear-gradient(135deg, #FF6B35, #FF8C42) !important;
+            padding: 12px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 8px 15px !important;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #fff !important;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ========== MOBILE FRIENDLY ========== */
+        body {
+            padding-bottom: 80px;
+            /* Space for bottom nav on mobile */
+        }
+
+        @media (min-width: 992px) {
+            body {
+                padding-bottom: 20px;
+            }
+        }
+
+        /* Stats Cards - Mobile Friendly */
+        .stats-card {
+            transition: transform 0.2s;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stats-card .card-body {
+            padding: 20px 15px;
+        }
+
+        .stats-card h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 10px 0 5px 0;
+        }
+
+        .stats-card i {
+            font-size: 2rem;
+        }
+
+        @media (max-width: 576px) {
+            .stats-card h4 {
+                font-size: 1.2rem;
+            }
+
+            .stats-card i {
+                font-size: 1.5rem;
+            }
+
+            .stats-card small {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Quick Action Buttons - Mobile Friendly */
+        .quick-action-btn {
+            border-radius: 15px;
+            padding: 20px 15px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-action-btn i {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 576px) {
+            .quick-action-btn {
+                padding: 15px 10px;
+            }
+
+            .quick-action-btn i {
+                font-size: 1.5rem;
+            }
+
+            .quick-action-btn span {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Recent Lists - Mobile Friendly */
+        .list-group-item {
+            padding: 15px;
+            border-left: none;
+            border-right: none;
+        }
+
+        /* Temple Header Card */
+        .temple-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            padding: 25px 20px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .temple-header h2 {
+            color: #fff !important;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .temple-header p {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 576px) {
+            .temple-header {
+                padding: 20px 15px;
+            }
+
+            .temple-header h2 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ========== BOTTOM NAVIGATION - Mobile Only ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .bottom-nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            text-align: center;
+            padding: 5px 10px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            flex: 1;
+            max-width: 80px;
+        }
+
+        .bottom-nav a:hover,
+        .bottom-nav a.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .bottom-nav i {
+            font-size: 1.3rem;
+            display: block;
+        }
+
+        .bottom-nav span {
+            font-size: 0.65rem;
+            display: block;
+            margin-top: 2px;
+        }
+
+        @media (min-width: 992px) {
+            .bottom-nav {
+                display: none;
+            }
+        }
+
+        /* Hide desktop nav items on mobile */
+        @media (max-width: 991px) {
+            .navbar-nav {
+                display: none;
+            }
+        }
+
+        /* Section Headers */
+        .section-header {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header i {
+            color: #FF6B35;
+        }
+
+        /* Cards */
+        .content-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .content-card .card-header {
+            padding: 15px 20px;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Touch Friendly */
+        .btn,
+        .nav-link,
+        .list-group-item,
+        .quick-action-btn {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Pull to Refresh Area */
+        .pull-indicator {
+            text-align: center;
+            padding: 10px;
+            color: #999;
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">🛕 Temple Management</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/"><i class="bi bi-house"></i> Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/festivals"><i class="bi bi-calendar-event"></i> Festivals</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/donations"><i class="bi bi-cash-coin"></i> Donations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/expenses"><i class="bi bi-receipt"></i> Expenses</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/reports"><i class="bi bi-bar-chart"></i> Reports</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
-                    </li>
-                </ul>
-            </div>
+
+            <!-- Desktop Navigation -->
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/"><i class="bi bi-house-fill"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/festivals"><i class="bi bi-calendar-event"></i> Festivals</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/donations"><i class="bi bi-cash-coin"></i> Donations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/expenses"><i class="bi bi-receipt"></i> Expenses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/reports"><i class="bi bi-bar-chart"></i> Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                </li>
+            </ul>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="container py-4">
+    <div class="container py-4">
         <!-- Temple Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card bg-primary text-white">
-                    <div class="card-body text-center">
-                        <h2 id="templeName">🛕 Gauri Shankar Mandir</h2>
-                        <p id="templeAddress" class="mb-0">Poisar, Kandivali (East), Mumbai - 400101</p>
-                    </div>
-                </div>
-            </div>
+        <div class="temple-header">
+            <h2 id="templeName">🛕 Loading...</h2>
+            <p id="templeAddress">Please wait...</p>
         </div>
 
-        <!-- Dashboard Summary Cards -->
+        <!-- Stats Cards -->
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-3">
-                <div class="card bg-success text-white h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-cash-coin fs-2"></i>
-                        <h4 id="totalDonations">₹0</h4>
-                        <small>Total Donations</small>
+                <div class="card bg-success stats-card">
+                    <div class="card-body text-center text-white">
+                        <i class="bi bi-cash-coin"></i>
+                        <h4 id="totalDonations" style="color: #fff !important;">₹0</h4>
+                        <small style="color: rgba(255,255,255,0.9);">Total Donations</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card bg-danger text-white h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-receipt fs-2"></i>
-                        <h4 id="totalExpenses">₹0</h4>
-                        <small>Total Expenses</small>
+                <div class="card bg-danger stats-card">
+                    <div class="card-body text-center text-white">
+                        <i class="bi bi-receipt"></i>
+                        <h4 id="totalExpenses" style="color: #fff !important;">₹0</h4>
+                        <small style="color: rgba(255,255,255,0.9);">Total Expenses</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card bg-info text-white h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-wallet2 fs-2"></i>
-                        <h4 id="balance">₹0</h4>
-                        <small>Balance</small>
+                <div class="card bg-info stats-card">
+                    <div class="card-body text-center text-white">
+                        <i class="bi bi-wallet2"></i>
+                        <h4 id="balance" style="color: #fff !important;">₹0</h4>
+                        <small style="color: rgba(255,255,255,0.9);">Balance</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card bg-warning text-dark h-100">
+                <div class="card bg-warning stats-card">
                     <div class="card-body text-center">
-                        <i class="bi bi-calendar-event fs-2"></i>
-                        <h4 id="upcomingFestivals">0</h4>
-                        <small>Upcoming Festivals</small>
+                        <i class="bi bi-calendar-event" style="color: #333;"></i>
+                        <h4 id="upcomingFestivals" style="color: #333 !important;">0</h4>
+                        <small style="color: #555;">Upcoming Festivals</small>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Add this as a new column in Quick Actions -->
-        <div class="col-6 col-md-3" id="installContainer" style="display: none;">
-            <button class="btn btn-outline-success w-100 py-3" id="installBtn" onclick="installApp()">
-                <i class="bi bi-download fs-4 d-block"></i>
-                Install App
-            </button>
         </div>
 
         <!-- Quick Actions -->
+        <h5 class="section-header"><i class="bi bi-lightning-charge"></i> Quick Actions</h5>
         <div class="row g-3 mb-4">
-            <div class="col-12">
-                <h5><i class="bi bi-lightning"></i> Quick Actions</h5>
+            <div class="col-6 col-md-3">
+                <a href="/donations" class="quick-action-btn btn btn-outline-success text-center">
+                    <i class="bi bi-plus-circle d-block"></i>
+                    <span>Add Donation</span>
+                </a>
             </div>
             <div class="col-6 col-md-3">
-                <button class="btn btn-outline-success w-100 py-3" onclick="window.location.href='/donations'">
-                    <i class="bi bi-plus-circle fs-4 d-block"></i>
-                    Add Donation
-                </button>
+                <a href="/expenses" class="quick-action-btn btn btn-outline-danger text-center">
+                    <i class="bi bi-plus-circle d-block"></i>
+                    <span>Add Expense</span>
+                </a>
             </div>
             <div class="col-6 col-md-3">
-                <button class="btn btn-outline-danger w-100 py-3" onclick="window.location.href='/expenses'">
-                    <i class="bi bi-plus-circle fs-4 d-block"></i>
-                    Add Expense
-                </button>
+                <a href="/festivals" class="quick-action-btn btn btn-outline-primary text-center">
+                    <i class="bi bi-calendar-plus d-block"></i>
+                    <span>View Festivals</span>
+                </a>
             </div>
             <div class="col-6 col-md-3">
-                <button class="btn btn-outline-primary w-100 py-3" onclick="window.location.href='/festivals'">
-                    <i class="bi bi-calendar-plus fs-4 d-block"></i>
-                    View Festivals
-                </button>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="/reports" class="btn btn-outline-info w-100 py-3">
-                    <i class="bi bi-file-earmark-bar-graph fs-4 d-block"></i>
-                    View Reports
+                <a href="/reports" class="quick-action-btn btn btn-outline-info text-center">
+                    <i class="bi bi-bar-chart d-block"></i>
+                    <span>View Reports</span>
                 </a>
             </div>
         </div>
 
-        <!-- Recent Transactions -->
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card">
+        <!-- Recent Activity -->
+        <div class="row g-4">
+            <!-- Recent Donations -->
+            <div class="col-md-6">
+                <div class="content-card">
                     <div class="card-header bg-success text-white">
                         <i class="bi bi-cash-coin"></i> Recent Donations
                     </div>
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush" id="recentDonations">
-                            <div class="list-group-item text-center text-muted">
-                                <div class="spinner-border spinner-border-sm" role="status"></div>
-                                Loading...
+                            <div class="list-group-item text-center text-muted py-4">
+                                <div class="spinner-border spinner-border-sm text-success"></div>
+                                <span class="ms-2">Loading...</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-4">
-                <div class="card">
+
+            <!-- Recent Expenses -->
+            <div class="col-md-6">
+                <div class="content-card">
                     <div class="card-header bg-danger text-white">
                         <i class="bi bi-receipt"></i> Recent Expenses
                     </div>
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush" id="recentExpenses">
-                            <div class="list-group-item text-center text-muted">
-                                <div class="spinner-border spinner-border-sm" role="status"></div>
-                                Loading...
+                            <div class="list-group-item text-center text-muted py-4">
+                                <div class="spinner-border spinner-border-sm text-danger"></div>
+                                <span class="ms-2">Loading...</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- Bottom Navigation for Mobile -->
-    <nav class="navbar navbar-dark bg-primary fixed-bottom d-lg-none">
-        <div class="container d-flex justify-content-around">
-            <a class="nav-link text-white text-center" href="/">
-                <i class="bi bi-house fs-4"></i>
-                <small class="d-block">Home</small>
-            </a>
-            <a class="nav-link text-white text-center" href="/festivals">
-                <i class="bi bi-calendar-event fs-4"></i>
-                <small class="d-block">Festivals</small>
-            </a>
-            <a class="nav-link text-white text-center" href="/donations">
-                <i class="bi bi-cash-coin fs-4"></i>
-                <small class="d-block">Donations</small>
-            </a>
-            <a class="nav-link text-white text-center" href="/expenses">
-                <i class="bi bi-receipt fs-4"></i>
-                <small class="d-block">Expenses</small>
-            </a>
-        </div>
+    <!-- Bottom Navigation (Mobile Only) -->
+    <nav class="bottom-nav">
+        <a href="/" class="active">
+            <i class="bi bi-house-fill"></i>
+            <span>Home</span>
+        </a>
+        <a href="/festivals">
+            <i class="bi bi-calendar-event"></i>
+            <span>Festivals</span>
+        </a>
+        <a href="/donations">
+            <i class="bi bi-cash-coin"></i>
+            <span>Donations</span>
+        </a>
+        <a href="/expenses">
+            <i class="bi bi-receipt"></i>
+            <span>Expenses</span>
+        </a>
+        <a href="/login">
+            <i class="bi bi-person"></i>
+            <span>Login</span>
+        </a>
     </nav>
+
+    <!-- Developer Credit -->
+    <div class="developer-credit">
+        Developed by <a href="#">Vishwajeet_Yadav</a>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -209,29 +453,62 @@
 
         function formatDate(dateString) {
             if (!dateString) return '-';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-        }
-
-        async function apiCall(endpoint) {
-            try {
-                const response = await fetch(API_BASE + endpoint);
-                return await response.json();
-            } catch (error) {
-                console.error('API Error:', error);
-                return { success: false };
-            }
+            return new Date(dateString).toLocaleDateString('en-IN', {
+                day: '2-digit', month: 'short'
+            });
         }
 
         async function loadDashboard() {
             try {
-                const summary = await apiCall('/dashboard/summary');
+                // Load summary
+                const summaryRes = await fetch(API_BASE + '/dashboard/summary');
+                const summary = await summaryRes.json();
+
                 if (summary.success && summary.data) {
                     document.getElementById('totalDonations').textContent = formatCurrency(summary.data.total_donations || 0);
                     document.getElementById('totalExpenses').textContent = formatCurrency(summary.data.total_expenses || 0);
                     document.getElementById('balance').textContent = formatCurrency(summary.data.balance || 0);
                     document.getElementById('upcomingFestivals').textContent = summary.data.upcoming_festivals || 0;
                 }
+
+                // Load recent donations
+                const donationsRes = await fetch(API_BASE + '/dashboard/recent-donations');
+                const donations = await donationsRes.json();
+
+                const donationsContainer = document.getElementById('recentDonations');
+                if (donations.success && donations.data && donations.data.length > 0) {
+                    donationsContainer.innerHTML = donations.data.slice(0, 5).map(d => `
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong style="color: #111;">${d.donor_name || 'Anonymous'}</strong>
+                                <small class="d-block" style="color: #666;">${formatDate(d.date)}</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">${formatCurrency(d.amount)}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    donationsContainer.innerHTML = '<div class="list-group-item text-center text-muted">No donations yet</div>';
+                }
+
+                // Load recent expenses
+                const expensesRes = await fetch(API_BASE + '/dashboard/recent-expenses');
+                const expenses = await expensesRes.json();
+
+                const expensesContainer = document.getElementById('recentExpenses');
+                if (expenses.success && expenses.data && expenses.data.length > 0) {
+                    expensesContainer.innerHTML = expenses.data.slice(0, 5).map(e => `
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong style="color: #111;">${e.title}</strong>
+                                <small class="d-block" style="color: #666;">${e.category || 'General'}</small>
+                            </div>
+                            <span class="badge bg-danger rounded-pill">${formatCurrency(e.amount)}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    expensesContainer.innerHTML = '<div class="list-group-item text-center text-muted">No expenses yet</div>';
+                }
+
             } catch (error) {
                 console.error('Error loading dashboard:', error);
             }
@@ -239,132 +516,43 @@
 
         async function loadTempleInfo() {
             try {
-                const response = await apiCall('/temple');
-                if (response.success && response.data) {
-                    document.getElementById('templeName').textContent = '🛕 ' + response.data.name;
+                const response = await fetch(API_BASE + '/temple');
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    document.getElementById('templeName').textContent = '🛕 ' + data.data.name;
                     document.getElementById('templeAddress').textContent =
-                        response.data.address + ', ' + response.data.city + ', ' + response.data.state;
+                        data.data.address + ', ' + data.data.city + ', ' + data.data.state;
                 }
             } catch (error) {
-                console.error('Error loading temple info:', error);
-                document.getElementById('templeName').textContent = '🛕 Temple Management System';
-                document.getElementById('templeAddress').textContent = 'Welcome to Temple Management';
+                document.getElementById('templeName').textContent = '🛕 Temple Management';
+                document.getElementById('templeAddress').textContent = 'Welcome to Temple Management System';
             }
         }
 
-        async function loadRecentDonations() {
-            try {
-                const donations = await apiCall('/dashboard/recent-donations');
-                const container = document.getElementById('recentDonations');
-
-                if (donations.success && donations.data && donations.data.length > 0) {
-                    container.innerHTML = donations.data.slice(0, 5).map(d => `
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>${d.donor_name || 'Anonymous'}</strong>
-                                <small class="text-muted d-block">${formatDate(d.date)}</small>
-                            </div>
-                            <span class="badge bg-success">${formatCurrency(d.amount)}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    container.innerHTML = '<div class="list-group-item text-center text-muted">No donations yet</div>';
-                }
-            } catch (error) {
-                console.error('Error loading donations:', error);
-            }
-        }
-
-        async function loadRecentExpenses() {
-            try {
-                const expenses = await apiCall('/dashboard/recent-expenses');
-                const container = document.getElementById('recentExpenses');
-
-                if (expenses.success && expenses.data && expenses.data.length > 0) {
-                    container.innerHTML = expenses.data.slice(0, 5).map(e => `
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>${e.title}</strong>
-                                <small class="text-muted d-block">${e.category || 'General'}</small>
-                            </div>
-                            <span class="badge bg-danger">${formatCurrency(e.amount)}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    container.innerHTML = '<div class="list-group-item text-center text-muted">No expenses yet</div>';
-                }
-            } catch (error) {
-                console.error('Error loading expenses:', error);
-            }
-        }
-
-        // Load everything when page loads
+        // Load on page load
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('Page loaded, fetching data...');
             loadTempleInfo();
             loadDashboard();
-            loadRecentDonations();
-            loadRecentExpenses();
+        });
+
+        // Pull to refresh (for mobile)
+        let touchStartY = 0;
+        document.addEventListener('touchstart', e => {
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', e => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const diff = touchEndY - touchStartY;
+
+            if (diff > 100 && window.scrollY === 0) {
+                // Pull down detected at top of page
+                loadDashboard();
+                loadTempleInfo();
+            }
         });
     </script>
-    <!-- PWA Install Script -->
-    <script>
-        let deferredPrompt;
-        const installContainer = document.getElementById('installContainer');
-        const installBtn = document.getElementById('installBtn');
-
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/static/sw.js')
-                    .then(reg => console.log('SW registered:', reg.scope))
-                    .catch(err => console.log('SW registration failed:', err));
-            });
-        }
-
-        // Listen for install prompt
-        window.addEventListener('beforeinstallprompt', (e) => {
-            console.log('beforeinstallprompt fired');
-            e.preventDefault();
-            deferredPrompt = e;
-            // Show install button
-            if (installContainer) {
-                installContainer.style.display = 'block';
-            }
-        });
-
-        function installApp() {
-            if (!deferredPrompt) {
-                // Show manual instructions
-                alert('To install this app:\n\n📱 On Android: Tap the menu (⋮) and select "Add to Home Screen"\n\n🍎 On iPhone: Tap Share button and select "Add to Home Screen"');
-                return;
-            }
-
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted install');
-                    if (installContainer) {
-                        installContainer.style.display = 'none';
-                    }
-                }
-                deferredPrompt = null;
-            });
-        }
-
-        // Hide button if already installed
-        window.addEventListener('appinstalled', () => {
-            console.log('App installed');
-            if (installContainer) {
-                installContainer.style.display = 'none';
-            }
-            deferredPrompt = null;
-        });
-    </script>
-    <!-- Developer Credit -->
-    <div class="developer-credit">
-        Developed by <a href="#">Vishwajeet_Yadav</a>
-    </div>
 </body>
 
 </html>
