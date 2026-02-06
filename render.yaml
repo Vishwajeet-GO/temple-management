@@ -1,0 +1,17 @@
+
+services:
+  - type: web
+    name: temple-management
+    env: docker
+    plan: free
+    envVars:
+      - key: APP_PORT
+        value: 8080
+      - key: APP_ENV
+        value: production
+      - key: DB_TYPE
+        value: sqlite
+      - key: DB_NAME
+        value: temple.db
+      - key: JWT_SECRET
+        generateValue: true

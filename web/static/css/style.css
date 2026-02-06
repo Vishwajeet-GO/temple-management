@@ -1,0 +1,139 @@
+/* Custom styles for Temple Management App */
+
+:root {
+    --primary-color: #FF6B35;
+    --secondary-color: #004E89;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    padding-bottom: 70px;
+    /* Space for bottom nav on mobile */
+}
+
+@media (min-width: 992px) {
+    body {
+        padding-bottom: 0;
+    }
+}
+
+.navbar {
+    background: linear-gradient(135deg, #FF6B35, #FF8C42) !important;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn {
+    border-radius: 8px;
+}
+
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.badge {
+    font-weight: 500;
+    padding: 6px 12px;
+}
+
+/* Dashboard cards animation */
+.card-body h4,
+.card-body h3,
+.card-body h5 {
+    font-weight: 700;
+}
+
+/* Mobile bottom navigation */
+.fixed-bottom .nav-link {
+    padding: 8px;
+}
+
+.fixed-bottom .nav-link small {
+    font-size: 10px;
+}
+
+/* Form styling */
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #FF6B35;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+}
+
+/* Modal styling */
+.modal-header {
+    border-radius: 0;
+}
+
+.modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* List group styling */
+.list-group-item {
+    border-left: none;
+    border-right: none;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+/* Loading spinner */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Alert animation */
+.alert {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* Print styles */
+@media print {
+
+    .navbar,
+    .fixed-bottom,
+    .btn {
+        display: none !important;
+    }
+
+    body {
+        padding: 0;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}

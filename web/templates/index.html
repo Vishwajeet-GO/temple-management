@@ -1,0 +1,300 @@
+{{define "index.html"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛕 Temple Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/static/css/global.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">🛕 Temple Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/festivals"><i class="bi bi-calendar-event"></i> Festivals</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/donations"><i class="bi bi-cash-coin"></i> Donations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/expenses"><i class="bi bi-receipt"></i> Expenses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports"><i class="bi bi-bar-chart"></i> Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <!-- Temple Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <h2 id="templeName">🛕 Gauri Shankar Mandir</h2>
+                        <p id="templeAddress" class="mb-0">Poisar, Kandivali (East), Mumbai - 400101</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Summary Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="card bg-success text-white h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-cash-coin fs-2"></i>
+                        <h4 id="totalDonations">₹0</h4>
+                        <small>Total Donations</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card bg-danger text-white h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-receipt fs-2"></i>
+                        <h4 id="totalExpenses">₹0</h4>
+                        <small>Total Expenses</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card bg-info text-white h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-wallet2 fs-2"></i>
+                        <h4 id="balance">₹0</h4>
+                        <small>Balance</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card bg-warning text-dark h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-calendar-event fs-2"></i>
+                        <h4 id="upcomingFestivals">0</h4>
+                        <small>Upcoming Festivals</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <h5><i class="bi bi-lightning"></i> Quick Actions</h5>
+            </div>
+            <div class="col-6 col-md-3">
+                <button class="btn btn-outline-success w-100 py-3" onclick="window.location.href='/donations'">
+                    <i class="bi bi-plus-circle fs-4 d-block"></i>
+                    Add Donation
+                </button>
+            </div>
+            <div class="col-6 col-md-3">
+                <button class="btn btn-outline-danger w-100 py-3" onclick="window.location.href='/expenses'">
+                    <i class="bi bi-plus-circle fs-4 d-block"></i>
+                    Add Expense
+                </button>
+            </div>
+            <div class="col-6 col-md-3">
+                <button class="btn btn-outline-primary w-100 py-3" onclick="window.location.href='/festivals'">
+                    <i class="bi bi-calendar-plus fs-4 d-block"></i>
+                    View Festivals
+                </button>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="/reports" class="btn btn-outline-info w-100 py-3">
+                    <i class="bi bi-file-earmark-bar-graph fs-4 d-block"></i>
+                    View Reports
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-cash-coin"></i> Recent Donations
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush" id="recentDonations">
+                            <div class="list-group-item text-center text-muted">
+                                <div class="spinner-border spinner-border-sm" role="status"></div>
+                                Loading...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <i class="bi bi-receipt"></i> Recent Expenses
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush" id="recentExpenses">
+                            <div class="list-group-item text-center text-muted">
+                                <div class="spinner-border spinner-border-sm" role="status"></div>
+                                Loading...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation for Mobile -->
+    <nav class="navbar navbar-dark bg-primary fixed-bottom d-lg-none">
+        <div class="container d-flex justify-content-around">
+            <a class="nav-link text-white text-center" href="/">
+                <i class="bi bi-house fs-4"></i>
+                <small class="d-block">Home</small>
+            </a>
+            <a class="nav-link text-white text-center" href="/festivals">
+                <i class="bi bi-calendar-event fs-4"></i>
+                <small class="d-block">Festivals</small>
+            </a>
+            <a class="nav-link text-white text-center" href="/donations">
+                <i class="bi bi-cash-coin fs-4"></i>
+                <small class="d-block">Donations</small>
+            </a>
+            <a class="nav-link text-white text-center" href="/expenses">
+                <i class="bi bi-receipt fs-4"></i>
+                <small class="d-block">Expenses</small>
+            </a>
+        </div>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = '/api/v1';
+
+        function formatCurrency(amount) {
+            return '₹' + Number(amount).toLocaleString('en-IN');
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        async function apiCall(endpoint) {
+            try {
+                const response = await fetch(API_BASE + endpoint);
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                return { success: false };
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const summary = await apiCall('/dashboard/summary');
+                if (summary.success && summary.data) {
+                    document.getElementById('totalDonations').textContent = formatCurrency(summary.data.total_donations || 0);
+                    document.getElementById('totalExpenses').textContent = formatCurrency(summary.data.total_expenses || 0);
+                    document.getElementById('balance').textContent = formatCurrency(summary.data.balance || 0);
+                    document.getElementById('upcomingFestivals').textContent = summary.data.upcoming_festivals || 0;
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        async function loadTempleInfo() {
+            try {
+                const response = await apiCall('/temple');
+                if (response.success && response.data) {
+                    document.getElementById('templeName').textContent = '🛕 ' + response.data.name;
+                    document.getElementById('templeAddress').textContent =
+                        response.data.address + ', ' + response.data.city + ', ' + response.data.state;
+                }
+            } catch (error) {
+                console.error('Error loading temple info:', error);
+                document.getElementById('templeName').textContent = '🛕 Temple Management System';
+                document.getElementById('templeAddress').textContent = 'Welcome to Temple Management';
+            }
+        }
+
+        async function loadRecentDonations() {
+            try {
+                const donations = await apiCall('/dashboard/recent-donations');
+                const container = document.getElementById('recentDonations');
+
+                if (donations.success && donations.data && donations.data.length > 0) {
+                    container.innerHTML = donations.data.slice(0, 5).map(d => `
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${d.donor_name || 'Anonymous'}</strong>
+                                <small class="text-muted d-block">${formatDate(d.date)}</small>
+                            </div>
+                            <span class="badge bg-success">${formatCurrency(d.amount)}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="list-group-item text-center text-muted">No donations yet</div>';
+                }
+            } catch (error) {
+                console.error('Error loading donations:', error);
+            }
+        }
+
+        async function loadRecentExpenses() {
+            try {
+                const expenses = await apiCall('/dashboard/recent-expenses');
+                const container = document.getElementById('recentExpenses');
+
+                if (expenses.success && expenses.data && expenses.data.length > 0) {
+                    container.innerHTML = expenses.data.slice(0, 5).map(e => `
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${e.title}</strong>
+                                <small class="text-muted d-block">${e.category || 'General'}</small>
+                            </div>
+                            <span class="badge bg-danger">${formatCurrency(e.amount)}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="list-group-item text-center text-muted">No expenses yet</div>';
+                }
+            } catch (error) {
+                console.error('Error loading expenses:', error);
+            }
+        }
+
+        // Load everything when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Page loaded, fetching data...');
+            loadTempleInfo();
+            loadDashboard();
+            loadRecentDonations();
+            loadRecentExpenses();
+        });
+    </script>
+</body>
+
+</html>
+{{end}}
