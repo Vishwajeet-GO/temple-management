@@ -1,144 +1,132 @@
-/* Global Styles */
+/* Global Background for All Pages */
 body {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    background: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)),
         url('/static/images/temple-bg.jpg') center/cover fixed no-repeat;
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
     min-height: 100vh;
-    color: #f1e9e9;
-    font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
-    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Glassmorphism Card Style */
+/* Cards */
 .card {
-    background: rgba(255, 255, 255, 0.5) !important;
-    backdrop-filter: blur(12px) saturate(160%);
-    -webkit-backdrop-filter: blur(12px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 20px !important;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-}
-
-.card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.15) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 15px 45px 0 rgba(0, 0, 0, 0.6) !important;
-}
-
-/* Card Content Visibility */
-.card-body,
-.card-header,
-.card-footer {
-    color: #ffffff !important;
-    text-shadow: 0 2px 10px rgba(129, 17, 17, 0.5);
-}
-
-.card h1,
-.card h2,
-.card h3,
-.card h4,
-.card h5 {
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.card .text-muted,
-.card small {
-    color: rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Responsive Grid and Spacing */
-.container {
-    max-width: 1200px;
-}
-
-/* Navbar Tuning */
-.navbar {
-    background: rgba(255, 107, 53, 0.8) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.navbar-brand {
-    font-weight: 800;
-    letter-spacing: 0.5px;
-}
-
-/* Quick Action Buttons - Glassy */
-.btn-outline-success,
-.btn-outline-danger,
-.btn-outline-primary,
-.btn-outline-info {
-    border-width: 2px !important;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.98) !important;
     backdrop-filter: blur(5px);
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.4) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Navigation */
+.navbar {
+    background: linear-gradient(135deg, #FF6B35, #FF8C42) !important;
+    backdrop-filter: none !important;
+}
+
+/* Table Styles - Full Border */
+.table {
+    border: 1px solid #dee2e6;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.table th,
+.table td {
+    border: 1px solid #dee2e6 !important;
+    padding: 12px 15px;
+    vertical-align: middle;
+}
+
+.table thead th {
+    border-bottom: 2px solid #dee2e6 !important;
     font-weight: 600;
-    border-radius: 12px;
 }
 
-.btn-outline-success:hover {
-    background: #198754 !important;
-    border-color: #198754 !important;
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
 }
 
-.btn-outline-danger:hover {
-    background: #dc3545 !important;
-    border-color: #dc3545 !important;
+/* Form Labels - High Visibility */
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: block;
 }
 
-.btn-outline-primary:hover {
-    background: #0d6efd !important;
-    border-color: #0d6efd !important;
+/* Form Inputs */
+.form-control,
+.form-select {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 15px;
+    color: #333;
 }
 
-.btn-outline-info:hover {
-    background: #0dcaf0 !important;
-    border-color: #0dcaf0 !important;
+.form-control:focus,
+.form-select:focus {
+    border-color: #FF6B35;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
 }
 
-/* Dashboard Card Specific Overlays (Subtle) */
-.bg-primary {
-    background: rgba(13, 110, 253, 0.2) !important;
+.form-control::placeholder {
+    color: #999;
 }
 
-.bg-success {
-    background: rgba(25, 135, 84, 0.2) !important;
+/* Modal Styles */
+.modal-content {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-.bg-danger {
-    background: rgba(220, 53, 69, 0.2) !important;
+.modal-header {
+    border-radius: 15px 15px 0 0;
+    border-bottom: none;
 }
 
-.bg-info {
-    background: rgba(13, 202, 240, 0.2) !important;
+.modal-footer {
+    border-top: 1px solid #eee;
+    padding: 15px 20px;
 }
 
-.bg-warning {
-    background: rgba(255, 193, 7, 0.2) !important;
+.modal-footer .btn {
+    min-width: 120px;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
 }
 
-/* List Group Cleanup */
-.list-group-item {
-    background: transparent !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+/* Button Fixes */
+.btn-secondary {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: white !important;
 }
 
-/* Badge Tweaks */
-.badge {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+.btn-secondary:hover {
+    background-color: #5a6268 !important;
+    border-color: #545b62 !important;
 }
 
-/* Utility classes */
-.blur-bg {
-    backdrop-filter: blur(8px);
+/* Alert Styles */
+.floating-alert {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
 }

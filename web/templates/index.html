@@ -5,10 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🛕 Temple Management</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <!-- PWA Support -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Temple App">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
@@ -101,9 +103,9 @@
             </div>
         </div>
 
-        <div class="col-6 col-md-3">
-            <button class="btn btn-outline-dark w-100 py-3" id="installBtn" onclick="installApp()"
-                style="display:none;">
+        <!-- Add this as a new column in Quick Actions -->
+        <div class="col-6 col-md-3" id="installContainer" style="display: none;">
+            <button class="btn btn-outline-success w-100 py-3" id="installBtn" onclick="installApp()">
                 <i class="bi bi-download fs-4 d-block"></i>
                 Install App
             </button>
@@ -305,38 +307,59 @@
             loadRecentExpenses();
         });
     </script>
-    <!-- PWA Install & Service Worker -->
+    <!-- PWA Install Script -->
     <script>
+        let deferredPrompt;
+        const installContainer = document.getElementById('installContainer');
+        const installBtn = document.getElementById('installBtn');
+
         // Register Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/static/sw.js')
-                    .then(reg => console.log('Service Worker registered'))
+                    .then(reg => console.log('SW registered:', reg.scope))
                     .catch(err => console.log('SW registration failed:', err));
             });
         }
 
-        // Install Prompt
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
-
+        // Listen for install prompt
         window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('beforeinstallprompt fired');
             e.preventDefault();
             deferredPrompt = e;
-            if (installBtn) installBtn.style.display = 'block';
+            // Show install button
+            if (installContainer) {
+                installContainer.style.display = 'block';
+            }
         });
 
         function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((result) => {
-                    if (result.outcome === 'accepted') {
-                        console.log('App installed');
-                    }
-                    deferredPrompt = null;
-                });
+            if (!deferredPrompt) {
+                // Show manual instructions
+                alert('To install this app:\n\n📱 On Android: Tap the menu (⋮) and select "Add to Home Screen"\n\n🍎 On iPhone: Tap Share button and select "Add to Home Screen"');
+                return;
             }
+
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted install');
+                    if (installContainer) {
+                        installContainer.style.display = 'none';
+                    }
+                }
+                deferredPrompt = null;
+            });
         }
+
+        // Hide button if already installed
+        window.addEventListener('appinstalled', () => {
+            console.log('App installed');
+            if (installContainer) {
+                installContainer.style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
     </script>
 </body>
 

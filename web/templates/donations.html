@@ -10,12 +10,58 @@
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(rgba(255, 255, 255, 0.50), rgba(255, 255, 255, 0.50)),
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
                 url('/static/images/temple-bg.jpg') center/cover fixed no-repeat;
         }
 
         .navbar {
             background: linear-gradient(135deg, #28a745, #20c997) !important;
+        }
+
+        /* Table Border Fix */
+        .table {
+            border: 1px solid #dee2e6;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #dee2e6 !important;
+            padding: 12px;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Fix Table Borders */
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+        .table thead th {
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
+        }
+
+        /* Ensure Actions column has border */
+        .table th:last-child,
+        .table td:last-child {
+            border-right: 1px solid #dee2e6;
         }
 
         .table-container {
@@ -187,6 +233,7 @@
                             <th>Amount</th>
                             <th>Purpose</th>
                             <th>Date</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -272,9 +319,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Notes</label>
-                            <textarea class="form-control" id="notes" rows="2"
-                                placeholder="Any additional notes (optional)"></textarea>
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="status">
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                                <!-- <option value="cancelled">Cancelled</option> -->
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">

@@ -9,13 +9,107 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
+        body {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+                url('/static/images/temple-bg.jpg') center/cover fixed no-repeat;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #6f42c1, #5a32a3) !important;
+        }
+
         .festival-card {
             transition: transform 0.2s;
-            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .festival-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Fix Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #eee;
+            padding: 15px 20px;
+        }
+
+        /* Fix Label Visibility */
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control,
+        .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 15px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: #aaa;
+        }
+
+        /* Button Styles */
+        .btn {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .modal-footer .btn {
+            min-width: 120px;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6f42c1, #5a32a3);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a32a3, #4a2893);
+            color: white;
+        }
+
+        /* Nav Pills */
+        .nav-pills .nav-link {
+            color: #6f42c1;
+            border-radius: 20px;
+            padding: 8px 20px;
+            margin-right: 5px;
+        }
+
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, #6f42c1, #5a32a3);
         }
     </style>
 </head>
@@ -36,65 +130,106 @@
     </nav>
 
     <div class="container py-4">
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <i class="bi bi-calendar-event fs-3"></i>
+                        <h4 id="totalFestivals">0</h4>
+                        <small>Total Festivals</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body text-center">
+                        <i class="bi bi-clock fs-3"></i>
+                        <h4 id="upcomingCount">0</h4>
+                        <small>Upcoming</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <i class="bi bi-play-circle fs-3"></i>
+                        <h4 id="ongoingCount">0</h4>
+                        <small>Ongoing</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card bg-secondary text-white">
+                    <div class="card-body text-center">
+                        <i class="bi bi-check-circle fs-3"></i>
+                        <h4 id="completedCount">0</h4>
+                        <small>Completed</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Filter Tabs -->
         <ul class="nav nav-pills mb-4" id="festivalTabs">
             <li class="nav-item">
-                <a class="nav-link active" href="#" onclick="filterFestivals('all', this)">All</a>
+                <a class="nav-link active" href="#" onclick="filterFestivals('all', this); return false;">All</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="filterFestivals('upcoming', this)">Upcoming</a>
+                <a class="nav-link" href="#" onclick="filterFestivals('upcoming', this); return false;">Upcoming</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="filterFestivals('ongoing', this)">Ongoing</a>
+                <a class="nav-link" href="#" onclick="filterFestivals('ongoing', this); return false;">Ongoing</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="filterFestivals('completed', this)">Completed</a>
+                <a class="nav-link" href="#" onclick="filterFestivals('completed', this); return false;">Completed</a>
             </li>
         </ul>
 
         <!-- Festival Cards -->
         <div class="row g-4" id="festivalsGrid">
-            <div class="col-12 text-center">
+            <div class="col-12 text-center py-5">
                 <div class="spinner-border text-primary" role="status"></div>
-                <p>Loading festivals...</p>
+                <p class="mt-2">Loading festivals...</p>
             </div>
         </div>
     </div>
 
     <!-- Add/Edit Modal -->
-    <div class="modal fade" id="festivalModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="festivalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalTitle">
                         <i class="bi bi-calendar-plus"></i> Add Festival
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
-                <form id="festivalForm">
+                <form id="festivalForm" onsubmit="saveFestival(event)">
                     <div class="modal-body">
                         <input type="hidden" id="festivalId">
 
                         <div class="mb-3">
-                            <label class="form-label">Festival Name *</label>
-                            <input type="text" class="form-control" id="name" required
-                                placeholder="e.g., Diwali Celebration">
+                            <label class="form-label">Festival Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="festivalName" required
+                                placeholder="e.g., Diwali Celebration 2024">
                         </div>
 
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label class="form-label">Start Date *</label>
+                                <label class="form-label">Start Date <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" id="startDate" required>
                             </div>
                             <div class="col-6 mb-3">
-                                <label class="form-label">End Date *</label>
+                                <label class="form-label">End Date <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" id="endDate" required>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select class="form-select" id="status">
+                            <select class="form-select" id="festivalStatus">
                                 <option value="upcoming">Upcoming</option>
                                 <option value="ongoing">Ongoing</option>
                                 <option value="completed">Completed</option>
@@ -103,12 +238,14 @@
 
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea class="form-control" id="description" rows="3"
-                                placeholder="Festival details..."></textarea>
+                            <textarea class="form-control" id="festivalDescription" rows="3"
+                                placeholder="Festival details, timings, special events..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </button>
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-check-circle"></i> Save Festival
                         </button>
@@ -119,15 +256,17 @@
     </div>
 
     <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog modal-sm">
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title"><i class="bi bi-trash"></i> Delete</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title"><i class="bi bi-trash"></i> Delete Festival</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p>Delete this festival?</p>
+                    <i class="bi bi-exclamation-triangle text-danger fs-1"></i>
+                    <p class="mt-3 mb-0">Are you sure you want to delete this festival?</p>
                     <input type="hidden" id="deleteId">
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -143,8 +282,19 @@
         const API_BASE = '/api/v1';
         let festivalsData = [];
         let currentFilter = 'all';
+        let festivalModal = null;
+        let deleteModalInstance = null;
 
-        function getToken() { return localStorage.getItem('token'); }
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            festivalModal = new bootstrap.Modal(document.getElementById('festivalModal'));
+            deleteModalInstance = new bootstrap.Modal(document.getElementById('deleteModal'));
+            loadFestivals();
+        });
+
+        function getToken() {
+            return localStorage.getItem('token');
+        }
 
         function formatDate(dateString) {
             if (!dateString) return '-';
@@ -154,8 +304,13 @@
         }
 
         function getStatusBadge(status) {
-            const colors = { 'upcoming': 'warning', 'ongoing': 'success', 'completed': 'secondary' };
-            return `<span class="badge bg-${colors[status] || 'primary'}">${status}</span>`;
+            const config = {
+                'upcoming': { color: 'warning', icon: 'clock' },
+                'ongoing': { color: 'success', icon: 'play-circle' },
+                'completed': { color: 'secondary', icon: 'check-circle' }
+            };
+            const s = config[status] || config['upcoming'];
+            return `<span class="badge bg-${s.color}"><i class="bi bi-${s.icon} me-1"></i>${status}</span>`;
         }
 
         async function loadFestivals() {
@@ -166,10 +321,23 @@
                 if (data.success) {
                     festivalsData = data.data || [];
                     renderGrid();
+                    updateStats();
                 }
             } catch (error) {
                 console.error('Error:', error);
+                showAlert('Failed to load festivals', 'danger');
             }
+        }
+
+        function updateStats() {
+            const upcoming = festivalsData.filter(f => f.status === 'upcoming').length;
+            const ongoing = festivalsData.filter(f => f.status === 'ongoing').length;
+            const completed = festivalsData.filter(f => f.status === 'completed').length;
+
+            document.getElementById('totalFestivals').textContent = festivalsData.length;
+            document.getElementById('upcomingCount').textContent = upcoming;
+            document.getElementById('ongoingCount').textContent = ongoing;
+            document.getElementById('completedCount').textContent = completed;
         }
 
         function renderGrid() {
@@ -181,22 +349,32 @@
             }
 
             if (filtered.length === 0) {
-                grid.innerHTML = '<div class="col-12 text-center text-muted"><p>No festivals found.</p></div>';
+                grid.innerHTML = `
+                    <div class="col-12 text-center text-muted py-5">
+                        <i class="bi bi-calendar-x fs-1 d-block mb-3"></i>
+                        <p>No festivals found.</p>
+                        <button class="btn btn-primary" onclick="showAddModal()">
+                            <i class="bi bi-plus-circle"></i> Add First Festival
+                        </button>
+                    </div>`;
                 return;
             }
 
             grid.innerHTML = filtered.map(f => `
                 <div class="col-md-6 col-lg-4">
                     <div class="card festival-card h-100">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <strong>${f.name}</strong>
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <strong class="text-truncate me-2">${f.name}</strong>
                             ${getStatusBadge(f.status)}
                         </div>
                         <div class="card-body">
-                            <p><i class="bi bi-calendar"></i> ${formatDate(f.start_date)} - ${formatDate(f.end_date)}</p>
-                            <p class="text-muted small">${f.description || 'No description'}</p>
+                            <p class="mb-2">
+                                <i class="bi bi-calendar text-primary me-2"></i>
+                                ${formatDate(f.start_date)} - ${formatDate(f.end_date)}
+                            </p>
+                            <p class="text-muted small mb-0">${f.description || 'No description available'}</p>
                         </div>
-                        <div class="card-footer bg-transparent">
+                        <div class="card-footer bg-white border-0">
                             <button class="btn btn-sm btn-outline-primary me-1" onclick="editFestival(${f.ID})">
                                 <i class="bi bi-pencil"></i> Edit
                             </button>
@@ -220,34 +398,56 @@
             document.getElementById('modalTitle').innerHTML = '<i class="bi bi-calendar-plus"></i> Add Festival';
             document.getElementById('festivalForm').reset();
             document.getElementById('festivalId').value = '';
-            new bootstrap.Modal(document.getElementById('festivalModal')).show();
+            festivalModal.show();
+        }
+
+        function closeModal() {
+            festivalModal.hide();
         }
 
         function editFestival(id) {
             const festival = festivalsData.find(f => f.ID === id);
-            if (!festival) return;
+            if (!festival) {
+                showAlert('Festival not found', 'danger');
+                return;
+            }
+
+            console.log('Editing festival:', festival); // Debug log
 
             document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil"></i> Edit Festival';
-            document.getElementById('festivalId').value = id;
-            document.getElementById('name').value = festival.name || '';
-            document.getElementById('startDate').value = festival.start_date ? festival.start_date.split('T')[0] : '';
-            document.getElementById('endDate').value = festival.end_date ? festival.end_date.split('T')[0] : '';
-            document.getElementById('status').value = festival.status || 'upcoming';
-            document.getElementById('description').value = festival.description || '';
+            document.getElementById('festivalId').value = festival.ID;
+            document.getElementById('festivalName').value = festival.name || '';
 
-            new bootstrap.Modal(document.getElementById('festivalModal')).show();
+            // Handle date format
+            if (festival.start_date) {
+                const startDate = festival.start_date.split('T')[0];
+                document.getElementById('startDate').value = startDate;
+            }
+            if (festival.end_date) {
+                const endDate = festival.end_date.split('T')[0];
+                document.getElementById('endDate').value = endDate;
+            }
+
+            document.getElementById('festivalStatus').value = festival.status || 'upcoming';
+            document.getElementById('festivalDescription').value = festival.description || '';
+
+            festivalModal.show();
         }
 
         function deleteFestival(id) {
             document.getElementById('deleteId').value = id;
-            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+            deleteModalInstance.show();
         }
 
         async function confirmDelete() {
             const id = document.getElementById('deleteId').value;
             const token = getToken();
 
-            if (!token) { window.location.href = '/login'; return; }
+            if (!token) {
+                showAlert('Please login first', 'warning');
+                setTimeout(() => window.location.href = '/login', 1500);
+                return;
+            }
 
             try {
                 const response = await fetch(API_BASE + '/festivals/' + id, {
@@ -255,33 +455,59 @@
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
 
-                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-                if (response.ok) loadFestivals();
+                deleteModalInstance.hide();
+
+                if (response.ok) {
+                    showAlert('Festival deleted successfully!', 'success');
+                    loadFestivals();
+                } else {
+                    const data = await response.json();
+                    showAlert(data.error || 'Failed to delete', 'danger');
+                }
             } catch (error) {
-                console.error('Error:', error);
+                showAlert('Error deleting festival', 'danger');
             }
         }
 
-        document.getElementById('festivalForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
+        async function saveFestival(event) {
+            event.preventDefault();
 
             const token = getToken();
-            if (!token) { window.location.href = '/login'; return; }
+            if (!token) {
+                showAlert('Please login first', 'warning');
+                setTimeout(() => window.location.href = '/login', 1500);
+                return;
+            }
 
             const id = document.getElementById('festivalId').value;
-            const isEdit = !!id;
+            const isEdit = id && id !== '';
+
+            console.log('Saving festival, ID:', id, 'isEdit:', isEdit); // Debug log
 
             const festivalData = {
-                name: document.getElementById('name').value,
+                name: document.getElementById('festivalName').value.trim(),
                 start_date: new Date(document.getElementById('startDate').value).toISOString(),
                 end_date: new Date(document.getElementById('endDate').value).toISOString(),
-                status: document.getElementById('status').value,
-                description: document.getElementById('description').value
+                status: document.getElementById('festivalStatus').value,
+                description: document.getElementById('festivalDescription').value.trim()
             };
 
+            console.log('Festival data:', festivalData); // Debug log
+
+            // Validate
+            if (!festivalData.name) {
+                showAlert('Please enter festival name', 'warning');
+                return;
+            }
+
+            const url = isEdit ? `${API_BASE}/festivals/${id}` : `${API_BASE}/festivals`;
+            const method = isEdit ? 'PUT' : 'POST';
+
+            console.log('Request URL:', url, 'Method:', method); // Debug log
+
             try {
-                const response = await fetch(API_BASE + '/festivals' + (isEdit ? '/' + id : ''), {
-                    method: isEdit ? 'PUT' : 'POST',
+                const response = await fetch(url, {
+                    method: method,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + token
@@ -289,14 +515,44 @@
                     body: JSON.stringify(festivalData)
                 });
 
-                bootstrap.Modal.getInstance(document.getElementById('festivalModal')).hide();
-                if (response.ok) loadFestivals();
+                const data = await response.json();
+                console.log('Response:', data); // Debug log
+
+                festivalModal.hide();
+
+                if (response.ok) {
+                    showAlert(isEdit ? 'Festival updated successfully!' : 'Festival added successfully!', 'success');
+                    loadFestivals();
+                } else {
+                    showAlert(data.error || 'Failed to save festival', 'danger');
+                }
             } catch (error) {
                 console.error('Error:', error);
+                showAlert('Error saving festival. Please try again.', 'danger');
             }
-        });
+        }
 
-        document.addEventListener('DOMContentLoaded', loadFestivals);
+        function showAlert(message, type) {
+            document.querySelectorAll('.floating-alert').forEach(el => el.remove());
+
+            const iconMap = {
+                'success': 'check-circle',
+                'danger': 'exclamation-circle',
+                'warning': 'exclamation-triangle',
+                'info': 'info-circle'
+            };
+
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show floating-alert position-fixed`;
+            alert.style.cssText = 'top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);';
+            alert.innerHTML = `
+                <i class="bi bi-${iconMap[type] || 'info-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            setTimeout(() => alert.remove(), 4000);
+        }
     </script>
 </body>
 
