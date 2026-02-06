@@ -9,17 +9,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-                url('/static/images/temple-bg.jpg') center/cover fixed no-repeat;
-        }
-
         .navbar {
             background: linear-gradient(135deg, #dc3545, #c82333) !important;
         }
 
         .table-container {
-            background: rgba(255, 255, 255, 0.50);
+            background: #fff;
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -27,88 +22,21 @@
 
         .stats-card {
             transition: transform 0.2s;
-            border: none;
-            border-radius: 12px;
         }
 
         .stats-card:hover {
             transform: translateY(-3px);
         }
 
-        /* Fix Modal Styles */
-        .modal-content {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        .bg-danger h4,
+        .bg-primary h4,
+        .bg-info h4,
+        .bg-success h4 {
+            color: #fff !important;
         }
 
-        .modal-header {
-            border-radius: 15px 15px 0 0;
-        }
-
-        .modal-footer {
-            border-top: 1px solid #eee;
-            padding: 15px 20px;
-        }
-
-        /* Fix Label Visibility */
-        .form-label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .form-control,
-        .form-select {
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 10px 12px;
-            font-size: 15px;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-        }
-
-        .form-control::placeholder {
-            color: #aaa;
-        }
-
-        /* Fix Button Styles */
-        .btn {
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 500;
-        }
-
-        .modal-footer .btn {
-            min-width: 120px;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background-color: #545b62;
-            border-color: #545b62;
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            border: none;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #c82333, #bd2130);
-            color: white;
+        .bg-warning h4 {
+            color: #333 !important;
         }
     </style>
 </head>
@@ -118,12 +46,9 @@
         <div class="container">
             <a class="navbar-brand" href="/">🛕 Temple Management</a>
             <div class="navbar-nav ms-auto flex-row">
-                <a href="/" class="btn btn-outline-light btn-sm me-2">
-                    <i class="bi bi-house"></i> Home
-                </a>
-                <button class="btn btn-light btn-sm" onclick="showAddModal()">
-                    <i class="bi bi-plus-circle"></i> Add Expense
-                </button>
+                <a href="/" class="btn btn-outline-light btn-sm me-2"><i class="bi bi-house"></i> Home</a>
+                <button class="btn btn-light btn-sm" onclick="showAddModal()"><i class="bi bi-plus-circle"></i> Add
+                    Expense</button>
             </div>
         </div>
     </nav>
@@ -132,38 +57,38 @@
         <!-- Stats Cards -->
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-3">
-                <div class="card bg-danger text-white stats-card">
-                    <div class="card-body text-center">
+                <div class="card bg-danger stats-card">
+                    <div class="card-body text-center text-white">
                         <i class="bi bi-cash-stack fs-3"></i>
-                        <h4 id="totalAmount">₹0</h4>
-                        <small>Total Expenses</small>
+                        <h4 id="totalAmount" style="color: #fff !important; font-weight: 700;">₹0</h4>
+                        <small style="color: rgba(255,255,255,0.8);">Total Expenses</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card bg-primary text-white stats-card">
-                    <div class="card-body text-center">
+                <div class="card bg-primary stats-card">
+                    <div class="card-body text-center text-white">
                         <i class="bi bi-receipt fs-3"></i>
-                        <h4 id="totalCount">0</h4>
-                        <small>Total Entries</small>
+                        <h4 id="totalCount" style="color: #fff !important; font-weight: 700;">0</h4>
+                        <small style="color: rgba(255,255,255,0.8);">Total Entries</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card bg-warning text-dark stats-card">
-                    <div class="card-body text-center">
-                        <i class="bi bi-calendar-check fs-3"></i>
-                        <h4 id="thisMonthAmount">₹0</h4>
-                        <small>This Month</small>
+                <div class="card bg-success stats-card">
+                    <div class="card-body text-center text-white">
+                        <i class="bi bi-check-circle fs-3"></i>
+                        <h4 id="paidCount" style="color: #fff !important; font-weight: 700;">0</h4>
+                        <small style="color: rgba(255,255,255,0.8);">Paid</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card bg-info text-white stats-card">
+                <div class="card bg-warning stats-card">
                     <div class="card-body text-center">
-                        <i class="bi bi-graph-down fs-3"></i>
-                        <h4 id="avgExpense">₹0</h4>
-                        <small>Average Expense</small>
+                        <i class="bi bi-clock fs-3" style="color: #333;"></i>
+                        <h4 id="pendingCount" style="color: #333 !important; font-weight: 700;">0</h4>
+                        <small style="color: #555;">Pending</small>
                     </div>
                 </div>
             </div>
@@ -171,43 +96,28 @@
 
         <!-- Expenses Table -->
         <div class="table-container">
-            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                <h5 class="mb-0"><i class="bi bi-list-ul"></i> All Expenses</h5>
-                <div class="d-flex gap-2">
-                    <select class="form-select form-select-sm" id="categoryFilter" onchange="filterByCategory()"
-                        style="width: auto;">
-                        <option value="">All Categories</option>
-                        <option value="decoration">Decoration</option>
-                        <option value="food">Food/Prasad</option>
-                        <option value="puja_items">Puja Items</option>
-                        <option value="electricity">Electricity</option>
-                        <option value="maintenance">Maintenance</option>
-                        <option value="salary">Salary</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Search..."
-                        onkeyup="filterTable()" style="width: 150px;">
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 style="color: #333;"><i class="bi bi-list-ul"></i> All Expenses</h5>
+                <input type="text" class="form-control w-auto" id="searchInput" placeholder="Search..."
+                    onkeyup="filterTable()">
             </div>
-
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead class="table-danger">
                         <tr>
-                            <th>Date</th>
-                            <th>Title</th>
-                            <th>Category</th>
-                            <th>Vendor</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th style="color: #fff;">Date</th>
+                            <th style="color: #fff;">Title</th>
+                            <th style="color: #fff;">Category</th>
+                            <th style="color: #fff;">Vendor</th>
+                            <th style="color: #fff;">Amount</th>
+                            <th style="color: #fff;">Status</th>
+                            <th style="color: #fff;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="expensesBody">
                         <tr>
-                            <td colspan="6" class="text-center">
-                                <div class="spinner-border text-danger" role="status"></div>
-                                <span class="ms-2">Loading...</span>
+                            <td colspan="7" class="text-center">
+                                <div class="spinner-border text-danger"></div> Loading...
                             </td>
                         </tr>
                     </tbody>
@@ -217,42 +127,39 @@
     </div>
 
     <!-- Add/Edit Modal -->
-    <div class="modal fade" id="expenseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="expenseModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="modalTitle">
-                        <i class="bi bi-plus-circle"></i> Add Expense
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <h5 class="modal-title" id="modalTitle"><i class="bi bi-plus-circle"></i> Add Expense</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="expenseForm" onsubmit="saveExpense(event)">
-                    <div class="modal-body">
+                    <div class="modal-body" style="background: #fff;">
                         <input type="hidden" id="expenseId">
-
                         <div class="mb-3">
-                            <label class="form-label">Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="title" required
-                                placeholder="e.g., Flowers for Pooja">
+                            <label class="form-label" style="color: #333; font-weight: 600;">Title <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="title" required placeholder="e.g., Flowers"
+                                style="color: #333;">
                         </div>
-
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label class="form-label">Amount (₹) <span class="text-danger">*</span></label>
+                                <label class="form-label" style="color: #333; font-weight: 600;">Amount (₹) <span
+                                        class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="amount" required min="1"
-                                    placeholder="Enter amount">
+                                    style="color: #333;">
                             </div>
                             <div class="col-6 mb-3">
-                                <label class="form-label">Date <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="expenseDate" required>
+                                <label class="form-label" style="color: #333; font-weight: 600;">Date <span
+                                        class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="expenseDate" required style="color: #333;">
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label class="form-label">Category</label>
-                                <select class="form-select" id="category">
+                                <label class="form-label" style="color: #333; font-weight: 600;">Category</label>
+                                <select class="form-select" id="category" style="color: #333;">
                                     <option value="puja_items">Puja Items</option>
                                     <option value="decoration">Decoration</option>
                                     <option value="food">Food/Prasad</option>
@@ -263,41 +170,23 @@
                                 </select>
                             </div>
                             <div class="col-6 mb-3">
-                                <label class="form-label">Payment Mode</label>
-                                <select class="form-select" id="paymentMode">
-                                    <option value="cash">Cash</option>
-                                    <option value="upi">UPI</option>
-                                    <option value="bank_transfer">Bank Transfer</option>
+                                <label class="form-label" style="color: #333; font-weight: 600;">Status</label>
+                                <select class="form-select" id="expenseStatus" style="color: #333;">
+                                    <option value="paid">Paid</option>
+                                    <option value="pending">Pending</option>
                                 </select>
                             </div>
                         </div>
-
                         <div class="mb-3">
-                            <label class="form-label">Vendor Name</label>
-                            <input type="text" class="form-control" id="vendorName" placeholder="Shop or person name">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" id="status">
-                                <option value="pending">Pending</option>
-                                <option value="paid">Paid</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea class="form-control" id="description" rows="2"
-                                placeholder="Additional details (optional)"></textarea>
+                            <label class="form-label" style="color: #333; font-weight: 600;">Vendor Name</label>
+                            <input type="text" class="form-control" id="vendorName" placeholder="Shop name"
+                                style="color: #333;">
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal()">
-                            <i class="bi bi-x-circle"></i> Cancel
-                        </button>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-check-circle"></i> Save Expense
-                        </button>
+                    <div class="modal-footer" style="background: #fff;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()"><i
+                                class="bi bi-x-circle"></i> Cancel</button>
+                        <button type="submit" class="btn btn-danger"><i class="bi bi-check-circle"></i> Save</button>
                     </div>
                 </form>
             </div>
@@ -305,37 +194,31 @@
     </div>
 
     <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="deleteModal" tabindex="-1">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title"><i class="bi bi-trash"></i> Delete Expense</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <h5 class="modal-title"><i class="bi bi-trash"></i> Delete</h5><button type="button"
+                        class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body text-center">
-                    <i class="bi bi-exclamation-triangle text-danger fs-1"></i>
-                    <p class="mt-3 mb-0">Are you sure you want to delete this expense?</p>
-                    <input type="hidden" id="deleteId">
+                <div class="modal-body text-center" style="background: #fff; color: #333;">
+                    <p>Delete this expense?</p><input type="hidden" id="deleteId">
                 </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x"></i> Cancel
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">
-                        <i class="bi bi-trash"></i> Delete
-                    </button>
-                </div>
+                <div class="modal-footer justify-content-center" style="background: #fff;"><button type="button"
+                        class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button"
+                        class="btn btn-danger" onclick="confirmDelete()">Delete</button></div>
             </div>
         </div>
     </div>
+
+    <!-- Developer Credit -->
+    <div class="developer-credit">Developed by <a href="#">Vishwajeet_Yadav</a></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const API_BASE = '/api/v1';
         let expensesData = [];
-        let expenseModal = null;
-        let deleteModalInstance = null;
+        let expenseModal, deleteModalInstance;
 
         document.addEventListener('DOMContentLoaded', function () {
             expenseModal = new bootstrap.Modal(document.getElementById('expenseModal'));
@@ -345,75 +228,37 @@
         });
 
         function getToken() { return localStorage.getItem('token'); }
-
-        function formatCurrency(amount) {
-            return '₹' + Number(amount).toLocaleString('en-IN');
-        }
-
+        function formatCurrency(amount) { return '₹' + Number(amount).toLocaleString('en-IN'); }
         function formatDate(dateString) {
             if (!dateString) return '-';
-            return new Date(dateString).toLocaleDateString('en-IN', {
-                day: '2-digit', month: 'short', year: 'numeric'
-            });
-        }
-
-        function getCategoryBadge(category) {
-            const colors = {
-                'decoration': 'primary',
-                'food': 'success',
-                'puja_items': 'warning',
-                'electricity': 'info',
-                'maintenance': 'secondary',
-                'salary': 'dark',
-                'other': 'light text-dark'
-            };
-            return `<span class="badge bg-${colors[category] || 'secondary'}">${category || 'Other'}</span>`;
+            return new Date(dateString).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
         }
 
         async function loadExpenses() {
             try {
                 const response = await fetch(API_BASE + '/expenses');
                 const data = await response.json();
-
-                if (data.success) {
-                    expensesData = data.data || [];
-                    renderTable();
-                    updateStats();
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('Failed to load expenses', 'danger');
-            }
+                if (data.success) { expensesData = data.data || []; renderTable(); updateStats(); }
+            } catch (error) { console.error('Error:', error); }
         }
 
         function renderTable() {
             const tbody = document.getElementById('expensesBody');
-
             if (expensesData.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
-                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                            No expenses found. Click "Add Expense" to add one.
-                        </td>
-                    </tr>`;
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="color: #666;">No expenses yet</td></tr>';
                 return;
             }
-
             tbody.innerHTML = expensesData.map(e => `
                 <tr>
-                    <td>${formatDate(e.date)}</td>
-                    <td><strong>${e.title}</strong></td>
-                    <td>${getCategoryBadge(e.category)}</td>
-                    <td>${e.vendor_name || '-'}</td>
-                    <td class="text-danger fw-bold">${formatCurrency(e.amount)}</td>
+                    <td style="color: #333;">${formatDate(e.date)}</td>
+                    <td style="color: #111; font-weight: 600;">${e.title}</td>
+                    <td><span class="badge bg-secondary">${e.category || 'Other'}</span></td>
+                    <td style="color: #333;">${e.vendor_name || '-'}</td>
+                    <td style="color: #dc3545; font-weight: 700;">${formatCurrency(e.amount)}</td>
+                    <td>${e.description === 'pending' ? '<span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Pending</span>' : '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Paid</span>'}</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editExpense(${e.ID})" title="Edit">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteExpense(${e.ID})" title="Delete">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editExpense(${e.ID})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteExpense(${e.ID})"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -421,18 +266,12 @@
 
         function updateStats() {
             const total = expensesData.reduce((sum, e) => sum + (e.amount || 0), 0);
-            const avg = expensesData.length > 0 ? total / expensesData.length : 0;
-
-            const now = new Date();
-            const thisMonth = expensesData.filter(e => {
-                const date = new Date(e.date);
-                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-            }).reduce((sum, e) => sum + (e.amount || 0), 0);
-
+            const paid = expensesData.filter(e => e.description !== 'pending').length;
+            const pending = expensesData.filter(e => e.description === 'pending').length;
             document.getElementById('totalAmount').textContent = formatCurrency(total);
             document.getElementById('totalCount').textContent = expensesData.length;
-            document.getElementById('thisMonthAmount').textContent = formatCurrency(thisMonth);
-            document.getElementById('avgExpense').textContent = formatCurrency(Math.round(avg));
+            document.getElementById('paidCount').textContent = paid;
+            document.getElementById('pendingCount').textContent = pending;
         }
 
         function showAddModal() {
@@ -443,135 +282,59 @@
             expenseModal.show();
         }
 
-        function closeModal() {
-            expenseModal.hide();
-        }
+        function closeModal() { expenseModal.hide(); }
 
         function editExpense(id) {
-            const expense = expensesData.find(e => e.ID === id);
-            if (!expense) return;
-
+            const e = expensesData.find(x => x.ID === id);
+            if (!e) return;
             document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil"></i> Edit Expense';
             document.getElementById('expenseId').value = id;
-            document.getElementById('title').value = expense.title || '';
-            document.getElementById('amount').value = expense.amount || '';
-            document.getElementById('expenseDate').value = expense.date ? expense.date.split('T')[0] : '';
-            document.getElementById('category').value = expense.category || 'other';
-            document.getElementById('vendorName').value = expense.vendor_name || '';
-            document.getElementById('billNo').value = expense.bill_no || '';
-            document.getElementById('paymentMode').value = expense.payment_mode || 'cash';
-            document.getElementById('description').value = expense.description || '';
-
+            document.getElementById('title').value = e.title || '';
+            document.getElementById('amount').value = e.amount || '';
+            document.getElementById('expenseDate').value = e.date ? e.date.split('T')[0] : '';
+            document.getElementById('category').value = e.category || 'other';
+            document.getElementById('vendorName').value = e.vendor_name || '';
+            document.getElementById('expenseStatus').value = e.description === 'pending' ? 'pending' : 'paid';
             expenseModal.show();
         }
 
-        function deleteExpense(id) {
-            document.getElementById('deleteId').value = id;
-            deleteModalInstance.show();
-        }
+        function deleteExpense(id) { document.getElementById('deleteId').value = id; deleteModalInstance.show(); }
 
         async function confirmDelete() {
-            const id = document.getElementById('deleteId').value;
             const token = getToken();
-
-            if (!token) {
-                showAlert('Please login first', 'warning');
-                setTimeout(() => window.location.href = '/login', 1500);
-                return;
-            }
-
-            try {
-                const response = await fetch(API_BASE + '/expenses/' + id, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-
-                deleteModalInstance.hide();
-
-                if (response.ok) {
-                    showAlert('Expense deleted successfully!', 'success');
-                    loadExpenses();
-                } else {
-                    showAlert('Failed to delete', 'danger');
-                }
-            } catch (error) {
-                showAlert('Error deleting expense', 'danger');
-            }
+            if (!token) { window.location.href = '/login'; return; }
+            await fetch(API_BASE + '/expenses/' + document.getElementById('deleteId').value, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+            deleteModalInstance.hide();
+            loadExpenses();
         }
 
         async function saveExpense(event) {
             event.preventDefault();
-
             const token = getToken();
-            if (!token) {
-                showAlert('Please login first', 'warning');
-                setTimeout(() => window.location.href = '/login', 1500);
-                return;
-            }
-
+            if (!token) { window.location.href = '/login'; return; }
             const id = document.getElementById('expenseId').value;
-            const isEdit = !!id;
-
-            const expenseData = {
+            const data = {
                 title: document.getElementById('title').value,
                 amount: parseFloat(document.getElementById('amount').value),
                 date: new Date(document.getElementById('expenseDate').value).toISOString(),
                 category: document.getElementById('category').value,
                 vendor_name: document.getElementById('vendorName').value,
-                bill_no: document.getElementById('billNo').value,
-                payment_mode: document.getElementById('paymentMode').value,
-                description: document.getElementById('description').value
+                description: document.getElementById('expenseStatus').value
             };
-
-            try {
-                const response = await fetch(API_BASE + '/expenses' + (isEdit ? '/' + id : ''), {
-                    method: isEdit ? 'PUT' : 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify(expenseData)
-                });
-
-                expenseModal.hide();
-
-                if (response.ok) {
-                    showAlert(isEdit ? 'Expense updated!' : 'Expense added!', 'success');
-                    loadExpenses();
-                } else {
-                    const data = await response.json();
-                    showAlert(data.error || 'Failed to save', 'danger');
-                }
-            } catch (error) {
-                showAlert('Error saving expense', 'danger');
-            }
+            await fetch(API_BASE + '/expenses' + (id ? '/' + id : ''), {
+                method: id ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify(data)
+            });
+            expenseModal.hide();
+            loadExpenses();
         }
 
         function filterTable() {
             const search = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#expensesBody tr');
-            rows.forEach(row => {
+            document.querySelectorAll('#expensesBody tr').forEach(row => {
                 row.style.display = row.textContent.toLowerCase().includes(search) ? '' : 'none';
             });
-        }
-
-        function filterByCategory() {
-            const category = document.getElementById('categoryFilter').value.toLowerCase();
-            const rows = document.querySelectorAll('#expensesBody tr');
-            rows.forEach(row => {
-                if (!category) row.style.display = '';
-                else row.style.display = row.textContent.toLowerCase().includes(category) ? '' : 'none';
-            });
-        }
-
-        function showAlert(message, type) {
-            document.querySelectorAll('.floating-alert').forEach(el => el.remove());
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show floating-alert position-fixed`;
-            alert.style.cssText = 'top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;';
-            alert.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-            document.body.appendChild(alert);
-            setTimeout(() => alert.remove(), 4000);
         }
     </script>
 </body>

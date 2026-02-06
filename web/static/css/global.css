@@ -1,33 +1,105 @@
-/* Global Background for All Pages */
+/* ========== BACKGROUND ========== */
 body {
-    background: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)),
+    background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)),
         url('/static/images/temple-bg.jpg') center/cover fixed no-repeat;
     background-size: cover;
     background-attachment: fixed;
-    background-position: center;
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Cards */
+/* ========== NAVIGATION ========== */
+.navbar-brand,
+.nav-link {
+    color: #fff !important;
+}
+
+/* ========== CARDS - General ========== */
 .card {
-    background: rgba(255, 255, 255, 0.98) !important;
-    backdrop-filter: blur(5px);
     border: none !important;
     border-radius: 12px !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Navigation */
-.navbar {
-    background: linear-gradient(135deg, #FF6B35, #FF8C42) !important;
-    backdrop-filter: none !important;
+/* ========== COLORED CARDS - Keep Bootstrap Colors ========== */
+.card.bg-success,
+.card.bg-danger,
+.card.bg-primary,
+.card.bg-info,
+.card.bg-secondary,
+.card.bg-dark {
+    color: #fff !important;
 }
 
-/* Table Styles - Full Border */
+.card.bg-success .card-body,
+.card.bg-danger .card-body,
+.card.bg-primary .card-body,
+.card.bg-info .card-body,
+.card.bg-secondary .card-body,
+.card.bg-dark .card-body {
+    color: #fff !important;
+}
+
+.card.bg-success h4,
+.card.bg-danger h4,
+.card.bg-primary h4,
+.card.bg-info h4,
+.card.bg-secondary h4,
+.card.bg-dark h4,
+.card.bg-success h5,
+.card.bg-danger h5,
+.card.bg-primary h5,
+.card.bg-info h5,
+.card.bg-secondary h5,
+.card.bg-dark h5 {
+    color: #fff !important;
+}
+
+.card.bg-success small,
+.card.bg-danger small,
+.card.bg-primary small,
+.card.bg-info small,
+.card.bg-secondary small,
+.card.bg-dark small {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.card.bg-success i,
+.card.bg-danger i,
+.card.bg-primary i,
+.card.bg-info i,
+.card.bg-secondary i,
+.card.bg-dark i {
+    color: #fff !important;
+}
+
+/* Warning card - dark text */
+.card.bg-warning {
+    color: #333 !important;
+}
+
+.card.bg-warning .card-body,
+.card.bg-warning h4,
+.card.bg-warning h5,
+.card.bg-warning small,
+.card.bg-warning i {
+    color: #333 !important;
+}
+
+/* ========== WHITE CARDS (Tables, Content) ========== */
+.table-container,
+.card:not(.bg-success):not(.bg-danger):not(.bg-primary):not(.bg-info):not(.bg-warning):not(.bg-secondary):not(.bg-dark) {
+    background: rgba(255, 255, 255, 0.98) !important;
+}
+
+.table-container h5,
+.table-container p {
+    color: #333 !important;
+}
+
+/* ========== TABLES ========== */
 .table {
     border: 1px solid #dee2e6;
-    border-collapse: collapse;
     margin-bottom: 0;
 }
 
@@ -38,34 +110,51 @@ body {
     vertical-align: middle;
 }
 
-.table thead th {
-    border-bottom: 2px solid #dee2e6 !important;
-    font-weight: 600;
+.table td {
+    color: #333 !important;
+    background: #fff;
+}
+
+.table td strong {
+    color: #111 !important;
+}
+
+.table-success th {
+    background-color: #28a745 !important;
+    color: #fff !important;
+}
+
+.table-danger th {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.table-primary th {
+    background-color: #007bff !important;
+    color: #fff !important;
 }
 
 .table-responsive {
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #dee2e6;
 }
 
-/* Form Labels - High Visibility */
+/* ========== FORMS ========== */
 .form-label {
-    font-weight: 600;
-    color: #333;
+    font-weight: 600 !important;
+    color: #333 !important;
     margin-bottom: 8px;
     font-size: 14px;
-    display: block;
 }
 
-/* Form Inputs */
 .form-control,
 .form-select {
     border: 2px solid #dee2e6;
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 15px;
-    color: #333;
+    color: #333 !important;
+    background: #fff !important;
 }
 
 .form-control:focus,
@@ -75,46 +164,72 @@ body {
 }
 
 .form-control::placeholder {
-    color: #999;
+    color: #999 !important;
 }
 
-/* Modal Styles */
+/* ========== MODALS ========== */
 .modal-content {
     border: none;
     border-radius: 15px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-.modal-header {
-    border-radius: 15px 15px 0 0;
-    border-bottom: none;
+.modal-body {
+    background: #fff !important;
+}
+
+.modal-body label {
+    color: #333 !important;
 }
 
 .modal-footer {
+    background: #fff !important;
     border-top: 1px solid #eee;
-    padding: 15px 20px;
 }
 
 .modal-footer .btn {
     min-width: 120px;
     border-radius: 8px;
     padding: 10px 20px;
-    font-weight: 500;
 }
 
-/* Button Fixes */
+/* ========== BUTTONS ========== */
 .btn-secondary {
     background-color: #6c757d !important;
     border-color: #6c757d !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .btn-secondary:hover {
     background-color: #5a6268 !important;
-    border-color: #545b62 !important;
+    color: #fff !important;
 }
 
-/* Alert Styles */
+/* ========== DEVELOPER CREDIT ========== */
+.developer-credit {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    z-index: 1000;
+}
+
+.developer-credit a {
+    color: #FF6B35;
+    text-decoration: none;
+}
+
+@media (max-width: 991px) {
+    .developer-credit {
+        bottom: 80px;
+    }
+}
+
+/* ========== ALERTS ========== */
 .floating-alert {
     animation: slideDown 0.3s ease;
 }
