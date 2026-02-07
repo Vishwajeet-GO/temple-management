@@ -18,87 +18,62 @@ func SetupRoutes(r *gin.Engine) {
 	}))
 
 	r.Static("/static", "./web/static")
-
-	// Load HTML templates
 	r.LoadHTMLGlob("web/templates/*.html")
 
-	// Web routes - serve HTML files
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", nil)
-	})
+	// Public Pages
+	r.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
+	r.GET("/login", func(c *gin.Context) { c.HTML(http.StatusOK, "login.html", nil) })
+	r.GET("/festivals", func(c *gin.Context) { c.HTML(http.StatusOK, "festivals.html", nil) })
+	r.GET("/donations", func(c *gin.Context) { c.HTML(http.StatusOK, "donations.html", nil) })
+	r.GET("/expenses", func(c *gin.Context) { c.HTML(http.StatusOK, "expenses.html", nil) })
+	r.GET("/reports", func(c *gin.Context) { c.HTML(http.StatusOK, "reports.html", nil) })
 
-	r.GET("/login", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "login.html", nil)
-	})
+	// NEW: Donate Page
+	r.GET("/donate", func(c *gin.Context) { c.HTML(http.StatusOK, "donate.html", nil) })
 
-	r.GET("/festivals", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "festivals.html", nil)
-	})
-
-	r.GET("/donations", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "donations.html", nil)
-	})
-
-	r.GET("/expenses", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "expenses.html", nil)
-	})
-
-	r.GET("/reports", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "reports.html", nil)
-	})
-
-	// API routes
 	api := r.Group("/api/v1")
 	{
-		// Auth
 		authHandler := handlers.NewAuthHandler()
 		api.POST("/auth/login", authHandler.Login)
-		api.POST("/auth/logout", authHandler.Logout)
 
-		// Dashboard
+		// NEW: Payment Submit Route
+		paymentHandler := handlers.NewPaymentHandler()
+		api.POST("/submit-donation", paymentHandler.ProcessDonation)
+
+		// Public Data
+		templeHandler := handlers.NewTempleHandler()
+		api.GET("/temple", templeHandler.GetTemple)
+
+		festivalHandler := handlers.NewFestivalHandler()
+		api.GET("/festivals", festivalHandler.GetAll)
+
 		dashboardHandler := handlers.NewDashboardHandler()
 		api.GET("/dashboard/summary", dashboardHandler.GetSummary)
 		api.GET("/dashboard/recent-donations", dashboardHandler.GetRecentDonations)
 		api.GET("/dashboard/recent-expenses", dashboardHandler.GetRecentExpenses)
+		api.GET("/dashboard/project/:id", dashboardHandler.GetProjectStats)
 
-		// Temple
-		templeHandler := handlers.NewTempleHandler()
-		api.GET("/temple", templeHandler.GetTemple)
-
-		// Festivals
-		festivalHandler := handlers.NewFestivalHandler()
-		api.GET("/festivals", festivalHandler.GetAll)
-		api.GET("/festivals/upcoming", festivalHandler.GetUpcoming)
-		api.GET("/festivals/:id", festivalHandler.GetByID)
-
-		// Donations
+		// Protected Routes
 		donationHandler := handlers.NewDonationHandler()
-		api.GET("/donations", donationHandler.GetAll)
-		api.GET("/donations/:id", donationHandler.GetByID)
-		api.GET("/donations/festival/:festivalId", donationHandler.GetByFestival)
+		api.GET("/donations", donationHandler.GetAll) // Kept public for viewing based on previous requests
 
-		// Expenses
-		expenseHandler := handlers.NewExpenseHandler()
-		api.GET("/expenses", expenseHandler.GetAll)
-		api.GET("/expenses/:id", expenseHandler.GetByID)
-		api.GET("/expenses/festival/:festivalId", expenseHandler.GetByFestival)
-
-		// Protected routes
 		protected := api.Group("/")
 		protected.Use(middleware.AuthMiddleware())
 		{
-			protected.GET("/auth/me", authHandler.GetCurrentUser)
-			protected.POST("/auth/change-password", authHandler.ChangePassword)
-			protected.PUT("/temple", templeHandler.UpdateTemple)
-			protected.POST("/festivals", festivalHandler.Create)
-			protected.PUT("/festivals/:id", festivalHandler.Update)
-			protected.DELETE("/festivals/:id", festivalHandler.Delete)
-			protected.POST("/donations", donationHandler.Create)
-			protected.PUT("/donations/:id", donationHandler.Update)
-			protected.DELETE("/donations/:id", donationHandler.Delete)
-			protected.POST("/expenses", expenseHandler.Create)
-			protected.PUT("/expenses/:id", expenseHandler.Update)
-			protected.DELETE("/expenses/:id", expenseHandler.Delete)
+			// Protected Management Routes
+			api.POST("/donations", donationHandler.Create)
+			api.PUT("/donations/:id", donationHandler.Update)
+			api.DELETE("/donations/:id", donationHandler.Delete)
+
+			expenseHandler := handlers.NewExpenseHandler()
+			api.GET("/expenses", expenseHandler.GetAll)
+			api.POST("/expenses", expenseHandler.Create)
+			api.PUT("/expenses/:id", expenseHandler.Update)
+			api.DELETE("/expenses/:id", expenseHandler.Delete)
+
+			api.POST("/festivals", festivalHandler.Create)
+			api.PUT("/festivals/:id", festivalHandler.Update)
+			api.DELETE("/festivals/:id", festivalHandler.Delete)
 		}
 	}
 }

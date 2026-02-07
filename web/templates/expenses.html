@@ -10,6 +10,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
+        body {
+            background: url('/static/images/temple-bg.jpg') center/cover no-repeat fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
         .navbar {
             background: linear-gradient(135deg, #dc3545, #c82333) !important;
             padding: 12px 0;
@@ -188,7 +203,7 @@
             </div>
             <div class="col-6 col-md-3">
                 <div class="card bg-warning stats-card">
-                    <div class="card-body text-center py-3"><i class="bi bi-clock fs-4" style="color: #333;"></i>
+                    <div class="card-body text-center py-3"><i class="bi bi-clock fs-4" ></i>
                         <h4 id="pendingCount" style="color: #333 !important;">0</h4><small
                             style="color: #555;">Pending</small>
                     </div>
@@ -240,23 +255,23 @@
                         type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="expenseForm" onsubmit="saveExpense(event)">
-                    <div class="modal-body" style="background: #fff;">
+                    <div class="modal-body" >
                         <input type="hidden" id="expenseId">
                         <div class="mb-3"><label class="form-label" style="color: #333; font-weight: 600;">Title
                                 *</label><input type="text" class="form-control" id="title" required
-                                placeholder="e.g., Flowers" style="color: #333;"></div>
+                                placeholder="e.g., Flowers" ></div>
                         <div class="row">
                             <div class="col-6 mb-3"><label class="form-label"
                                     style="color: #333; font-weight: 600;">Amount *</label><input type="number"
-                                    class="form-control" id="amount" required min="1" style="color: #333;"></div>
+                                    class="form-control" id="amount" required min="1" ></div>
                             <div class="col-6 mb-3"><label class="form-label"
                                     style="color: #333; font-weight: 600;">Date *</label><input type="date"
-                                    class="form-control" id="expenseDate" required style="color: #333;"></div>
+                                    class="form-control" id="expenseDate" required ></div>
                         </div>
                         <div class="row">
                             <div class="col-6 mb-3"><label class="form-label"
                                     style="color: #333; font-weight: 600;">Category</label><select class="form-select"
-                                    id="category" style="color: #333;">
+                                    id="category" >
                                     <option value="puja_items">Puja Items</option>
                                     <option value="decoration">Decoration</option>
                                     <option value="food">Food</option>
@@ -266,16 +281,16 @@
                                 </select></div>
                             <div class="col-6 mb-3"><label class="form-label"
                                     style="color: #333; font-weight: 600;">Status</label><select class="form-select"
-                                    id="expenseStatus" style="color: #333;">
+                                    id="expenseStatus" >
                                     <option value="paid">Paid</option>
                                     <option value="pending">Pending</option>
                                 </select></div>
                         </div>
                         <div class="mb-3"><label class="form-label"
                                 style="color: #333; font-weight: 600;">Vendor</label><input type="text"
-                                class="form-control" id="vendorName" placeholder="Shop name" style="color: #333;"></div>
+                                class="form-control" id="vendorName" placeholder="Shop name" ></div>
                     </div>
-                    <div class="modal-footer" style="background: #fff;"><button type="button" class="btn btn-secondary"
+                    <div class="modal-footer" ><button type="button" class="btn btn-secondary"
                             onclick="closeModal()">Cancel</button><button type="submit"
                             class="btn btn-danger">Save</button></div>
                 </form>
@@ -292,14 +307,14 @@
                 </div>
                 <div class="modal-body text-center" style="background: #fff; color: #333;">Delete this?<input
                         type="hidden" id="deleteId"></div>
-                <div class="modal-footer justify-content-center" style="background: #fff;"><button type="button"
+                <div class="modal-footer justify-content-center" ><button type="button"
                         class="btn btn-secondary btn-sm" data-bs-dismiss="modal">No</button><button type="button"
                         class="btn btn-danger btn-sm" onclick="confirmDelete()">Yes</button></div>
             </div>
         </div>
     </div>
 
-    <div class="developer-credit">Developed by <a href="#">Vishwajeet_Yadav</a></div>
+    <div class="developer-credit">Developer<a href="#">Vishwajeet_Yadav</a></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>

@@ -4,19 +4,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#28a745">
     <title>Donations - Temple Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
-        /* Navbar */
-        .navbar {
-            background: linear-gradient(135deg, #28a745, #20c997) !important;
-            padding: 12px 0;
+        body {
+            background-image: url("/static/images/temple-bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
-        /* Mobile friendly body */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #28a745, #20c997) !important;
+            padding: 10px 0;
+        }
+
+        .table-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-card {
+            transition: transform 0.2s;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stats-card h4 {
+            font-weight: 700;
+            color: white !important;
+        }
+
+        .bg-warning h4 {
+            color: #333 !important;
+        }
+
+        .table th {
+            background: #28a745;
+            color: rgb(237, 230, 230);
+            white-space: nowrap;
+        }
+
+        .table td {
+            color: #333;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        .modal-header {
+            background: #28a745;
+            color: white;
+        }
+
         body {
             padding-bottom: 80px;
         }
@@ -26,159 +89,6 @@
                 padding-bottom: 20px;
             }
         }
-
-        /* Stats Cards */
-        .stats-card {
-            transition: transform 0.2s;
-            border-radius: 15px;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .stats-card h4 {
-            font-size: 1.3rem;
-        }
-
-        @media (max-width: 576px) {
-            .stats-card h4 {
-                font-size: 1.1rem;
-            }
-
-            .stats-card i {
-                font-size: 1.3rem !important;
-            }
-
-            .stats-card small {
-                font-size: 0.7rem;
-            }
-        }
-
-        /* Table container */
-        .table-container {
-            background: #fff;
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Mobile table */
-        @media (max-width: 768px) {
-            .table-responsive {
-                font-size: 0.85rem;
-            }
-
-            .table td,
-            .table th {
-                padding: 8px 6px;
-                white-space: nowrap;
-            }
-
-            .btn-sm {
-                padding: 4px 8px;
-                font-size: 0.75rem;
-            }
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #28a745, #20c997);
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .bottom-nav a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            text-align: center;
-            padding: 5px 10px;
-            border-radius: 10px;
-            flex: 1;
-            max-width: 80px;
-        }
-
-        .bottom-nav a:hover,
-        .bottom-nav a.active {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .bottom-nav i {
-            font-size: 1.3rem;
-            display: block;
-        }
-
-        .bottom-nav span {
-            font-size: 0.65rem;
-            display: block;
-            margin-top: 2px;
-        }
-
-        @media (min-width: 992px) {
-            .bottom-nav {
-                display: none;
-            }
-        }
-
-        /* Modal mobile friendly */
-        @media (max-width: 576px) {
-            .modal-dialog {
-                margin: 10px;
-                max-width: calc(100% - 20px);
-            }
-
-            .modal-body {
-                padding: 15px;
-            }
-
-            .form-label {
-                font-size: 0.9rem;
-            }
-        }
-
-        /* Floating Add Button (Mobile) */
-        .fab-add {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-            font-size: 24px;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .fab-add:hover {
-            transform: scale(1.1);
-        }
-
-        @media (min-width: 992px) {
-            .fab-add {
-                display: none;
-            }
-        }
-
-        /* Touch friendly */
-        .btn,
-        .nav-link,
-        .list-group-item {
-            -webkit-tap-highlight-color: transparent;
-        }
     </style>
 </head>
 
@@ -186,78 +96,70 @@
     <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">🛕 Temple Management</a>
-            <div class="navbar-nav ms-auto d-none d-lg-flex flex-row">
-                <a href="/" class="btn btn-outline-light btn-sm me-2"><i class="bi bi-house"></i> Home</a>
-                <button class="btn btn-light btn-sm" onclick="showAddModal()"><i class="bi bi-plus-circle"></i>
-                    Add</button>
+            <div class="d-flex align-items-center d-none d-lg-flex">
+                <a href="/" class="btn btn-outline-light btn-sm me-2">Home</a>
+                <button class="btn btn-light btn-sm text-success fw-bold" onclick="openAddModal()">
+                    <i class="bi bi-plus-circle-fill"></i> Add Manual
+                </button>
             </div>
         </div>
     </nav>
 
-    <div class="container py-3">
+    <div class="container py-4">
         <!-- Stats Cards -->
-        <div class="row g-2 mb-3">
+        <div class="row g-3 mb-4">
             <div class="col-6 col-md-3">
                 <div class="card bg-success stats-card">
-                    <div class="card-body text-center text-white py-3">
-                        <i class="bi bi-cash-coin fs-4"></i>
-                        <h4 id="totalAmount" style="color: #fff !important;">₹0</h4>
-                        <small style="color: rgba(255,255,255,0.9);">Total</small>
+                    <div class="card-body text-center text-white p-3"><i class="bi bi-cash-coin fs-3"></i>
+                        <h4 id="totalAmount">₹0</h4><small style="opacity:0.9">Total</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="card bg-primary stats-card">
-                    <div class="card-body text-center text-white py-3">
-                        <i class="bi bi-receipt fs-4"></i>
-                        <h4 id="totalCount" style="color: #fff !important;">0</h4>
-                        <small style="color: rgba(255,255,255,0.9);">Donations</small>
+                    <div class="card-body text-center text-white p-3"><i class="bi bi-receipt fs-3"></i>
+                        <h4 id="totalCount">0</h4><small style="opacity:0.9">Entries</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="card bg-info stats-card">
-                    <div class="card-body text-center text-white py-3">
-                        <i class="bi bi-check-circle fs-4"></i>
-                        <h4 id="paidCount" style="color: #fff !important;">0</h4>
-                        <small style="color: rgba(255,255,255,0.9);">Paid</small>
+                    <div class="card-body text-center text-white p-3"><i class="bi bi-check-circle fs-3"></i>
+                        <h4 id="paidCount">0</h4><small style="opacity:0.9">Paid</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="card bg-warning stats-card">
-                    <div class="card-body text-center py-3">
-                        <i class="bi bi-clock fs-4" style="color: #333;"></i>
-                        <h4 id="pendingCount" style="color: #333 !important;">0</h4>
-                        <small style="color: #555;">Pending</small>
+                    <div class="card-body text-center p-3"><i class="bi bi-clock fs-3 text-dark"></i>
+                        <h4 id="pendingCount">0</h4><small class="text-dark">Pending</small>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Search -->
-        <div class="mb-3">
-            <input type="text" class="form-control" id="searchInput" placeholder="🔍 Search donor..."
-                onkeyup="filterTable()">
-        </div>
-
         <!-- Donations Table -->
         <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0 text-dark"><i class="bi bi-list-ul"></i> History</h5>
+                <input type="text" class="form-control form-control-sm w-auto" id="searchInput" placeholder="Search..."
+                    onkeyup="filterTable()">
+            </div>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-success">
+                    <thead>
                         <tr>
-                            <th style="color: #fff;">Donor</th>
-                            <th style="color: #fff;">Amount</th>
-                            <th style="color: #fff;">Status</th>
-                            <th style="color: #fff;">Actions</th>
+                            <th>Date</th>
+                            <th>Donor</th>
+                            <th>Amount</th>
+                            <th>Link</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="donationsBody">
                         <tr>
-                            <td colspan="4" class="text-center py-4">
-                                <div class="spinner-border text-success"></div>
-                            </td>
+                            <td colspan="6" class="text-center py-4 text-muted">Loading...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -266,233 +168,235 @@
     </div>
 
     <!-- Floating Add Button (Mobile) -->
-    <button class="fab-add" onclick="showAddModal()">
-        <i class="bi bi-plus"></i>
+    <button class="btn btn-success rounded-circle shadow position-fixed d-lg-none"
+        style="bottom: 90px; right: 20px; width: 56px; height: 56px; z-index: 999;" onclick="openAddModal()">
+        <i class="bi bi-plus-lg fs-4"></i>
     </button>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Nav -->
     <nav class="bottom-nav">
         <a href="/"><i class="bi bi-house"></i><span>Home</span></a>
-        <a href="/festivals"><i class="bi bi-calendar-event"></i><span>Festivals</span></a>
-        <a href="/donations" class="active"><i class="bi bi-cash-coin"></i><span>Donations</span></a>
-        <a href="/expenses"><i class="bi bi-receipt"></i><span>Expenses</span></a>
-        <a href="/login"><i class="bi bi-person"></i><span>Login</span></a>
+        <a href="/donate"><i class="bi bi-qr-code"></i><span>Pay</span></a>
+        <a href="/donations" class="active" style="color: #28a745;"><i
+                class="bi bi-cash-coin"></i><span>History</span></a>
+        <a href="/expenses"><i class="bi bi-receipt"></i><span>Expense</span></a>
+        <a href="/login"><i class="bi bi-person"></i><span>Admin</span></a>
     </nav>
 
     <!-- Add/Edit Modal -->
     <div class="modal fade" id="donationModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="modalTitle"><i class="bi bi-plus-circle"></i> Add Donation</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add Donation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="donationForm" onsubmit="saveDonation(event)">
-                    <div class="modal-body" style="background: #fff; max-height: 70vh; overflow-y: auto;">
+                    <div class="modal-body">
                         <input type="hidden" id="donationId">
+
                         <div class="mb-3">
-                            <label class="form-label" style="color: #333; font-weight: 600;">Donor Name *</label>
-                            <input type="text" class="form-control" id="donorName" required placeholder="Full name"
-                                style="color: #333;">
+                            <label class="form-label fw-bold text-dark">Donor Name *</label>
+                            <input type="text" class="form-control" id="donorName" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label" style="color: #333; font-weight: 600;">Phone</label>
-                            <input type="tel" class="form-control" id="donorPhone" placeholder="10 digit"
-                                style="color: #333;">
-                        </div>
+
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label class="form-label" style="color: #333; font-weight: 600;">Amount (₹) *</label>
-                                <input type="number" class="form-control" id="amount" required min="1"
-                                    style="color: #333;">
+                                <label class="form-label fw-bold text-dark">Amount (₹) *</label>
+                                <input type="number" class="form-control" id="amount" required min="1">
                             </div>
                             <div class="col-6 mb-3">
-                                <label class="form-label" style="color: #333; font-weight: 600;">Date *</label>
-                                <input type="date" class="form-control" id="donationDate" required style="color: #333;">
+                                <label class="form-label fw-bold text-dark">Date *</label>
+                                <input type="date" class="form-control" id="donationDate" required>
                             </div>
                         </div>
+
+                        <!-- Link to Event -->
+                        <div class="mb-3 p-2 border rounded bg-light">
+                            <label class="form-label text-success fw-bold"><i class="bi bi-link-45deg"></i> Link to
+                                Event</label>
+                            <select class="form-select border-success" id="festivalIdLink">
+                                <option value="0">-- General Fund --</option>
+                                <!-- JS Populated -->
+                            </select>
+                        </div>
+
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label class="form-label" style="color: #333; font-weight: 600;">Payment</label>
-                                <select class="form-select" id="paymentMode" style="color: #333;">
+                                <label class="form-label fw-bold text-dark">Mode</label>
+                                <select class="form-select" id="paymentMode">
                                     <option value="cash">Cash</option>
                                     <option value="upi">UPI</option>
-                                    <option value="bank_transfer">Bank</option>
+                                    <option value="bank">Bank</option>
                                 </select>
                             </div>
                             <div class="col-6 mb-3">
-                                <label class="form-label" style="color: #333; font-weight: 600;">Status</label>
-                                <select class="form-select" id="donationStatus" style="color: #333;">
+                                <label class="form-label fw-bold text-dark">Status</label>
+                                <select class="form-select" id="donationStatus">
                                     <option value="paid">Paid</option>
                                     <option value="pending">Pending</option>
                                 </select>
                             </div>
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label" style="color: #333; font-weight: 600;">Purpose</label>
-                            <select class="form-select" id="purpose" style="color: #333;">
-                                <option value="general">General</option>
-                                <option value="festival">Festival</option>
-                                <option value="construction">Construction</option>
-                                <option value="annadaan">Annadaan</option>
-                                <option value="pooja">Pooja</option>
-                            </select>
+                            <label class="form-label fw-bold text-dark">Phone (Optional)</label>
+                            <input type="tel" class="form-control" id="donorPhone">
                         </div>
                     </div>
-                    <div class="modal-footer" style="background: #fff;">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                        <button type="submit" class="btn btn-success">Save</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success px-4">Save</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title"><i class="bi bi-trash"></i> Delete</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center" style="background: #fff; color: #333;">Delete this?<input
-                        type="hidden" id="deleteId"></div>
-                <div class="modal-footer justify-content-center" style="background: #fff;">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">No</button>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete()">Yes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Developer Credit -->
     <div class="developer-credit">Developed by <a href="#">Vishwajeet_Yadav</a></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const API_BASE = '/api/v1';
         let donationsData = [];
-        let donationModal, deleteModalInstance;
+        let festivalsList = [];
+        let donationModal;
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async () => {
             donationModal = new bootstrap.Modal(document.getElementById('donationModal'));
-            deleteModalInstance = new bootstrap.Modal(document.getElementById('deleteModal'));
             document.getElementById('donationDate').valueAsDate = new Date();
+
+            // Load Festivals
+            try {
+                const fRes = await fetch(API_BASE + '/festivals');
+                const fJson = await fRes.json();
+                if (fJson.success) {
+                    festivalsList = fJson.data || [];
+                    const sel = document.getElementById('festivalIdLink');
+                    festivalsList.forEach(f => {
+                        const opt = document.createElement('option');
+                        opt.value = f.ID;
+                        opt.innerText = f.name;
+                        sel.appendChild(opt);
+                    });
+                }
+            } catch (e) { }
+
             loadDonations();
         });
 
         function getToken() { return localStorage.getItem('token'); }
-        function formatCurrency(amount) { return '₹' + Number(amount).toLocaleString('en-IN'); }
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            return new Date(dateString).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-        }
+        function formatCurrency(val) { return '₹' + Number(val).toLocaleString('en-IN'); }
+        function formatDate(d) { return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }); }
 
         async function loadDonations() {
             try {
-                const response = await fetch(API_BASE + '/donations');
-                const data = await response.json();
-                if (data.success) { donationsData = data.data || []; renderTable(); updateStats(); }
-            } catch (error) { console.error('Error:', error); }
+                const res = await fetch(API_BASE + '/donations');
+                const json = await res.json();
+                if (json.success) {
+                    donationsData = json.data || [];
+                    renderTable();
+                    updateStats();
+                }
+            } catch (e) { }
         }
 
         function renderTable() {
             const tbody = document.getElementById('donationsBody');
             if (donationsData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No donations yet</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No donations found</td></tr>';
                 return;
             }
-            tbody.innerHTML = donationsData.map(d => `
+            tbody.innerHTML = donationsData.map(d => {
+                const statusBadge = d.notes === 'pending' ? '<span class="badge bg-warning text-dark">Pending</span>' : '<span class="badge bg-success">Paid</span>';
+                const linkBadge = d.festival_id ? '<span class="badge bg-info text-dark">Linked</span>' : '<span class="badge bg-secondary">General</span>';
+
+                return `
                 <tr>
+                    <td>${formatDate(d.date)}</td>
                     <td>
-                        <strong style="color: #111;">${d.donor_name || 'Anonymous'}</strong>
-                        <small class="d-block" style="color: #666;">${formatDate(d.date)}</small>
+                        <div class="fw-bold text-dark">${d.donor_name}</div>
+                        <small class="text-muted">${d.donor_phone || ''}</small>
                     </td>
-                    <td style="color: #28a745; font-weight: 700;">${formatCurrency(d.amount)}</td>
-                    <td>${d.notes === 'pending' ? '<span class="badge bg-warning text-dark">Pending</span>' : '<span class="badge bg-success">Paid</span>'}</td>
+                    <td class="text-success fw-bold">${formatCurrency(d.amount)}</td>
+                    <td>${linkBadge}</td>
+                    <td>${statusBadge}</td>
                     <td>
                         <button class="btn btn-sm btn-outline-primary" onclick="editDonation(${d.ID})"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteDonation(${d.ID})"><i class="bi bi-trash"></i></button>
                     </td>
-                </tr>
-            `).join('');
+                </tr>`;
+            }).join('');
         }
 
         function updateStats() {
-            const total = donationsData.reduce((sum, d) => sum + (d.amount || 0), 0);
-            const paid = donationsData.filter(d => d.notes !== 'pending').length;
-            const pending = donationsData.filter(d => d.notes === 'pending').length;
-            document.getElementById('totalAmount').textContent = formatCurrency(total);
-            document.getElementById('totalCount').textContent = donationsData.length;
-            document.getElementById('paidCount').textContent = paid;
-            document.getElementById('pendingCount').textContent = pending;
+            const total = donationsData.reduce((s, d) => s + d.amount, 0);
+            document.getElementById('totalAmount').innerText = formatCurrency(total);
+            document.getElementById('totalCount').innerText = donationsData.length;
+            document.getElementById('paidCount').innerText = donationsData.filter(d => d.notes !== 'pending').length;
+            document.getElementById('pendingCount').innerText = donationsData.filter(d => d.notes === 'pending').length;
         }
 
-        function showAddModal() {
-            document.getElementById('modalTitle').innerHTML = '<i class="bi bi-plus-circle"></i> Add Donation';
+        window.openAddModal = function () {
+            document.getElementById('modalTitle').innerText = 'Add Donation';
             document.getElementById('donationForm').reset();
             document.getElementById('donationId').value = '';
             document.getElementById('donationDate').valueAsDate = new Date();
+            document.getElementById('donationStatus').value = 'paid';
             donationModal.show();
-        }
+        };
 
-        function closeModal() { donationModal.hide(); }
-
-        function editDonation(id) {
-            const d = donationsData.find(x => x.ID === id);
-            if (!d) return;
-            document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil"></i> Edit';
-            document.getElementById('donationId').value = id;
-            document.getElementById('donorName').value = d.donor_name || '';
-            document.getElementById('donorPhone').value = d.donor_phone || '';
-            document.getElementById('amount').value = d.amount || '';
-            document.getElementById('donationDate').value = d.date ? d.date.split('T')[0] : '';
-            document.getElementById('paymentMode').value = d.payment_mode || 'cash';
-            document.getElementById('donationStatus').value = d.notes === 'pending' ? 'pending' : 'paid';
-            document.getElementById('purpose').value = d.purpose || 'general';
-            donationModal.show();
-        }
-
-        function deleteDonation(id) { document.getElementById('deleteId').value = id; deleteModalInstance.show(); }
-
-        async function confirmDelete() {
+        window.saveDonation = async function (e) {
+            e.preventDefault();
             const token = getToken();
-            if (!token) { alert('Please login first'); window.location.href = '/login'; return; }
-            await fetch(API_BASE + '/donations/' + document.getElementById('deleteId').value, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
-            deleteModalInstance.hide();
-            loadDonations();
-        }
+            if (!token) return window.location.href = '/login';
 
-        async function saveDonation(event) {
-            event.preventDefault();
-            const token = getToken();
-            if (!token) { alert('Please login first'); window.location.href = '/login'; return; }
             const id = document.getElementById('donationId').value;
+            const fid = document.getElementById('festivalIdLink').value;
+
             const data = {
                 donor_name: document.getElementById('donorName').value,
                 donor_phone: document.getElementById('donorPhone').value,
                 amount: parseFloat(document.getElementById('amount').value),
                 date: new Date(document.getElementById('donationDate').value).toISOString(),
                 payment_mode: document.getElementById('paymentMode').value,
-                purpose: document.getElementById('purpose').value,
-                notes: document.getElementById('donationStatus').value
+                notes: document.getElementById('donationStatus').value,
+                festival_id: parseInt(fid),
+                purpose: "Linked"
             };
-            await fetch(API_BASE + '/donations' + (id ? '/' + id : ''), {
-                method: id ? 'PUT' : 'POST',
+
+            const url = API_BASE + '/donations' + (id ? '/' + id : '');
+            const method = id ? 'PUT' : 'POST';
+
+            await fetch(url, {
+                method: method,
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
                 body: JSON.stringify(data)
             });
             donationModal.hide();
             loadDonations();
+        };
+
+        window.editDonation = function (id) {
+            const d = donationsData.find(x => x.ID === id);
+            if (!d) return;
+            document.getElementById('modalTitle').innerText = 'Edit Donation';
+            document.getElementById('donationId').value = id;
+            document.getElementById('donorName').value = d.donor_name;
+            document.getElementById('donorPhone').value = d.donor_phone;
+            document.getElementById('amount').value = d.amount;
+            document.getElementById('donationDate').value = d.date.split('T')[0];
+            document.getElementById('paymentMode').value = d.payment_mode;
+            document.getElementById('donationStatus').value = d.notes === 'pending' ? 'pending' : 'paid';
+            document.getElementById('festivalIdLink').value = d.festival_id || 0;
+            donationModal.show();
         }
 
-        function filterTable() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            document.querySelectorAll('#donationsBody tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(search) ? '' : 'none';
+        window.filterTable = function () {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('#donationsBody tr').forEach(r => {
+                r.style.display = r.innerText.toLowerCase().includes(term) ? '' : 'none';
             });
-        }
+        };
     </script>
 </body>
 

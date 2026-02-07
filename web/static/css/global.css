@@ -1,247 +1,321 @@
-/* ========== BACKGROUND ========== */
+/* IMPORT FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Rozha+One&family=Yatra+One&display=swap');
+
+/* ========== BACKGROUND ANIMATION ========== */
+@keyframes moveBackground {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 body {
-    background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-        url('/static/images/temple-bg.jpg') center/cover fixed no-repeat;
-    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(-45deg, rgba(0, 0, 0, 0.8), rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.8)),
+        url('/static/images/temple-bg.jpg');
+    background-size: 400% 400%, cover;
+    animation: moveBackground 20s ease infinite;
     background-attachment: fixed;
     min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e0e0e0;
+    padding-bottom: 60px;
+    position: relative;
 }
 
-/* ========== NAVIGATION ========== */
-.navbar-brand,
-.nav-link {
-    color: #fff !important;
+/* ========== TEXT GLOW & VISIBILITY ========== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
-/* ========== CARDS - General ========== */
+/* ========== CARDS (Dark Glass) ========== */
 .card {
-    border: none !important;
-    border-radius: 12px !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* ========== COLORED CARDS - Keep Bootstrap Colors ========== */
-.card.bg-success,
-.card.bg-danger,
-.card.bg-primary,
-.card.bg-info,
-.card.bg-secondary,
-.card.bg-dark {
+    background: rgba(30, 30, 30, 0.6) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
     color: #fff !important;
 }
 
-.card.bg-success .card-body,
-.card.bg-danger .card-body,
-.card.bg-primary .card-body,
-.card.bg-info .card-body,
-.card.bg-secondary .card-body,
-.card.bg-dark .card-body {
-    color: #fff !important;
+.card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 107, 53, 0.4) !important;
+    box-shadow: 0 8px 40px rgba(255, 107, 53, 0.2) !important;
 }
 
-.card.bg-success h4,
-.card.bg-danger h4,
-.card.bg-primary h4,
-.card.bg-info h4,
-.card.bg-secondary h4,
-.card.bg-dark h4,
-.card.bg-success h5,
-.card.bg-danger h5,
-.card.bg-primary h5,
-.card.bg-info h5,
-.card.bg-secondary h5,
-.card.bg-dark h5 {
-    color: #fff !important;
+/* Colored Stats Cards - Enhanced Visibility */
+.card.bg-success {
+    background: linear-gradient(135deg, #1e5128, #28a745) !important;
 }
 
-.card.bg-success small,
-.card.bg-danger small,
-.card.bg-primary small,
-.card.bg-info small,
-.card.bg-secondary small,
-.card.bg-dark small {
-    color: rgba(255, 255, 255, 0.9) !important;
+.card.bg-danger {
+    background: linear-gradient(135deg, #6c1e24, #dc3545) !important;
 }
 
-.card.bg-success i,
-.card.bg-danger i,
-.card.bg-primary i,
-.card.bg-info i,
-.card.bg-secondary i,
-.card.bg-dark i {
-    color: #fff !important;
+.card.bg-primary {
+    background: linear-gradient(135deg, #0d3663, #007bff) !important;
 }
 
-/* Warning card - dark text */
 .card.bg-warning {
-    color: #333 !important;
+    background: linear-gradient(135deg, #856404, #ffc107) !important;
 }
 
-.card.bg-warning .card-body,
+.card.bg-info {
+    background: linear-gradient(135deg, #115361, #17a2b8) !important;
+}
+
+/* Warning card text fix */
 .card.bg-warning h4,
-.card.bg-warning h5,
 .card.bg-warning small,
 .card.bg-warning i {
-    color: #333 !important;
+    color: #623da4 !important;
+    text-shadow: none !important;
+    font-weight: 700;
 }
 
-/* ========== WHITE CARDS (Tables, Content) ========== */
-.table-container,
-.card:not(.bg-success):not(.bg-danger):not(.bg-primary):not(.bg-info):not(.bg-warning):not(.bg-secondary):not(.bg-dark) {
-    background: rgba(255, 255, 255, 0.98) !important;
-}
-
-.table-container h5,
-.table-container p {
-    color: #333 !important;
-}
-
-/* ========== TABLES ========== */
-.table {
-    border: 1px solid #dee2e6;
-    margin-bottom: 0;
-}
-
-.table th,
-.table td {
-    border: 1px solid #dee2e6 !important;
-    padding: 12px 15px;
-    vertical-align: middle;
-}
-
-.table td {
-    color: #333 !important;
-    background: #fff;
-}
-
-.table td strong {
-    color: #111 !important;
-}
-
-.table-success th {
-    background-color: #28a745 !important;
+/* ========== MODAL FIX (The White on White Issue) ========== */
+.modal-content {
+    background-color: #212529 !important;
+    /* Dark Grey */
     color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
 }
 
-.table-danger th {
-    background-color: #dc3545 !important;
-    color: #fff !important;
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.table-primary th {
-    background-color: #007bff !important;
-    color: #fff !important;
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #212529 !important;
 }
 
-.table-responsive {
-    border-radius: 8px;
-    overflow: hidden;
+.modal-body {
+    background-color: #212529 !important;
 }
 
-/* ========== FORMS ========== */
+/* Form Labels inside Modal */
+.modal-body label,
 .form-label {
-    font-weight: 600 !important;
-    color: #333 !important;
-    margin-bottom: 8px;
-    font-size: 14px;
+    color: #ccc !important;
+    font-weight: 500;
+    text-shadow: none;
+    margin-bottom: 5px;
 }
 
+/* Input Fields inside Modal */
 .form-control,
 .form-select {
-    border: 2px solid #dee2e6;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 15px;
-    color: #333 !important;
-    background: #fff !important;
+    background-color: #2c3034 !important;
+    border: 1px solid #495057 !important;
+    color: #fff !important;
 }
 
 .form-control:focus,
 .form-select:focus {
-    border-color: #FF6B35;
-    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+    background-color: #2c3034 !important;
+    border-color: #FF6B35 !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.25);
+    color: #fff !important;
 }
 
+/* Fix Placeholder Color */
 .form-control::placeholder {
-    color: #999 !important;
+    color: #888 !important;
 }
 
-/* ========== MODALS ========== */
-.modal-content {
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+/* Fix Calendar Icon in Dark Mode */
+input[type="date"] {
+    color-scheme: dark;
 }
 
-.modal-body {
-    background: #fff !important;
+/* Close Button (X) */
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-.modal-body label {
-    color: #333 !important;
+/* ========== TABLES ========== */
+.table-container {
+    background: rgba(30, 30, 30, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.modal-footer {
-    background: #fff !important;
-    border-top: 1px solid #eee;
+.table {
+    color: #e0e0e0 !important;
+    --bs-table-bg: transparent;
 }
 
-.modal-footer .btn {
-    min-width: 120px;
-    border-radius: 8px;
-    padding: 10px 20px;
+.table th {
+    background-color: rgba(255, 107, 53, 0.2) !important;
+    color: #FF6B35 !important;
+    border-bottom: 2px solid rgba(255, 107, 53, 0.5);
 }
 
-/* ========== BUTTONS ========== */
-.btn-secondary {
-    background-color: #6c757d !important;
-    border-color: #6c757d !important;
+.table td {
+    border-color: rgba(255, 255, 255, 0.1) !important;
     color: #fff !important;
 }
 
-.btn-secondary:hover {
-    background-color: #5a6268 !important;
-    color: #fff !important;
+.table-hover tbody tr:hover td {
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* ========== DEVELOPER CREDIT ========== */
+/* ========== DEVELOPER CREDIT (Bottom Center & Transparent) ========== */
 .developer-credit {
     position: fixed;
-    bottom: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.7);
-    color: #fff;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    z-index: 1000;
+    bottom: 85px;
+    /* Above bottom nav on mobile */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.3);
+    /* Transparent */
+    z-index: 0;
+    /* Behind content */
+    pointer-events: none;
+    /* Allows clicking through it */
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-.developer-credit a {
-    color: #FF6B35;
-    text-decoration: none;
-}
-
-@media (max-width: 991px) {
+@media (min-width: 992px) {
     .developer-credit {
-        bottom: 80px;
+        bottom: 10px;
     }
 }
 
-/* ========== ALERTS ========== */
-.floating-alert {
-    animation: slideDown 0.3s ease;
+/* ========== NAVIGATION ========== */
+.navbar {
+    background: rgba(20, 20, 20, 0.9) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -20px);
-    }
+.navbar-brand {
+    font-family: 'Rozha One', serif;
+    font-size: 1.5rem;
+    background: linear-gradient(45deg, #FF6B35, #FF8C42);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
+/* Bottom Nav */
+.bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 65px !important;
+    background: rgba(15, 15, 15, 0.98) !important;
+    /* Very dark background */
+    backdrop-filter: blur(10px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 10px !important;
+    z-index: 10000 !important;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+.bottom-nav a {
+    flex: 1 !important;
+    /* This forces them to share equal width */
+    display: flex !important;
+    flex-direction: column !important;
+    /* Stack Icon on top of Text */
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    color: #888 !important;
+    /* Default color */
+    padding: 8px 0 !important;
+    transition: all 0.3s ease;
+}
+
+.bottom-nav i {
+    font-size: 22px !important;
+    margin-bottom: 4px !important;
+    display: block !important;
+}
+
+.bottom-nav span {
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px;
+    display: block !important;
+}
+
+/* Active State (Orange) */
+.bottom-nav a.active {
+    color: #FF6B35 !important;
+    transform: translateY(-2px);
+}
+
+.bottom-nav a.active i {
+    filter: drop-shadow(0 0 5px rgba(255, 107, 53, 0.5));
+}
+
+/* Hover State */
+.bottom-nav a:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+/* ========== FIX FESTIVAL CARD COLORS ========== */
+.festival-card {
+    background: rgba(30, 30, 30, 0.7) !important;
+    /* Dark Glass */
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+
+.festival-card .card-header {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+
+.festival-card .card-body {
+    background: transparent !important;
+    /* Ensures it takes parent color */
+    color: #e0e0e0 !important;
+    /* Light Grey Text */
+}
+
+.festival-card .card-footer {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Fix Date & Icon Colors */
+.festival-card i,
+.festival-card strong,
+.festival-card p,
+.festival-card small {
+    color: #e0e0e0 !important;
+}
+
+/* Fix Badges inside card */
+.festival-card .badge.bg-warning {
+    color: #000 !important;
+    /* Black text on Yellow badge */
+    background-color: #ffc107 !important;
 }

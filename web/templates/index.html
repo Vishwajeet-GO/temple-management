@@ -4,45 +4,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#FF6B35">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Temple App">
     <title>🛕 Temple Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
-        /* ========== NAVBAR - Orange Color ========== */
-        .navbar {
-            background: linear-gradient(135deg, #FF6B35, #FF8C42) !important;
-            padding: 12px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        body {
+            background-image: url('/static/images/temple-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
-        .navbar-brand {
-            font-size: 1.3rem;
-            font-weight: 600;
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
-        .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            padding: 8px 15px !important;
-            border-radius: 8px;
-            transition: all 0.3s;
+        /* Fix button clickability */
+        .quick-action-btn {
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            background: white;
+            border-width: 2px;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
-            color: #fff !important;
-            background: rgba(255, 255, 255, 0.2);
+        /* Highlight Donate Button */
+        .btn-donate-highlight {
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            color: white !important;
+            border: none;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
         }
 
-        /* ========== MOBILE FRIENDLY ========== */
+        .btn-donate-highlight:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .stats-card h4 {
+            font-weight: 700;
+            color: white !important;
+        }
+
+        .bg-warning h4 {
+            color: #333 !important;
+        }
+
+        /* Mobile fixes */
         body {
             padding-bottom: 80px;
-            /* Space for bottom nav on mobile */
         }
 
         @media (min-width: 992px) {
@@ -50,507 +77,163 @@
                 padding-bottom: 20px;
             }
         }
-
-        /* Stats Cards - Mobile Friendly */
-        .stats-card {
-            transition: transform 0.2s;
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .stats-card .card-body {
-            padding: 20px 15px;
-        }
-
-        .stats-card h4 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 10px 0 5px 0;
-        }
-
-        .stats-card i {
-            font-size: 2rem;
-        }
-
-        @media (max-width: 576px) {
-            .stats-card h4 {
-                font-size: 1.2rem;
-            }
-
-            .stats-card i {
-                font-size: 1.5rem;
-            }
-
-            .stats-card small {
-                font-size: 0.75rem;
-            }
-        }
-
-        /* Quick Action Buttons - Mobile Friendly */
-        .quick-action-btn {
-            border-radius: 15px;
-            padding: 20px 15px;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: block;
-        }
-
-        .quick-action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .quick-action-btn i {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        @media (max-width: 576px) {
-            .quick-action-btn {
-                padding: 15px 10px;
-            }
-
-            .quick-action-btn i {
-                font-size: 1.5rem;
-            }
-
-            .quick-action-btn span {
-                font-size: 0.85rem;
-            }
-        }
-
-        /* Recent Lists - Mobile Friendly */
-        .list-group-item {
-            padding: 15px;
-            border-left: none;
-            border-right: none;
-        }
-
-        /* Temple Header Card */
-        .temple-header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 15px;
-            padding: 25px 20px;
-            color: white;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .temple-header h2 {
-            color: #fff !important;
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        .temple-header p {
-            color: rgba(255, 255, 255, 0.9);
-            margin: 0;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 576px) {
-            .temple-header {
-                padding: 20px 15px;
-            }
-
-            .temple-header h2 {
-                font-size: 1.2rem;
-            }
-        }
-
-        /* ========== BOTTOM NAVIGATION - Mobile Only ========== */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #FF6B35, #FF8C42);
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .bottom-nav a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            text-align: center;
-            padding: 5px 10px;
-            border-radius: 10px;
-            transition: all 0.3s;
-            flex: 1;
-            max-width: 80px;
-        }
-
-        .bottom-nav a:hover,
-        .bottom-nav a.active {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .bottom-nav i {
-            font-size: 1.3rem;
-            display: block;
-        }
-
-        .bottom-nav span {
-            font-size: 0.65rem;
-            display: block;
-            margin-top: 2px;
-        }
-
-        @media (min-width: 992px) {
-            .bottom-nav {
-                display: none;
-            }
-        }
-
-        /* Hide desktop nav items on mobile */
-        @media (max-width: 991px) {
-            .navbar-nav {
-                display: none;
-            }
-        }
-
-        /* Section Headers */
-        .section-header {
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-header i {
-            color: #FF6B35;
-        }
-
-        /* Cards */
-        .content-card {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-
-        .content-card .card-header {
-            padding: 15px 20px;
-            font-weight: 600;
-            border-bottom: 1px solid #eee;
-        }
-
-        /* Touch Friendly */
-        .btn,
-        .nav-link,
-        .list-group-item,
-        .quick-action-btn {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Smooth Scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Pull to Refresh Area */
-        .pull-indicator {
-            text-align: center;
-            padding: 10px;
-            color: #999;
-            font-size: 0.8rem;
-        }
     </style>
 </head>
 
 <body>
-    <!-- Top Navigation -->
     <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">🛕 Temple Management</a>
-
-            <!-- Desktop Navigation -->
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/"><i class="bi bi-house-fill"></i> Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/festivals"><i class="bi bi-calendar-event"></i> Festivals</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/donations"><i class="bi bi-cash-coin"></i> Donations</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/expenses"><i class="bi bi-receipt"></i> Expenses</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/reports"><i class="bi bi-bar-chart"></i> Reports</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
-                </li>
-            </ul>
+            <div class="navbar-nav ms-auto d-none d-lg-flex flex-row">
+                <a href="/donate" class="btn btn-warning btn-sm me-2 fw-bold text-dark">
+                    <i class="bi bi-heart-fill text-danger"></i> Donate Now
+                </a>
+                <a href="/login" class="btn btn-outline-light btn-sm">Login</a>
+            </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="container py-4">
         <!-- Temple Header -->
-        <div class="temple-header">
-            <h2 id="templeName">🛕 Loading...</h2>
-            <p id="templeAddress">Please wait...</p>
+        <div class="card mb-4 bg-primary text-white border-0 shadow">
+            <div class="card-body text-center py-4" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <h2 id="templeName">🛕 Temple Management</h2>
+                <p id="templeAddress" style="color: rgba(255,255,255,0.9);">Welcome to Temple Management System</p>
+                <!-- <p id="templeCity" style="color: rgba(255,255,255,0.9);">id</p> -->
+                <!-- <p id="templeState" style="color: rgba(255,255,255,0.9);">id</p> -->
+                <!-- <p id="templePinCode" style="color: rgba(255,255,255,0.9);">id</p> -->
+            </div>
+        </div>
+
+        <!-- Quick Actions (Fixed Buttons) -->
+        <h5 class="mb-3" style="color: #e97da4; font-weight: 600;"><i
+                class="bi bi-lightning-charge-fill text-warning"></i>
+            Quick Actions</h5>
+
+        <div class="row g-3 mb-4">
+            <!-- DONATE BUTTON (NEW) -->
+            <div class="col-12 col-md-12 mb-2">
+                <a href="/donate"
+                    class="quick-action-btn btn-donate-highlight p-3 rounded-3 text-center d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-heart-fill fs-4"></i>
+                    <span class="fs-5 fw-bold">Make a Donation</span>
+                </a>
+            </div>
+
+            <!-- Admin Actions -->
+            <div class="col-6 col-md-3">
+                <a href="/donations" class="quick-action-btn btn btn-outline-success w-100 py-3">
+                    <i class="bi bi-cash-coin fs-2 d-block mb-2"></i>
+                    Donations
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="/expenses" class="quick-action-btn btn btn-outline-danger w-100 py-3">
+                    <i class="bi bi-receipt fs-2 d-block mb-2"></i>
+                    Expenses
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="/festivals" class="quick-action-btn btn btn-outline-primary w-100 py-3">
+                    <i class="bi bi-calendar-event fs-2 d-block mb-2"></i>
+                    Festivals
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="/reports" class="quick-action-btn btn btn-outline-info w-100 py-3">
+                    <i class="bi bi-bar-chart fs-2 d-block mb-2"></i>
+                    Reports
+                </a>
+            </div>
         </div>
 
         <!-- Stats Cards -->
+        <h5 class="mb-3" style="color: #e68b9e; font-weight: 600;"><i class="bi bi-graph-up text-primary"></i> Overview
+        </h5>
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-3">
                 <div class="card bg-success stats-card">
-                    <div class="card-body text-center text-white">
-                        <i class="bi bi-cash-coin"></i>
-                        <h4 id="totalDonations" style="color: #fff !important;">₹0</h4>
-                        <small style="color: rgba(255,255,255,0.9);">Total Donations</small>
+                    <div class="card-body text-center text-white p-3">
+                        <i class="bi bi-cash-coin fs-3 mb-1"></i>
+                        <h4 id="totalDonations">₹0</h4>
+                        <small style="color: rgba(255,255,255,0.9);">Total Income</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="card bg-danger stats-card">
-                    <div class="card-body text-center text-white">
-                        <i class="bi bi-receipt"></i>
-                        <h4 id="totalExpenses" style="color: #fff !important;">₹0</h4>
+                    <div class="card-body text-center text-white p-3">
+                        <i class="bi bi-receipt fs-3 mb-1"></i>
+                        <h4 id="totalExpenses">₹0</h4>
                         <small style="color: rgba(255,255,255,0.9);">Total Expenses</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="card bg-info stats-card">
-                    <div class="card-body text-center text-white">
-                        <i class="bi bi-wallet2"></i>
-                        <h4 id="balance" style="color: #fff !important;">₹0</h4>
+                    <div class="card-body text-center text-white p-3">
+                        <i class="bi bi-wallet2 fs-3 mb-1"></i>
+                        <h4 id="balance">₹0</h4>
                         <small style="color: rgba(255,255,255,0.9);">Balance</small>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="card bg-warning stats-card">
-                    <div class="card-body text-center">
-                        <i class="bi bi-calendar-event" style="color: #333;"></i>
-                        <h4 id="upcomingFestivals" style="color: #333 !important;">0</h4>
-                        <small style="color: #555;">Upcoming Festivals</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <h5 class="section-header"><i class="bi bi-lightning-charge"></i> Quick Actions</h5>
-        <div class="row g-3 mb-4">
-            <div class="col-6 col-md-3">
-                <a href="/donations" class="quick-action-btn btn btn-outline-success text-center">
-                    <i class="bi bi-plus-circle d-block"></i>
-                    <span>Add Donation</span>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="/expenses" class="quick-action-btn btn btn-outline-danger text-center">
-                    <i class="bi bi-plus-circle d-block"></i>
-                    <span>Add Expense</span>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="/festivals" class="quick-action-btn btn btn-outline-primary text-center">
-                    <i class="bi bi-calendar-plus d-block"></i>
-                    <span>View Festivals</span>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="/reports" class="quick-action-btn btn btn-outline-info text-center">
-                    <i class="bi bi-bar-chart d-block"></i>
-                    <span>View Reports</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="row g-4">
-            <!-- Recent Donations -->
-            <div class="col-md-6">
-                <div class="content-card">
-                    <div class="card-header bg-success text-white">
-                        <i class="bi bi-cash-coin"></i> Recent Donations
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush" id="recentDonations">
-                            <div class="list-group-item text-center text-muted py-4">
-                                <div class="spinner-border spinner-border-sm text-success"></div>
-                                <span class="ms-2">Loading...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Expenses -->
-            <div class="col-md-6">
-                <div class="content-card">
-                    <div class="card-header bg-danger text-white">
-                        <i class="bi bi-receipt"></i> Recent Expenses
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush" id="recentExpenses">
-                            <div class="list-group-item text-center text-muted py-4">
-                                <div class="spinner-border spinner-border-sm text-danger"></div>
-                                <span class="ms-2">Loading...</span>
-                            </div>
-                        </div>
+                    <div class="card-body text-center p-3">
+                        <i class="bi bi-calendar-check fs-3 mb-1 text-dark"></i>
+                        <h4 id="upcomingFestivals">0</h4>
+                        <small style="color: #444;">Festivals</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation (Mobile Only) -->
+    <!-- Bottom Navigation -->
     <nav class="bottom-nav">
-        <a href="/" class="active">
-            <i class="bi bi-house-fill"></i>
-            <span>Home</span>
-        </a>
-        <a href="/festivals">
-            <i class="bi bi-calendar-event"></i>
-            <span>Festivals</span>
-        </a>
-        <a href="/donations">
-            <i class="bi bi-cash-coin"></i>
-            <span>Donations</span>
-        </a>
-        <a href="/expenses">
-            <i class="bi bi-receipt"></i>
-            <span>Expenses</span>
-        </a>
-        <a href="/login">
-            <i class="bi bi-person"></i>
-            <span>Login</span>
-        </a>
+        <a href="/" class="active"><i class="bi bi-house-fill"></i><span>Home</span></a>
+        <a href="/donate" style="color: #FF6B35;"><i class="bi bi-heart-fill"></i><span>Donate</span></a>
+        <a href="/donations"><i class="bi bi-cash-coin"></i><span>History</span></a>
+        <a href="/expenses"><i class="bi bi-receipt"></i><span>Expense</span></a>
+        <a href="/login"><i class="bi bi-person"></i><span>Admin</span></a>
     </nav>
 
     <!-- Developer Credit -->
-    <div class="developer-credit">
-        Developed by <a href="#">Vishwajeet_Yadav</a>
-    </div>
+    <div class="developer-credit">Developed by <a href="#">Vishwajeet_Yadav</a></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const API_BASE = '/api/v1';
-
-        function formatCurrency(amount) {
-            return '₹' + Number(amount).toLocaleString('en-IN');
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            return new Date(dateString).toLocaleDateString('en-IN', {
-                day: '2-digit', month: 'short'
-            });
-        }
+        function formatCurrency(amount) { return '₹' + Number(amount).toLocaleString('en-IN'); }
 
         async function loadDashboard() {
             try {
-                // Load summary
-                const summaryRes = await fetch(API_BASE + '/dashboard/summary');
-                const summary = await summaryRes.json();
-
-                if (summary.success && summary.data) {
-                    document.getElementById('totalDonations').textContent = formatCurrency(summary.data.total_donations || 0);
-                    document.getElementById('totalExpenses').textContent = formatCurrency(summary.data.total_expenses || 0);
-                    document.getElementById('balance').textContent = formatCurrency(summary.data.balance || 0);
-                    document.getElementById('upcomingFestivals').textContent = summary.data.upcoming_festivals || 0;
+                const res = await fetch(API_BASE + '/dashboard/summary');
+                const data = await res.json();
+                if (data.success && data.data) {
+                    document.getElementById('totalDonations').textContent = formatCurrency(data.data.total_donations || 0);
+                    document.getElementById('totalExpenses').textContent = formatCurrency(data.data.total_expenses || 0);
+                    document.getElementById('balance').textContent = formatCurrency(data.data.balance || 0);
+                    document.getElementById('upcomingFestivals').textContent = data.data.upcoming_festivals || 0;
                 }
-
-                // Load recent donations
-                const donationsRes = await fetch(API_BASE + '/dashboard/recent-donations');
-                const donations = await donationsRes.json();
-
-                const donationsContainer = document.getElementById('recentDonations');
-                if (donations.success && donations.data && donations.data.length > 0) {
-                    donationsContainer.innerHTML = donations.data.slice(0, 5).map(d => `
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong style="color: #111;">${d.donor_name || 'Anonymous'}</strong>
-                                <small class="d-block" style="color: #666;">${formatDate(d.date)}</small>
-                            </div>
-                            <span class="badge bg-success rounded-pill">${formatCurrency(d.amount)}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    donationsContainer.innerHTML = '<div class="list-group-item text-center text-muted">No donations yet</div>';
-                }
-
-                // Load recent expenses
-                const expensesRes = await fetch(API_BASE + '/dashboard/recent-expenses');
-                const expenses = await expensesRes.json();
-
-                const expensesContainer = document.getElementById('recentExpenses');
-                if (expenses.success && expenses.data && expenses.data.length > 0) {
-                    expensesContainer.innerHTML = expenses.data.slice(0, 5).map(e => `
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong style="color: #111;">${e.title}</strong>
-                                <small class="d-block" style="color: #666;">${e.category || 'General'}</small>
-                            </div>
-                            <span class="badge bg-danger rounded-pill">${formatCurrency(e.amount)}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    expensesContainer.innerHTML = '<div class="list-group-item text-center text-muted">No expenses yet</div>';
-                }
-
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-            }
+            } catch (error) { console.error('Error:', error); }
         }
 
         async function loadTempleInfo() {
             try {
-                const response = await fetch(API_BASE + '/temple');
-                const data = await response.json();
-
+                const res = await fetch(API_BASE + '/temple');
+                const data = await res.json();
                 if (data.success && data.data) {
                     document.getElementById('templeName').textContent = '🛕 ' + data.data.name;
-                    document.getElementById('templeAddress').textContent =
-                        data.data.address + ', ' + data.data.city + ', ' + data.data.state;
+                    document.getElementById('templeAddress').textContent = data.data.address;
                 }
-            } catch (error) {
-                document.getElementById('templeName').textContent = '🛕 Temple Management';
-                document.getElementById('templeAddress').textContent = 'Welcome to Temple Management System';
-            }
+            } catch (e) { }
         }
 
-        // Load on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            loadTempleInfo();
+        document.addEventListener('DOMContentLoaded', () => {
             loadDashboard();
-        });
-
-        // Pull to refresh (for mobile)
-        let touchStartY = 0;
-        document.addEventListener('touchstart', e => {
-            touchStartY = e.touches[0].clientY;
-        });
-
-        document.addEventListener('touchend', e => {
-            const touchEndY = e.changedTouches[0].clientY;
-            const diff = touchEndY - touchStartY;
-
-            if (diff > 100 && window.scrollY === 0) {
-                // Pull down detected at top of page
-                loadDashboard();
-                loadTempleInfo();
-            }
+            loadTempleInfo();
         });
     </script>
 </body>

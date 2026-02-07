@@ -3,14 +3,58 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Reports - Temple Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        body {
+            background: url('/static/images/temple-bg.jpg') center/cover no-repeat fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
         .navbar {
             background: linear-gradient(135deg, #17a2b8, #138496) !important;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            position: relative;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .select-project {
+            border: 2px solid #FF6B35;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #333;
         }
     </style>
 </head>
@@ -18,29 +62,150 @@
 <body>
     <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="/">🛕 Temple Management</a>
-            <a href="/" class="btn btn-outline-light btn-sm">
-                <i class="bi bi-house"></i> Home
-            </a>
+            <a class="navbar-brand" href="/">🛕 Temple Reports</a>
+            <a href="/" class="btn btn-outline-light btn-sm">Home</a>
         </div>
     </nav>
 
     <div class="container py-4">
-        <div class="card">
+
+        <!-- Project Selector -->
+        <div class="card mb-4">
             <div class="card-body">
-                <h3 style="color: #333;"><i class="bi bi-bar-chart"></i> Reports & Analytics</h3>
-                <p style="color: #666;">Generate reports and view analytics for your temple.</p>
-                <div class="alert alert-info mt-3">
-                    <i class="bi bi-info-circle"></i> Advanced reports feature coming soon!
-                </div>
+                <label class="form-label text-dark">Select Festival / Project:</label>
+                <select class="form-select select-project" id="projectSelect" onchange="loadProjectData()">
+                    <option value="" disabled selected>-- Choose an Event --</option>
+                    <!-- Options populated by JS -->
+                </select>
             </div>
         </div>
+
+        <!-- Charts Area (Hidden until selected) -->
+        <div id="reportArea" style="display:none;">
+            <h4 class="text-center mb-3" id="projectNameDisplay" style="color:#333;">Project Overview</h4>
+
+            <div class="row g-3 mb-4">
+                <div class="col-4">
+                    <div class="summary-box">
+                        <small class="text-success fw-bold">Income</small>
+                        <h5 class="text-success" id="projIncome">₹0</h5>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="summary-box">
+                        <small class="text-danger fw-bold">Expense</small>
+                        <h5 class="text-danger" id="projExpense">₹0</h5>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="summary-box">
+                        <small class="text-primary fw-bold">Balance</small>
+                        <h5 class="text-primary" id="projBalance">₹0</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Chart -->
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+
+            <div class="alert alert-info mt-3 text-center">
+                <i class="bi bi-info-circle"></i>
+                To edit this data, go to Donations or Expenses page and edit the entries linked to this festival.
+            </div>
+        </div>
+
+        <div id="loading" class="text-center py-5">
+            <div class="spinner-border text-primary"></div>
+            <p>Loading Projects...</p>
+        </div>
+
     </div>
 
-    <!-- Developer Credit -->
-    <div class="developer-credit">
-        Developed by <a href="#">Vishwajeet_Yadav</a>
-    </div>
+    <script>
+        const API_BASE = '/api/v1';
+        let myChart = null;
+
+        document.addEventListener('DOMContentLoaded', loadProjects);
+
+        async function loadProjects() {
+            try {
+                const res = await fetch(API_BASE + '/festivals');
+                const json = await res.json();
+                const select = document.getElementById('projectSelect');
+
+                if (json.success) {
+                    json.data.forEach(f => {
+                        const opt = document.createElement('option');
+                        opt.value = f.ID;
+                        opt.text = f.name + ' (' + f.status + ')';
+                        select.appendChild(opt);
+                    });
+                }
+                document.getElementById('loading').style.display = 'none';
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadProjectData() {
+            const id = document.getElementById('projectSelect').value;
+            const name = document.getElementById('projectSelect').options[document.getElementById('projectSelect').selectedIndex].text;
+
+            if (!id) return;
+
+            document.getElementById('projectNameDisplay').innerText = name;
+            document.getElementById('reportArea').style.display = 'block';
+
+            try {
+                const res = await fetch(`${API_BASE}/dashboard/project/${id}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('projIncome').innerText = '₹' + data.income.toLocaleString();
+                    document.getElementById('projExpense').innerText = '₹' + data.expense.toLocaleString();
+                    document.getElementById('projBalance').innerText = '₹' + data.balance.toLocaleString();
+
+                    renderChart(data.income, data.expense);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function renderChart(income, expense) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Donations', 'Expenses'],
+                    datasets: [{
+                        data: [income, expense],
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.8)', // Green
+                            'rgba(220, 53, 69, 0.8)'  // Red
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(220, 53, 69, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>
