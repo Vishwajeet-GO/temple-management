@@ -4,17 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
     <title>Festivals - Temple Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
         body {
-            background-image: url('/static/images/temple-bg.jpg');
+            background-image: url("/static/images/temple-bg.jpg");
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
             background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
         body::before {
@@ -24,344 +24,875 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(13, 12, 12, 0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
 
-        /* Navbar */
-        .navbar {
-            background: linear-gradient(135deg, #6f42c1, #5a32a3) !important;
-            padding: 10px 0;
+        .top-nav {
+            background: linear-gradient(135deg, #4a148c, #7b1fa2, #9c27b0);
         }
 
-        /* Mobile spacing */
-        body {
-            padding-bottom: 80px;
-        }
-
-        @media (min-width: 992px) {
-            body {
-                padding-bottom: 20px;
-            }
-        }
-
-        /* Filter Buttons (Pills) */
-        .nav-pills {
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
             gap: 8px;
+            padding: 16px 16px 0;
             overflow-x: auto;
-            flex-wrap: nowrap;
-            padding-bottom: 5px;
-            /* Hide scrollbar */
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
 
-        .nav-pills::-webkit-scrollbar {
+        .filter-tabs::-webkit-scrollbar {
             display: none;
         }
 
-        .nav-pills .nav-link {
-            border-radius: 20px;
+        .filter-tab {
             padding: 8px 20px;
-            color: #5a32a3;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #e0e0e0;
-            white-space: nowrap;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .nav-pills .nav-link.active {
-            background: linear-gradient(135deg, #6f42c1, #5a32a3);
-            color: white;
+        .filter-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, #7b1fa2, #9c27b0);
+            color: #fff;
             border-color: transparent;
-            box-shadow: 0 4px 10px rgba(111, 66, 193, 0.3);
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
         }
 
-        /* Cards */
+        .filter-tab .count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+
+        .filter-tab.active .count {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Festival Cards Grid */
+        .festival-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+            padding: 16px;
+            animation: slideUp 0.5s ease-out;
+        }
+
         .festival-card {
-            border: none;
-            border-radius: 15px;
-            transition: transform 0.2s;
-            background: rgb(94, 20, 32);
-            box-shadow: 0 2px 8px rgba(100, 105, 4, 0.05);
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            animation: slideUp 0.4s ease-out backwards;
         }
 
         .festival-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(156, 39, 176, 0.3);
         }
 
-        /* Status Badges */
-        .badge {
-            padding: 6px 10px;
+        .festival-card-header {
+            padding: 16px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .festival-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .festival-name i {
+            color: #ffd54f;
+            font-size: 0.9rem;
+        }
+
+        .festival-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .festival-status.upcoming {
+            background: linear-gradient(135deg, #e65100, #f57c00);
+            color: #ffe0b2;
+            box-shadow: 0 2px 8px rgba(245, 124, 0, 0.3);
+        }
+
+        .festival-status.ongoing {
+            background: linear-gradient(135deg, #1b5e20, #388e3c);
+            color: #a5d6a7;
+            box-shadow: 0 2px 8px rgba(56, 142, 60, 0.3);
+        }
+
+        .festival-status.completed {
+            background: linear-gradient(135deg, #37474f, #546e7a);
+            color: #b0bec5;
+            box-shadow: 0 2px 8px rgba(84, 110, 122, 0.3);
+        }
+
+        .festival-card-body {
+            padding: 16px 18px;
+        }
+
+        .festival-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .festival-info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .festival-info-row i {
+            width: 16px;
+            text-align: center;
+            color: #9c27b0;
+            font-size: 0.8rem;
+        }
+
+        .festival-description {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .festival-card-footer {
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .festival-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .festival-stat {
+            text-align: center;
+        }
+
+        .festival-stat-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .festival-stat-value.income {
+            color: #66bb6a;
+        }
+
+        .festival-stat-value.expense {
+            color: #ef5350;
+        }
+
+        .festival-stat-label {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .festival-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .festival-actions .action-btn {
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .festival-actions .action-btn.view {
+            background: rgba(156, 39, 176, 0.2);
+            color: #ce93d8;
+            border: 1px solid rgba(156, 39, 176, 0.3);
+        }
+
+        .festival-actions .action-btn.edit {
+            background: rgba(33, 150, 243, 0.2);
+            color: #64b5f6;
+            border: 1px solid rgba(33, 150, 243, 0.3);
+        }
+
+        .festival-actions .action-btn.delete {
+            background: rgba(244, 67, 54, 0.2);
+            color: #ef9a9a;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .festival-actions .action-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .festival-actions .action-btn.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* Modal overrides */
+        .modal-head {
+            background: linear-gradient(135deg, #4a148c, #7b1fa2);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #7b1fa2, #9c27b0);
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+        }
+
+        .btn-save:hover {
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.5);
+        }
+
+        .search-input:focus {
+            border-color: #9c27b0;
+            box-shadow: 0 0 20px rgba(156, 39, 176, 0.2);
+        }
+
+        /* Active nav */
+        .nav-item.active {
+            color: #9c27b0;
+        }
+
+        .nav-item.active i {
+            filter: drop-shadow(0 3px 6px rgba(156, 39, 176, 0.5));
+        }
+
+        .nav-item.active::before {
+            background: #9c27b0;
+        }
+
+        .spinner {
+            border-top-color: #9c27b0;
+        }
+
+        /* Summary stats at top */
+        .stat-card.total {
+            background: linear-gradient(135deg, #4a148c, #7b1fa2);
+        }
+
+        .stat-card.upcoming-stat {
+            background: linear-gradient(135deg, #e65100, #ffa726);
+        }
+
+        .stat-card.ongoing-stat {
+            background: linear-gradient(135deg, #1b5e20, #43a047);
+        }
+
+        .stat-card.completed-stat {
+            background: linear-gradient(135deg, #37474f, #607d8b);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .festival-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 12px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .festival-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">🛕 Temple Management</a>
-            <div class="d-flex align-items-center">
-                <a href="/" class="btn btn-outline-light btn-sm me-2 d-none d-md-block"><i class="bi bi-house"></i>
-                    Home</a>
-                <button class="btn btn-light btn-sm text-primary fw-bold" onclick="openAddModal()">
-                    <i class="bi bi-plus-circle-fill"></i> Add Festival
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div class="particles" id="particles"></div>
 
-    <div class="container py-3">
+    <!-- Toast -->
+    <div class="toast-box" id="toastBox"></div>
 
-        <!-- Filter Tabs (Fixed) -->
-        <div class="d-flex justify-content-center mb-4">
-            <div class="nav nav-pills" id="festivalTabs" role="tablist">
-                <button class="nav-link active" onclick="filterFestivals('all', this)">All</button>
-                <button class="nav-link" onclick="filterFestivals('upcoming', this)">Upcoming</button>
-                <button class="nav-link" onclick="filterFestivals('ongoing', this)">Ongoing</button>
-                <button class="nav-link" onclick="filterFestivals('completed', this)">Completed</button>
-            </div>
-        </div>
-
-        <!-- Festival Cards Grid -->
-        <div class="row g-3" id="festivalsGrid">
-            <div class="col-12 text-center py-5">
-                <div class="spinner-border text-primary"></div>
-                <p class="mt-2 text-muted">Loading festivals...</p>
+    <!-- Confirm Dialog -->
+    <div class="confirm-bg" id="confirmBg">
+        <div class="confirm-box">
+            <div class="confirm-icon"><i class="fas fa-trash-alt"></i></div>
+            <h4>Delete Festival?</h4>
+            <p>All linked donations & expenses will be unlinked.</p>
+            <div class="confirm-btns">
+                <button class="cbtn cancel" onclick="closeConfirm()">Cancel</button>
+                <button class="cbtn del" id="confirmDelBtn">Delete</button>
             </div>
         </div>
     </div>
 
-    <!-- Floating Add Button (Mobile) -->
-    <button class="btn btn-primary rounded-circle shadow position-fixed d-md-none"
-        style="bottom: 80px; right: 20px; width: 56px; height: 56px; z-index: 999; background: linear-gradient(135deg, #6f42c1, #5a32a3); border:none;"
-        onclick="openAddModal()">
-        <i class="bi bi-plus-lg fs-4"></i>
-    </button>
+    <div class="main">
+        <!-- Top Nav -->
+        <nav class="top-nav">
+            <a href="/" class="brand"><i class="fas fa-gopuram"></i><span>मंदिर उत्सव</span></a>
+            <div class="nav-btns">
+                <a href="/" class="nav-btn home"><i class="fas fa-home"></i> Home</a>
+                <button class="nav-btn add" id="addBtn" onclick="openModal()"><i class="fas fa-plus"></i> Add</button>
+            </div>
+        </nav>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card upcoming-stat">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-value" id="statUpcoming">0</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+            <div class="stat-card ongoing-stat">
+                <div class="stat-icon"><i class="fas fa-play-circle"></i></div>
+                <div class="stat-value" id="statOngoing">0</div>
+                <div class="stat-label">Ongoing</div>
+            </div>
+            <div class="stat-card completed-stat">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value" id="statCompleted">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" id="filterTabs">
+            <button class="filter-tab active" onclick="filterFestivals('all', this)">
+                <i class="fas fa-layer-group"></i> All <span class="count" id="countAll">0</span>
+            </button>
+            <button class="filter-tab" onclick="filterFestivals('upcoming', this)">
+                <i class="fas fa-clock"></i> Upcoming <span class="count" id="countUpcoming">0</span>
+            </button>
+            <button class="filter-tab" onclick="filterFestivals('ongoing', this)">
+                <i class="fas fa-play-circle"></i> Ongoing <span class="count" id="countOngoing">0</span>
+            </button>
+            <button class="filter-tab" onclick="filterFestivals('completed', this)">
+                <i class="fas fa-check-circle"></i> Completed <span class="count" id="countCompleted">0</span>
+            </button>
+        </div>
+
+        <!-- Search -->
+        <div class="search-box" style="margin-top: 12px;">
+            <div class="search-wrap">
+                <i class="fas fa-search"
+                    style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#888"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search festivals..."
+                    oninput="handleSearch(this.value)" style="padding-left:40px">
+            </div>
+        </div>
+
+        <!-- Festival Cards -->
+        <div class="festival-grid" id="festivalGrid">
+            <div style="grid-column: 1/-1;">
+                <div class="loading-box">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Loading festivals...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-bg" id="modalBg">
+        <div class="modal">
+            <div class="modal-head">
+                <h3><i class="fas fa-calendar-plus"></i> <span id="modalTitle">Add Festival</span></h3>
+                <button class="modal-x" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+                <div class="fg">
+                    <label>Festival Name <span class="req">*</span></label>
+                    <input type="text" class="fi" id="fName" placeholder="e.g., Navratri, Diwali, Ganesh Chaturthi">
+                </div>
+                <div class="frow">
+                    <div class="fg">
+                        <label>Start Date <span class="req">*</span></label>
+                        <input type="date" class="fi" id="fStart">
+                    </div>
+                    <div class="fg">
+                        <label>End Date <span class="req">*</span></label>
+                        <input type="date" class="fi" id="fEnd">
+                    </div>
+                </div>
+                <div class="fg">
+                    <label>Status</label>
+                    <select class="fi" id="fStatus">
+                        <option value="upcoming">Upcoming</option>
+                        <option value="ongoing">Ongoing</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="fg">
+                    <label>Description</label>
+                    <textarea class="fi" id="fDesc" rows="3" placeholder="Festival details (optional)"
+                        style="resize:vertical;min-height:60px"></textarea>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-cancel" onclick="closeModal()"><i class="fas fa-times"></i> Cancel</button>
+                <button class="btn btn-save" onclick="saveFestival()"><i class="fas fa-save"></i> <span
+                        id="saveText">Save</span></button>
+            </div>
+        </div>
+    </div>
 
     <!-- Bottom Nav -->
     <nav class="bottom-nav">
-        <a href="/"><i class="bi bi-house"></i><span>Home</span></a>
-        <a href="/donate"><i class="bi bi-qr-code"></i><span>Pay</span></a>
-        <a href="/festivals" class="active" style="color: #6f42c1;"><i
-                class="bi bi-calendar-event"></i><span>Festivals</span></a>
-        <a href="/donations"><i class="bi bi-cash-coin"></i><span>History</span></a>
-        <a href="/expenses"><i class="bi bi-receipt"></i><span>Expense</span></a>
+        <a href="/" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/donate" class="nav-item"><i class="fas fa-heart"></i><span>Donate</span></a>
+        <a href="/festivals" class="nav-item active"><i class="fas fa-calendar-alt"></i><span>Festivals</span></a>
+        <a href="/donations" class="nav-item"><i class="fas fa-indian-rupee-sign"></i><span>History</span></a>
+        <a href="/expenses" class="nav-item"><i class="fas fa-file-invoice-dollar"></i><span>Expenses</span></a>
     </nav>
 
-    <!-- Add/Edit Modal -->
-    <div class="modal fade" id="festivalModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header text-white" style="background: linear-gradient(135deg, #6f42c1, #5a32a3);">
-                    <h5 class="modal-title" id="modalTitle">Add Festival</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <form id="festivalForm" onsubmit="saveFestival(event)">
-                    <div class="modal-body bg-white">
-                        <input type="hidden" id="festivalId">
-
-                        <div class="mb-3">
-                            <label class="form-label">Festival Name *</label>
-                            <input type="text" class="form-control" id="festivalName" required>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label">Start Date *</label>
-                                <input type="date" class="form-control" id="startDate" required>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label">End Date *</label>
-                                <input type="date" class="form-control" id="endDate" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" id="festivalStatus">
-                                <option value="upcoming">Upcoming</option>
-                                <option value="ongoing">Ongoing</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea class="form-control" id="festivalDescription" rows="2"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer bg-white">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Delete</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center bg-white">
-                    <p class="text-dark mb-0">Delete this festival?</p>
-                    <input type="hidden" id="deleteId">
-                </div>
-                <div class="modal-footer justify-content-center bg-white">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">No</button>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete()">Yes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="developer-credit">Developed by <a href="#">Vishwajeet_Yadav</a></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API_BASE = '/api/v1';
+        const API = window.location.origin + '/api/v1';
         let festivalsData = [];
         let currentFilter = 'all';
-        let festivalModal, deleteModal;
+        let searchTimer = null;
+        let deleteId = null;
+        let isAdmin = false;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            festivalModal = new bootstrap.Modal(document.getElementById('festivalModal'));
-            deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            checkAuth();
             loadFestivals();
         });
 
-        // Global functions for HTML onclick attributes
-        window.openAddModal = function () {
-            document.getElementById('modalTitle').innerText = 'Add Festival';
-            document.getElementById('festivalForm').reset();
-            document.getElementById('festivalId').value = '';
-            festivalModal.show();
-        };
-
-        window.filterFestivals = function (status, element) {
-            currentFilter = status;
-            // Update UI
-            document.querySelectorAll('#festivalTabs .nav-link').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-
-            // Re-render
-            renderGrid();
-        };
-
-        function getToken() { return localStorage.getItem('token'); }
-        function formatDate(d) { if (!d) return '-'; return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }); }
-
-        function getStatusBadge(status) {
-            const colors = { 'upcoming': 'warning text-dark', 'ongoing': 'success', 'completed': 'secondary' };
-            const icons = { 'upcoming': 'clock', 'ongoing': 'play-circle', 'completed': 'check-circle' };
-            const color = colors[status] || 'primary';
-            const icon = icons[status] || 'circle';
-            return `<span class="badge bg-${color}"><i class="bi bi-${icon} me-1"></i>${status}</span>`;
+        // ==================== PARTICLES ====================
+        function createParticles() {
+            const c = document.getElementById('particles');
+            for (let i = 0; i < 25; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                p.style.width = (Math.random() * 3 + 1) + 'px';
+                p.style.height = p.style.width;
+                p.style.background = 'rgba(156, 39, 176, 0.5)';
+                p.style.boxShadow = '0 0 6px rgba(156, 39, 176, 0.3)';
+                c.appendChild(p);
+            }
         }
 
+        // ==================== AUTH ====================
+        async function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                isAdmin = false;
+                document.getElementById('addBtn').style.display = 'none';
+                return;
+            }
+            try {
+                const r = await fetch(`${API}/auth/check`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const res = await r.json();
+                if (res.authenticated && res.user.role === 'admin') {
+                    isAdmin = true;
+                    document.getElementById('addBtn').style.display = 'flex';
+                } else {
+                    isAdmin = false;
+                    document.getElementById('addBtn').style.display = 'none';
+                }
+            } catch (e) {
+                isAdmin = false;
+                document.getElementById('addBtn').style.display = 'none';
+            }
+        }
+
+        function getToken() {
+            return localStorage.getItem('authToken');
+        }
+
+        // ==================== LOAD FESTIVALS ====================
         async function loadFestivals() {
             try {
-                const res = await fetch(API_BASE + '/festivals');
-                const json = await res.json();
-                if (json.success) {
-                    festivalsData = json.data || [];
+                const r = await fetch(`${API}/festivals`);
+                const res = await r.json();
+                if (res.success) {
+                    festivalsData = res.data || [];
+                    updateStats();
                     renderGrid();
+                } else {
+                    throw new Error(res.error || 'Failed to load');
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('festivalGrid').innerHTML = `
+                    <div style="grid-column:1/-1">
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Failed to load festivals</p>
+                            <button class="retry-btn" onclick="loadFestivals()"><i class="fas fa-redo"></i> Retry</button>
+                        </div>
+                    </div>`;
+            }
         }
 
+        // ==================== STATS ====================
+        function updateStats() {
+            const total = festivalsData.length;
+            const upcoming = festivalsData.filter(f => f.status === 'upcoming').length;
+            const ongoing = festivalsData.filter(f => f.status === 'ongoing').length;
+            const completed = festivalsData.filter(f => f.status === 'completed').length;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statUpcoming').textContent = upcoming;
+            document.getElementById('statOngoing').textContent = ongoing;
+            document.getElementById('statCompleted').textContent = completed;
+
+            document.getElementById('countAll').textContent = total;
+            document.getElementById('countUpcoming').textContent = upcoming;
+            document.getElementById('countOngoing').textContent = ongoing;
+            document.getElementById('countCompleted').textContent = completed;
+        }
+
+        // ==================== FILTER ====================
+        function filterFestivals(status, element) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            renderGrid();
+        }
+
+        function handleSearch(value) {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => renderGrid(), 300);
+        }
+
+        // ==================== RENDER ====================
         function renderGrid() {
-            const grid = document.getElementById('festivalsGrid');
+            const grid = document.getElementById('festivalGrid');
+            const search = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+
             let filtered = festivalsData;
 
             if (currentFilter !== 'all') {
-                filtered = festivalsData.filter(x => x.status === currentFilter);
+                filtered = filtered.filter(f => f.status === currentFilter);
+            }
+
+            if (search) {
+                filtered = filtered.filter(f =>
+                    (f.name || '').toLowerCase().includes(search) ||
+                    (f.description || '').toLowerCase().includes(search)
+                );
             }
 
             if (filtered.length === 0) {
-                grid.innerHTML = '<div class="col-12 text-center text-muted py-5">No festivals found</div>';
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1">
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-alt"></i>
+                            <p>No festivals found</p>
+                            <small style="color:#555">${isAdmin ? 'Click "Add" to create a festival' : 'No festivals available'}</small>
+                        </div>
+                    </div>`;
                 return;
             }
 
-            grid.innerHTML = filtered.map(x => `
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card festival-card h-100">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <strong class="text-dark">${x.name}</strong>
-                            ${getStatusBadge(x.status)}
+            grid.innerHTML = filtered.map((f, i) => `
+                <div class="festival-card" style="animation-delay: ${i * 0.08}s">
+                    <div class="festival-card-header">
+                        <div class="festival-name">
+                            <i class="fas fa-om"></i>
+                            ${esc(f.name)}
                         </div>
-                        <div class="card-body">
-                            <p class="text-dark mb-2"><i class="bi bi-calendar-range text-primary"></i> ${formatDate(x.start_date)} - ${formatDate(x.end_date)}</p>
-                            <p class="text-muted small mb-0">${x.description || 'No description'}</p>
+                        <span class="festival-status ${f.status}">
+                            ${f.status === 'upcoming' ? '⏳' : f.status === 'ongoing' ? '🔴' : '✅'} ${f.status}
+                        </span>
+                    </div>
+                    <div class="festival-card-body">
+                        <div class="festival-info">
+                            <div class="festival-info-row">
+                                <i class="fas fa-calendar-day"></i>
+                                <span>${fmtDate(f.start_date)} — ${fmtDate(f.end_date)}</span>
+                            </div>
+                            ${f.description ? `
+                            <div class="festival-info-row">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="festival-description">${esc(f.description)}</span>
+                            </div>` : ''}
                         </div>
-                        <div class="card-footer bg-white border-0">
-                            <button class="btn btn-sm btn-outline-primary" onclick="editFestival(${x.ID})"><i class="bi bi-pencil"></i></button> 
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteFestival(${x.ID})"><i class="bi bi-trash"></i></button>
+                    </div>
+                    <div class="festival-card-footer">
+                        <div class="festival-stats">
+                            <div class="festival-stat">
+                                <div class="festival-stat-value" id="fdon_${f.id}">—</div>
+                                <div class="festival-stat-label">Donations</div>
+                            </div>
+                            <div class="festival-stat">
+                                <div class="festival-stat-value" id="fexp_${f.id}">—</div>
+                                <div class="festival-stat-label">Expenses</div>
+                            </div>
+                        </div>
+                        <div class="festival-actions">
+                            <button class="action-btn view" onclick="viewReport(${f.id})" title="View Report">
+                                <i class="fas fa-chart-bar"></i>
+                            </button>
+                            <button class="action-btn edit ${isAdmin ? '' : 'disabled'}" onclick="editFestival(${f.id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete ${isAdmin ? '' : 'disabled'}" onclick="showConfirm(${f.id})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             `).join('');
+
+            // Load report data for each festival
+            filtered.forEach(f => loadFestivalMiniReport(f.id));
         }
 
-        window.editFestival = function (id) {
-            const f = festivalsData.find(x => x.ID === id);
-            if (!f) return;
-            document.getElementById('modalTitle').innerText = 'Edit Festival';
-            document.getElementById('festivalId').value = id;
-            document.getElementById('festivalName').value = f.name || '';
-            document.getElementById('startDate').value = f.start_date ? f.start_date.split('T')[0] : '';
-            document.getElementById('endDate').value = f.end_date ? f.end_date.split('T')[0] : '';
-            document.getElementById('festivalStatus').value = f.status || 'upcoming';
-            document.getElementById('festivalDescription').value = f.description || '';
-            festivalModal.show();
-        };
+        // ==================== MINI REPORT ====================
+        async function loadFestivalMiniReport(id) {
+            try {
+                const r = await fetch(`${API}/festivals/${id}/report`);
+                const res = await r.json();
+                if (res.success) {
+                    const donEl = document.getElementById(`fdon_${id}`);
+                    const expEl = document.getElementById(`fexp_${id}`);
+                    if (donEl) {
+                        donEl.textContent = '₹' + fmt(res.data.total_donations || 0);
+                        donEl.classList.add('income');
+                    }
+                    if (expEl) {
+                        expEl.textContent = '₹' + fmt(res.data.total_expenses || 0);
+                        expEl.classList.add('expense');
+                    }
+                }
+            } catch (e) {
+                console.error('Mini report error:', e);
+            }
+        }
 
-        window.deleteFestival = function (id) {
-            document.getElementById('deleteId').value = id;
-            deleteModal.show();
-        };
+        // ==================== VIEW REPORT ====================
+        function viewReport(id) {
+            window.location.href = `/reports?festival_id=${id}`;
+        }
 
-        window.confirmDelete = async function () {
+        // ==================== MODAL ====================
+        function openModal() {
+            if (!isAdmin) {
+                toast('Please login as admin first', 'error');
+                return;
+            }
+            document.getElementById('editId').value = '';
+            document.getElementById('fName').value = '';
+            document.getElementById('fStart').value = '';
+            document.getElementById('fEnd').value = '';
+            document.getElementById('fStatus').value = 'upcoming';
+            document.getElementById('fDesc').value = '';
+            document.getElementById('modalTitle').textContent = 'Add Festival';
+            document.getElementById('saveText').textContent = 'Save';
+            document.getElementById('modalBg').classList.add('active');
+            setTimeout(() => document.getElementById('fName').focus(), 300);
+        }
+
+        function closeModal() {
+            document.getElementById('modalBg').classList.remove('active');
+        }
+
+        function editFestival(id) {
+            if (!isAdmin) {
+                toast('Please login as admin', 'error');
+                return;
+            }
+            const f = festivalsData.find(x => x.id === id);
+            if (!f) { toast('Festival not found', 'error'); return; }
+
+            document.getElementById('editId').value = f.id;
+            document.getElementById('fName').value = f.name || '';
+            document.getElementById('fStart').value = f.start_date ? f.start_date.split('T')[0] : '';
+            document.getElementById('fEnd').value = f.end_date ? f.end_date.split('T')[0] : '';
+            document.getElementById('fStatus').value = f.status || 'upcoming';
+            document.getElementById('fDesc').value = f.description || '';
+            document.getElementById('modalTitle').textContent = 'Edit Festival';
+            document.getElementById('saveText').textContent = 'Update';
+            document.getElementById('modalBg').classList.add('active');
+        }
+
+        async function saveFestival() {
             const token = getToken();
-            if (!token) return window.location.href = '/login';
-            await fetch(API_BASE + '/festivals/' + document.getElementById('deleteId').value, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
-            deleteModal.hide();
-            loadFestivals();
-        };
+            if (!token || !isAdmin) {
+                toast('Please login as admin first', 'error');
+                setTimeout(() => window.location.href = '/login', 1500);
+                return;
+            }
 
-        window.saveFestival = async function (event) {
-            event.preventDefault();
+            const name = document.getElementById('fName').value.trim();
+            const startDate = document.getElementById('fStart').value;
+            const endDate = document.getElementById('fEnd').value;
+            const status = document.getElementById('fStatus').value;
+            const description = document.getElementById('fDesc').value.trim();
+            const editId = document.getElementById('editId').value;
+
+            if (!name) { toast('Please enter festival name', 'error'); return; }
+            if (!startDate) { toast('Please select start date', 'error'); return; }
+            if (!endDate) { toast('Please select end date', 'error'); return; }
+            if (new Date(endDate) < new Date(startDate)) {
+                toast('End date cannot be before start date', 'error');
+                return;
+            }
+
+            const data = { name, start_date: startDate, end_date: endDate, status, description };
+
+            try {
+                let url = `${API}/festivals`;
+                let method = 'POST';
+                if (editId) { url += `/${editId}`; method = 'PUT'; }
+
+                const r = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const res = await r.json();
+                if (!res.success) throw new Error(res.error || 'Failed to save');
+
+                toast(res.message || (editId ? 'Festival updated!' : 'Festival added!'), 'success');
+                closeModal();
+                loadFestivals();
+            } catch (e) {
+                toast('Error: ' + e.message, 'error');
+            }
+        }
+
+        // ==================== DELETE ====================
+        function showConfirm(id) {
+            if (!isAdmin) { toast('Admin access required', 'error'); return; }
+            deleteId = id;
+            document.getElementById('confirmBg').classList.add('active');
+            document.getElementById('confirmDelBtn').onclick = () => deleteFestival();
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirmBg').classList.remove('active');
+            deleteId = null;
+        }
+
+        async function deleteFestival() {
+            if (!deleteId) return;
             const token = getToken();
-            if (!token) return window.location.href = '/login';
+            if (!token) { toast('Please login first', 'error'); return; }
 
-            const id = document.getElementById('festivalId').value;
-            const data = {
-                name: document.getElementById('festivalName').value,
-                start_date: new Date(document.getElementById('startDate').value).toISOString(),
-                end_date: new Date(document.getElementById('endDate').value).toISOString(),
-                status: document.getElementById('festivalStatus').value,
-                description: document.getElementById('festivalDescription').value
-            };
+            try {
+                const r = await fetch(`${API}/festivals/${deleteId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const res = await r.json();
+                if (!res.success) throw new Error(res.error || 'Delete failed');
 
-            const url = API_BASE + '/festivals' + (id ? '/' + id : '');
-            const method = id ? 'PUT' : 'POST';
+                toast('Festival deleted', 'success');
+                closeConfirm();
+                loadFestivals();
+            } catch (e) {
+                toast('Error: ' + e.message, 'error');
+                closeConfirm();
+            }
+        }
 
-            await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                body: JSON.stringify(data)
-            });
-            festivalModal.hide();
-            loadFestivals();
-        };
+        // ==================== TOAST ====================
+        function toast(m, t = 'info') {
+            const box = document.getElementById('toastBox');
+            const el = document.createElement('div');
+            el.className = `toast ${t}`;
+            const icons = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle' };
+            el.innerHTML = `<i class="fas fa-${icons[t] || 'info-circle'}"></i> ${m}`;
+            box.appendChild(el);
+            setTimeout(() => el.classList.add('show'), 10);
+            setTimeout(() => {
+                el.classList.remove('show');
+                setTimeout(() => el.remove(), 400);
+            }, 3000);
+        }
+
+        // ==================== HELPERS ====================
+        function fmt(n) {
+            return Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        function fmtDate(d) {
+            if (!d) return '-';
+            try {
+                return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+            } catch { return d; }
+        }
+
+        function esc(s) {
+            if (!s) return '';
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        // Close on overlay/escape
+        document.getElementById('modalBg').addEventListener('click', e => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+        document.getElementById('confirmBg').addEventListener('click', e => {
+            if (e.target === e.currentTarget) closeConfirm();
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { closeModal(); closeConfirm(); }
+        });
     </script>
 </body>
 

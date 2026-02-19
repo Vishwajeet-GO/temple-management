@@ -4,14 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
     <title>Reports - Temple Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
-    <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            background: url('/static/images/temple-bg.jpg') center/cover no-repeat fixed;
+            background-image: url("/static/images/temple-bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
         body::before {
@@ -21,160 +25,1023 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #17a2b8, #138496) !important;
+        /* Theme Colors - Teal/Cyan */
+        .top-nav {
+            background: linear-gradient(135deg, #00695c, #00897b, #26a69a);
         }
 
-        .chart-container {
-            background: white;
-            border-radius: 15px;
+        .nav-item.active {
+            color: #26a69a;
+        }
+
+        .nav-item.active i {
+            filter: drop-shadow(0 3px 6px rgba(38, 166, 154, 0.5));
+        }
+
+        .nav-item.active::before {
+            background: #26a69a;
+        }
+
+        .spinner {
+            border-top-color: #26a69a;
+        }
+
+        /* Festival Selector */
+        .selector-section {
+            padding: 16px;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .selector-card {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+        }
+
+        .selector-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #26a69a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .selector-label i {
+            color: #ffd54f;
+        }
+
+        .festival-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid rgba(38, 166, 154, 0.3);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2326a69a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        .festival-select:focus {
+            border-color: #26a69a;
+            box-shadow: 0 0 20px rgba(38, 166, 154, 0.2);
+        }
+
+        .festival-select option {
+            background: #1e1e3a;
+            color: #fff;
+        }
+
+        /* Stats Cards */
+        .report-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+            margin-bottom: 16px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .report-stat {
+            border-radius: 16px;
+            padding: 20px 12px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s;
+            cursor: default;
             position: relative;
-            height: 300px;
+            overflow: hidden;
+        }
+
+        .report-stat:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .report-stat.donations {
+            background: linear-gradient(135deg, #1b5e20, #43a047);
+        }
+
+        .report-stat.expenses {
+            background: linear-gradient(135deg, #b71c1c, #ef5350);
+        }
+
+        .report-stat.balance {
+            background: linear-gradient(135deg, #00695c, #26a69a);
+        }
+
+        .report-stat .stat-icon {
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+            opacity: 0.9;
+        }
+
+        .report-stat .stat-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .report-stat .stat-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.85;
+            font-weight: 600;
+        }
+
+        /* Count Cards */
+        .count-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+            margin-bottom: 16px;
+        }
+
+        .count-card {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+        }
+
+        .count-card .count-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .count-card .count-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .count-card.don-count .count-value {
+            color: #66bb6a;
+        }
+
+        .count-card.exp-count .count-value {
+            color: #ef5350;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            padding: 0 16px;
+            margin-bottom: 16px;
+        }
+
+        .chart-card {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .chart-header {
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #26a69a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-body {
+            padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            height: 280px;
         }
 
-        .summary-box {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 10px;
-            padding: 15px;
+        .chart-body canvas {
+            max-height: 250px;
+        }
+
+        /* Festival Info */
+        .festival-info-card {
+            padding: 0 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-card {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+        }
+
+        .info-card h4 {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card h4 i {
+            color: #ffd54f;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.85rem;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row i {
+            color: #26a69a;
+            width: 18px;
             text-align: center;
-            border: 1px solid #dee2e6;
         }
 
-        .select-project {
-            border: 2px solid #FF6B35;
-            padding: 10px;
-            border-radius: 10px;
+        .info-row .info-label {
+            color: rgba(255, 255, 255, 0.5);
+            min-width: 80px;
+        }
+
+        .info-row .info-value {
+            color: #fff;
             font-weight: 600;
-            color: #333;
+        }
+
+        .festival-status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .festival-status-badge.upcoming {
+            background: linear-gradient(135deg, #e65100, #f57c00);
+            color: #ffe0b2;
+        }
+
+        .festival-status-badge.ongoing {
+            background: linear-gradient(135deg, #1b5e20, #388e3c);
+            color: #a5d6a7;
+        }
+
+        .festival-status-badge.completed {
+            background: linear-gradient(135deg, #37474f, #546e7a);
+            color: #b0bec5;
+        }
+
+        /* Tables Section */
+        .report-table-section {
+            padding: 0 16px;
+            margin-bottom: 16px;
+        }
+
+        .report-table-card {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .report-table-header {
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .report-table-header .title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .report-table-header .title.donations-title {
+            color: #66bb6a;
+        }
+
+        .report-table-header .title.expenses-title {
+            color: #ef5350;
+        }
+
+        .report-table-header .badge-count {
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .report-table-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 400px;
+        }
+
+        .report-table thead {
+            background: linear-gradient(135deg, rgba(0, 105, 92, 0.6), rgba(0, 105, 92, 0.4));
+        }
+
+        .report-table thead th {
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #80cbc4;
+            white-space: nowrap;
+        }
+
+        .report-table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: background 0.3s;
+        }
+
+        .report-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .report-table tbody td {
+            padding: 10px;
+            font-size: 0.82rem;
+            vertical-align: middle;
+        }
+
+        .report-table .amount-green {
+            color: #66bb6a;
+            font-weight: 700;
+        }
+
+        .report-table .amount-red {
+            color: #ef5350;
+            font-weight: 700;
+        }
+
+        .empty-table {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.85rem;
+        }
+
+        .empty-table i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 10px;
+            opacity: 0.3;
+        }
+
+        /* Action Buttons */
+        .action-bar {
+            padding: 0 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-bar-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            color: #fff;
+        }
+
+        .action-bar-btn.print {
+            background: linear-gradient(135deg, #00695c, #26a69a);
+            box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
+        }
+
+        .action-bar-btn.download {
+            background: linear-gradient(135deg, #1565c0, #42a5f5);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .action-bar-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Report Title */
+        .report-title {
+            text-align: center;
+            padding: 16px;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .report-title h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .report-title h3 i {
+            color: #ffd54f;
+        }
+
+        /* Initial State */
+        .initial-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.4);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .initial-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.2;
+            display: block;
+            color: #26a69a;
+        }
+
+        .initial-state p {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .initial-state small {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: #fff !important;
+                color: #000 !important;
+            }
+
+            body::before,
+            .particles,
+            .top-nav,
+            .bottom-nav,
+            .selector-section,
+            .action-bar {
+                display: none !important;
+            }
+
+            .main {
+                padding: 0 !important;
+            }
+
+            .report-stat,
+            .count-card,
+            .chart-card,
+            .info-card,
+            .report-table-card {
+                background: #fff !important;
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+                backdrop-filter: none !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .report-stat .stat-value,
+            .report-stat .stat-label,
+            .count-card .count-value,
+            .count-card .count-label,
+            .info-card h4,
+            .info-row .info-value,
+            .chart-header,
+            .report-table-header .title,
+            .report-title h3 {
+                color: #000 !important;
+            }
+
+            .report-table thead {
+                background: #eee !important;
+            }
+
+            .report-table thead th {
+                color: #333 !important;
+            }
+
+            .report-table tbody td {
+                color: #000 !important;
+                border-bottom: 1px solid #ddd !important;
+            }
+
+            .print-header {
+                display: block !important;
+                text-align: center;
+                padding: 20px;
+                border-bottom: 2px solid #000;
+                margin-bottom: 20px;
+            }
+
+            .print-header h2 {
+                margin: 0;
+                font-size: 1.5rem;
+            }
+
+            .print-header p {
+                margin: 5px 0 0;
+                color: #666;
+            }
+        }
+
+        .print-header {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .report-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .report-stat {
+                padding: 14px 8px;
+            }
+
+            .report-stat .stat-value {
+                font-size: 1rem;
+            }
+
+            .chart-body {
+                height: 220px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .report-stat .stat-value {
+                font-size: 0.9rem;
+            }
+
+            .report-stat .stat-label {
+                font-size: 0.6rem;
+            }
+
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .action-bar-btn {
+                justify-content: center;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .report-stats {
+                gap: 16px;
+            }
+
+            .report-stat {
+                padding: 24px 16px;
+            }
+
+            .report-stat .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .chart-body {
+                height: 320px;
+            }
+
+            .tables-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                padding: 0 16px;
+                margin-bottom: 16px;
+            }
+
+            .tables-grid .report-table-section {
+                padding: 0;
+                margin-bottom: 0;
+            }
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">🛕 Temple Reports</a>
-            <a href="/" class="btn btn-outline-light btn-sm">Home</a>
-        </div>
-    </nav>
+    <div class="particles" id="particles"></div>
+    <div class="toast-box" id="toastBox"></div>
 
-    <div class="container py-4">
+    <!-- Print Header (only visible when printing) -->
+    <div class="print-header">
+        <h2>🛕 श्री गौरी शंकर मंदिर</h2>
+        <p>Festival Report</p>
+    </div>
 
-        <!-- Project Selector -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <label class="form-label text-dark">Select Festival / Project:</label>
-                <select class="form-select select-project" id="projectSelect" onchange="loadProjectData()">
-                    <option value="" disabled selected>-- Choose an Event --</option>
-                    <!-- Options populated by JS -->
+    <div class="main">
+        <!-- Top Nav -->
+        <nav class="top-nav">
+            <a href="/" class="brand"><i class="fas fa-gopuram"></i><span>मंदिर रिपोर्ट</span></a>
+            <div class="nav-btns">
+                <a href="/" class="nav-btn home"><i class="fas fa-home"></i> Home</a>
+            </div>
+        </nav>
+
+        <!-- Festival Selector -->
+        <div class="selector-section">
+            <div class="selector-card">
+                <div class="selector-label">
+                    <i class="fas fa-calendar-alt"></i> Select Festival / Event
+                </div>
+                <select class="festival-select" id="projectSelect" onchange="loadProjectData()">
+                    <option value="" disabled selected>-- Choose a Festival --</option>
                 </select>
             </div>
         </div>
 
-        <!-- Charts Area (Hidden until selected) -->
+        <!-- Initial State (before selection) -->
+        <div id="initialState">
+            <div class="initial-state">
+                <i class="fas fa-chart-pie"></i>
+                <p>Select a festival to view its report</p>
+                <small>Donations, expenses, balance & charts will appear here</small>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loadingState" style="display:none;">
+            <div class="loading-box" style="padding:60px;">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading report...</div>
+            </div>
+        </div>
+
+        <!-- Report Area (hidden until festival selected) -->
         <div id="reportArea" style="display:none;">
-            <h4 class="text-center mb-3" id="projectNameDisplay" style="color:#333;">Project Overview</h4>
 
-            <div class="row g-3 mb-4">
-                <div class="col-4">
-                    <div class="summary-box">
-                        <small class="text-success fw-bold">Income</small>
-                        <h5 class="text-success" id="projIncome">₹0</h5>
+            <!-- Festival Info -->
+            <div class="festival-info-card">
+                <div class="info-card">
+                    <h4><i class="fas fa-om"></i> <span id="festivalName">Festival</span></h4>
+                    <div class="info-row">
+                        <i class="fas fa-calendar-day"></i>
+                        <span class="info-label">Duration</span>
+                        <span class="info-value" id="festivalDuration">-</span>
                     </div>
-                </div>
-                <div class="col-4">
-                    <div class="summary-box">
-                        <small class="text-danger fw-bold">Expense</small>
-                        <h5 class="text-danger" id="projExpense">₹0</h5>
+                    <div class="info-row">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="info-label">Status</span>
+                        <span id="festivalStatusBadge"></span>
                     </div>
-                </div>
-                <div class="col-4">
-                    <div class="summary-box">
-                        <small class="text-primary fw-bold">Balance</small>
-                        <h5 class="text-primary" id="projBalance">₹0</h5>
+                    <div class="info-row" id="festivalDescRow" style="display:none;">
+                        <i class="fas fa-align-left"></i>
+                        <span class="info-label">Details</span>
+                        <span class="info-value" id="festivalDesc">-</span>
                     </div>
                 </div>
             </div>
 
-            <!-- The Chart -->
-            <div class="chart-container">
-                <canvas id="myChart"></canvas>
+            <!-- Stats -->
+            <div class="report-stats">
+                <div class="report-stat donations">
+                    <div class="stat-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <div class="stat-value" id="projIncome">₹0</div>
+                    <div class="stat-label">Donations</div>
+                </div>
+                <div class="report-stat expenses">
+                    <div class="stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <div class="stat-value" id="projExpense">₹0</div>
+                    <div class="stat-label">Expenses</div>
+                </div>
+                <div class="report-stat balance">
+                    <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                    <div class="stat-value" id="projBalance">₹0</div>
+                    <div class="stat-label">Balance</div>
+                </div>
             </div>
 
-            <div class="alert alert-info mt-3 text-center">
-                <i class="bi bi-info-circle"></i>
-                To edit this data, go to Donations or Expenses page and edit the entries linked to this festival.
+            <!-- Counts -->
+            <div class="count-stats">
+                <div class="count-card don-count">
+                    <div class="count-value" id="donCount">0</div>
+                    <div class="count-label"><i class="fas fa-receipt"></i> Donation Entries</div>
+                </div>
+                <div class="count-card exp-count">
+                    <div class="count-value" id="expCount">0</div>
+                    <div class="count-label"><i class="fas fa-receipt"></i> Expense Entries</div>
+                </div>
             </div>
+
+            <!-- Chart -->
+            <div class="chart-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <i class="fas fa-chart-pie"></i> Income vs Expense
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-bar">
+                <button class="action-bar-btn print" onclick="printReport()">
+                    <i class="fas fa-print"></i> Print Report
+                </button>
+                <button class="action-bar-btn download" onclick="downloadReport()">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+            </div>
+
+            <!-- Donations Table -->
+            <div class="report-table-section" id="donationsTableSection">
+                <div class="report-table-card">
+                    <div class="report-table-header">
+                        <div class="title donations-title">
+                            <i class="fas fa-hand-holding-heart"></i> Donations
+                        </div>
+                        <span class="badge-count" id="donBadge">0 entries</span>
+                    </div>
+                    <div class="report-table-scroll">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Donor</th>
+                                    <th>Amount</th>
+                                    <th>Mode</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="donTableBody">
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="empty-table">
+                                            <i class="fas fa-hand-holding-heart"></i>
+                                            No donations for this festival
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expenses Table -->
+            <div class="report-table-section" id="expensesTableSection">
+                <div class="report-table-card">
+                    <div class="report-table-header">
+                        <div class="title expenses-title">
+                            <i class="fas fa-file-invoice-dollar"></i> Expenses
+                        </div>
+                        <span class="badge-count" id="expBadge">0 entries</span>
+                    </div>
+                    <div class="report-table-scroll">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Title</th>
+                                    <th>Amount</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expTableBody">
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="empty-table">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                            No expenses for this festival
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
-
-        <div id="loading" class="text-center py-5">
-            <div class="spinner-border text-primary"></div>
-            <p>Loading Projects...</p>
-        </div>
-
     </div>
 
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <a href="/" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/donate" class="nav-item"><i class="fas fa-heart"></i><span>Donate</span></a>
+        <a href="/festivals" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Festivals</span></a>
+        <a href="/donations" class="nav-item"><i class="fas fa-indian-rupee-sign"></i><span>History</span></a>
+        <a href="/expenses" class="nav-item"><i class="fas fa-file-invoice-dollar"></i><span>Expenses</span></a>
+    </nav>
+
     <script>
-        const API_BASE = '/api/v1';
+        const API = window.location.origin + '/api/v1';
         let myChart = null;
+        let currentReportData = null;
 
-        document.addEventListener('DOMContentLoaded', loadProjects);
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            loadFestivals();
 
-        async function loadProjects() {
+            // Check if festival_id passed in URL
+            const params = new URLSearchParams(window.location.search);
+            const fid = params.get('festival_id');
+            if (fid) {
+                setTimeout(() => {
+                    const sel = document.getElementById('projectSelect');
+                    sel.value = fid;
+                    if (sel.value === fid) loadProjectData();
+                }, 500);
+            }
+        });
+
+        // ==================== PARTICLES ====================
+        function createParticles() {
+            const c = document.getElementById('particles');
+            for (let i = 0; i < 25; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                p.style.width = (Math.random() * 3 + 1) + 'px';
+                p.style.height = p.style.width;
+                p.style.background = 'rgba(38, 166, 154, 0.5)';
+                p.style.boxShadow = '0 0 6px rgba(38, 166, 154, 0.3)';
+                c.appendChild(p);
+            }
+        }
+
+        // ==================== LOAD FESTIVALS ====================
+        async function loadFestivals() {
             try {
-                const res = await fetch(API_BASE + '/festivals');
+                const res = await fetch(`${API}/festivals`);
                 const json = await res.json();
                 const select = document.getElementById('projectSelect');
 
-                if (json.success) {
+                if (json.success && json.data) {
                     json.data.forEach(f => {
                         const opt = document.createElement('option');
-                        opt.value = f.ID;
-                        opt.text = f.name + ' (' + f.status + ')';
+                        opt.value = f.id;
+                        const statusEmoji = f.status === 'upcoming' ? '⏳' : f.status === 'ongoing' ? '🔴' : '✅';
+                        opt.text = `${statusEmoji} ${f.name} (${f.status})`;
                         select.appendChild(opt);
                     });
                 }
-                document.getElementById('loading').style.display = 'none';
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error('Error loading festivals:', e);
+                toast('Failed to load festivals', 'error');
+            }
         }
 
+        // ==================== LOAD REPORT ====================
         async function loadProjectData() {
             const id = document.getElementById('projectSelect').value;
-            const name = document.getElementById('projectSelect').options[document.getElementById('projectSelect').selectedIndex].text;
-
             if (!id) return;
 
-            document.getElementById('projectNameDisplay').innerText = name;
-            document.getElementById('reportArea').style.display = 'block';
+            document.getElementById('initialState').style.display = 'none';
+            document.getElementById('reportArea').style.display = 'none';
+            document.getElementById('loadingState').style.display = 'block';
 
             try {
-                const res = await fetch(`${API_BASE}/dashboard/project/${id}`);
-                const data = await res.json();
+                const res = await fetch(`${API}/festivals/${id}/report`);
+                const json = await res.json();
 
-                if (data.success) {
-                    document.getElementById('projIncome').innerText = '₹' + data.income.toLocaleString();
-                    document.getElementById('projExpense').innerText = '₹' + data.expense.toLocaleString();
-                    document.getElementById('projBalance').innerText = '₹' + data.balance.toLocaleString();
+                if (!json.success) throw new Error(json.error || 'Failed to load report');
 
-                    renderChart(data.income, data.expense);
+                currentReportData = json.data;
+                const d = json.data;
+                const f = d.festival;
+
+                // Festival Info
+                document.getElementById('festivalName').textContent = f.name;
+                document.getElementById('festivalDuration').textContent =
+                    `${fmtDate(f.start_date)} — ${fmtDate(f.end_date)}`;
+
+                document.getElementById('festivalStatusBadge').innerHTML =
+                    `<span class="festival-status-badge ${f.status}">
+                        ${f.status === 'upcoming' ? '⏳' : f.status === 'ongoing' ? '🔴' : '✅'} ${f.status}
+                    </span>`;
+
+                if (f.description) {
+                    document.getElementById('festivalDescRow').style.display = 'flex';
+                    document.getElementById('festivalDesc').textContent = f.description;
+                } else {
+                    document.getElementById('festivalDescRow').style.display = 'none';
                 }
-            } catch (e) { console.error(e); }
+
+                // Stats
+                document.getElementById('projIncome').textContent = '₹' + fmt(d.total_donations || 0);
+                document.getElementById('projExpense').textContent = '₹' + fmt(d.total_expenses || 0);
+                document.getElementById('projBalance').textContent = '₹' + fmt(d.balance || 0);
+                document.getElementById('donCount').textContent = d.donation_count || 0;
+                document.getElementById('expCount').textContent = d.expense_count || 0;
+                document.getElementById('donBadge').textContent = (d.donation_count || 0) + ' entries';
+                document.getElementById('expBadge').textContent = (d.expense_count || 0) + ' entries';
+
+                // Chart
+                renderChart(d.total_donations || 0, d.total_expenses || 0);
+
+                // Donations Table
+                renderDonationsTable(d.donations || []);
+
+                // Expenses Table
+                renderExpensesTable(d.expenses || []);
+
+                // Show report
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('reportArea').style.display = 'block';
+
+            } catch (e) {
+                console.error('Report error:', e);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('initialState').style.display = 'block';
+                toast('Error: ' + e.message, 'error');
+            }
         }
 
+        // ==================== RENDER CHART ====================
         function renderChart(income, expense) {
             const ctx = document.getElementById('myChart').getContext('2d');
 
-            if (myChart) {
-                myChart.destroy();
+            if (myChart) myChart.destroy();
+
+            if (income === 0 && expense === 0) {
+                myChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['No Data'],
+                        datasets: [{
+                            data: [1],
+                            backgroundColor: ['rgba(255,255,255,0.1)'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { enabled: false }
+                        }
+                    }
+                });
+                return;
             }
 
             myChart = new Chart(ctx, {
@@ -184,26 +1051,223 @@
                     datasets: [{
                         data: [income, expense],
                         backgroundColor: [
-                            'rgba(40, 167, 69, 0.8)', // Green
-                            'rgba(220, 53, 69, 0.8)'  // Red
+                            'rgba(102, 187, 106, 0.85)',
+                            'rgba(239, 83, 80, 0.85)'
                         ],
                         borderColor: [
-                            'rgba(40, 167, 69, 1)',
-                            'rgba(220, 53, 69, 1)'
+                            'rgba(102, 187, 106, 1)',
+                            'rgba(239, 83, 80, 1)'
                         ],
-                        borderWidth: 1
+                        borderWidth: 2,
+                        hoverOffset: 10
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: '60%',
                     plugins: {
                         legend: {
                             position: 'bottom',
+                            labels: {
+                                color: '#ccc',
+                                padding: 20,
+                                font: { size: 12, weight: '600' },
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30,30,50,0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#ccc',
+                            borderColor: 'rgba(255,255,255,0.1)',
+                            borderWidth: 1,
+                            cornerRadius: 10,
+                            padding: 12,
+                            callbacks: {
+                                label: function (context) {
+                                    return context.label + ': ₹' + fmt(context.raw);
+                                }
+                            }
                         }
                     }
                 }
             });
+        }
+
+        // ==================== RENDER DONATIONS TABLE ====================
+        function renderDonationsTable(donations) {
+            const tbody = document.getElementById('donTableBody');
+
+            if (!donations || donations.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6">
+                    <div class="empty-table">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        No donations for this festival
+                    </div>
+                </td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = donations.map((d, i) => `
+                <tr>
+                    <td style="color:rgba(255,255,255,0.3)">${i + 1}</td>
+                    <td>${fmtDate(d.date)}</td>
+                    <td><strong style="color:#fff">${esc(d.donor || 'Anonymous')}</strong></td>
+                    <td><span class="amount-green">₹${fmt(d.amount)}</span></td>
+                    <td><span style="padding:3px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;
+                        background:rgba(33,150,243,0.15);color:#90caf9;border:1px solid rgba(33,150,243,0.2)">
+                        ${esc(d.payment_mode || 'cash')}</span></td>
+                    <td><span class="status-badge ${d.status}">
+                        ${d.status === 'paid' ? '✓ Paid' : '⏳ Pending'}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // ==================== RENDER EXPENSES TABLE ====================
+        function renderExpensesTable(expenses) {
+            const tbody = document.getElementById('expTableBody');
+
+            if (!expenses || expenses.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6">
+                    <div class="empty-table">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        No expenses for this festival
+                    </div>
+                </td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = expenses.map((e, i) => `
+                <tr>
+                    <td style="color:rgba(255,255,255,0.3)">${i + 1}</td>
+                    <td>${fmtDate(e.date)}</td>
+                    <td><strong style="color:#fff">${esc(e.title || '-')}</strong>
+                        ${e.note ? `<br><small style="color:rgba(255,255,255,0.3)">${esc(e.note)}</small>` : ''}
+                    </td>
+                    <td><span class="amount-red">₹${fmt(e.amount)}</span></td>
+                    <td>${e.category ? `<span style="padding:3px 8px;border-radius:8px;font-size:0.7rem;font-weight:600;
+                        background:rgba(156,39,176,0.15);color:#ce93d8;border:1px solid rgba(156,39,176,0.2)">
+                        ${esc(e.category)}</span>` : '—'}</td>
+                    <td><span class="status-badge ${e.status}">
+                        ${e.status === 'paid' ? '✓ Paid' : '⏳ Pending'}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // ==================== PRINT ====================
+        function printReport() {
+            if (!currentReportData) {
+                toast('Please select a festival first', 'error');
+                return;
+            }
+            window.print();
+        }
+
+        // ==================== DOWNLOAD PDF ====================
+        function downloadReport() {
+            if (!currentReportData) {
+                toast('Please select a festival first', 'error');
+                return;
+            }
+
+            const d = currentReportData;
+            const f = d.festival;
+
+            // Generate text report
+            let content = '';
+            content += '═══════════════════════════════════════════\n';
+            content += '     🛕 श्री गौरी शंकर मंदिर\n';
+            content += '        Festival Report\n';
+            content += '═══════════════════════════════════════════\n\n';
+
+            content += `Festival: ${f.name}\n`;
+            content += `Status: ${f.status}\n`;
+            content += `Duration: ${f.start_date || '-'} to ${f.end_date || '-'}\n`;
+            if (f.description) content += `Description: ${f.description}\n`;
+            content += '\n';
+
+            content += '───────────────────────────────────────────\n';
+            content += `  Total Donations:  ₹${fmt(d.total_donations || 0)}\n`;
+            content += `  Total Expenses:   ₹${fmt(d.total_expenses || 0)}\n`;
+            content += `  Balance:          ₹${fmt(d.balance || 0)}\n`;
+            content += `  Donation Entries: ${d.donation_count || 0}\n`;
+            content += `  Expense Entries:  ${d.expense_count || 0}\n`;
+            content += '───────────────────────────────────────────\n\n';
+
+            // Donations
+            content += '💰 DONATIONS\n';
+            content += '───────────────────────────────────────────\n';
+            if (d.donations && d.donations.length > 0) {
+                d.donations.forEach((don, i) => {
+                    content += `${i + 1}. ${don.donor || 'Anonymous'} | ₹${fmt(don.amount)} | ${don.date || '-'} | ${don.payment_mode || 'cash'} | ${don.status}\n`;
+                });
+            } else {
+                content += 'No donations\n';
+            }
+            content += '\n';
+
+            // Expenses
+            content += '💸 EXPENSES\n';
+            content += '───────────────────────────────────────────\n';
+            if (d.expenses && d.expenses.length > 0) {
+                d.expenses.forEach((exp, i) => {
+                    content += `${i + 1}. ${exp.title || '-'} | ₹${fmt(exp.amount)} | ${exp.date || '-'} | ${exp.category || '-'} | ${exp.status}\n`;
+                });
+            } else {
+                content += 'No expenses\n';
+            }
+            content += '\n';
+            content += '═══════════════════════════════════════════\n';
+            content += `Generated on: ${new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}\n`;
+
+            // Download
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${f.name.replace(/\s+/g, '_')}_Report.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            toast('Report downloaded!', 'success');
+        }
+
+        // ==================== TOAST ====================
+        function toast(m, t = 'info') {
+            const box = document.getElementById('toastBox');
+            const el = document.createElement('div');
+            el.className = `toast ${t}`;
+            const icons = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle' };
+            el.innerHTML = `<i class="fas fa-${icons[t] || 'info-circle'}"></i> ${m}`;
+            box.appendChild(el);
+            setTimeout(() => el.classList.add('show'), 10);
+            setTimeout(() => {
+                el.classList.remove('show');
+                setTimeout(() => el.remove(), 400);
+            }, 3000);
+        }
+
+        // ==================== HELPERS ====================
+        function fmt(n) {
+            return Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        function fmtDate(d) {
+            if (!d) return '-';
+            try {
+                return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+            } catch { return d; }
+        }
+
+        function esc(s) {
+            if (!s) return '';
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
         }
     </script>
 </body>

@@ -4,15 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🛕 Temple Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="/static/css/global.css" rel="stylesheet">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Temple Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        html,
         body {
-            background-image: url('/static/images/temple-bg.jpg');
+            height: 100%;
+            overflow-x: hidden
+        }
+
+        body {
+            background-image: url("/static/images/temple-bg.jpg");
             background-size: cover;
             background-position: center;
+            background-attachment: fixed;
             background-repeat: no-repeat;
         }
 
@@ -26,215 +40,970 @@
             background-color: rgba(0, 0, 0, 0.5);
         }
 
-        /* Fix button clickability */
-        .quick-action-btn {
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            min-height: 100vh
+        }
+
+        /* Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0
+        }
+
+        .bg-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.15;
+            filter: blur(1px)
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 165, 0, 0.5);
+            border-radius: 50%;
+            animation: float linear infinite
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh);
+                opacity: 0
+            }
+
+            10% {
+                opacity: 1
+            }
+
+            90% {
+                opacity: 1
+            }
+
+            100% {
+                transform: translateY(-10vh);
+                opacity: 0
+            }
+        }
+
+        .main-content {
             position: relative;
             z-index: 10;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-            background: white;
-            border-width: 2px;
+            padding-bottom: 90px;
+            min-height: 100vh
         }
 
-        /* Highlight Donate Button */
-        .btn-donate-highlight {
-            background: linear-gradient(135deg, #FF6B35, #FF8C42);
-            color: white !important;
+        /* Top Navbar */
+        .top-navbar {
+            background: linear-gradient(135deg, #4a148c, #7b1fa2, #9c27b0);
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5)
+        }
+
+        .top-navbar .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            text-decoration: none
+        }
+
+        .top-navbar .brand i {
+            font-size: 1.5rem;
+            color: #ffd54f;
+            filter: drop-shadow(0 0 8px rgba(255, 213, 79, 0.6))
+        }
+
+        .top-navbar .brand span {
+            font-size: 1.15rem;
+            font-weight: 700
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px
+        }
+
+        .nav-btn {
+            padding: 8px 18px;
+            border-radius: 25px;
             border: none;
-            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #fff
         }
 
-        .btn-donate-highlight:hover {
+        .nav-btn.donate {
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4)
+        }
+
+        .nav-btn.donate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.6)
+        }
+
+        .nav-btn.login-btn {
+            background: linear-gradient(135deg, #1565c0, #42a5f5);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3)
+        }
+
+        .nav-btn.login-btn:hover {
+            transform: translateY(-2px)
+        }
+
+        .nav-btn.logout-btn {
+            background: linear-gradient(135deg, #c62828, #ef5350);
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3)
+        }
+
+        .nav-btn.admin-btn {
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3)
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            margin: 16px;
+            padding: 28px 24px;
+            background: linear-gradient(135deg, #4a148c, #7b1fa2);
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(74, 20, 140, 0.4);
+            position: relative;
+            overflow: hidden
+        }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite alternate
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: rotate(0deg)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+
+        .welcome-banner h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #fff;
+            position: relative;
+            z-index: 1
+        }
+
+        .welcome-banner h1 i {
+            color: #ffd54f
+        }
+
+        .welcome-banner p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1
+        }
+
+        /* Section Title */
+        .section-title {
+            padding: 0 16px;
+            margin: 20px 0 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ff9800;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .section-title i {
+            font-size: 0.9rem
+        }
+
+        /* Quick Action Buttons */
+        .quick-donate {
+            margin: 0 16px 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            border-radius: 16px;
+            text-align: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.35)
+        }
+
+        .quick-donate:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 152, 0, 0.5)
+        }
+
+        .quick-donate:active {
+            transform: scale(0.97)
+        }
+
+        /* Action Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+            margin-bottom: 20px
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #e0e0e0;
+            transition: all 0.3s;
+            cursor: pointer
+        }
+
+        .action-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.15)
+        }
+
+        .action-card:active {
+            transform: scale(0.95)
+        }
+
+        .action-card i {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            display: block
+        }
+
+        .action-card span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.3px
+        }
+
+        .action-card.donations i {
+            color: #4caf50
+        }
+
+        .action-card.expenses i {
+            color: #f44336
+        }
+
+        .action-card.festivals i {
+            color: #2196f3
+        }
+
+        .action-card.reports i {
+            color: #ff9800
         }
 
         /* Stats Cards */
-        .stats-card {
-            border: none;
-            border-radius: 15px;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+            margin-bottom: 24px
+        }
+
+        .stat-card {
+            border-radius: 18px;
+            padding: 20px 12px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+            position: relative;
+            overflow: hidden
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s
+        }
+
+        .stat-card:hover::before {
+            opacity: 1
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02)
+        }
+
+        .stat-card.income {
+            background: linear-gradient(135deg, #1b5e20, #43a047)
+        }
+
+        .stat-card.expense {
+            background: linear-gradient(135deg, #b71c1c, #ef5350)
+        }
+
+        .stat-card.balance {
+            background: linear-gradient(135deg, #00838f, #26c6da)
+        }
+
+        .stat-card.festival {
+            background: linear-gradient(135deg, #e65100, #ffa726)
+        }
+
+        .stat-icon {
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+            opacity: 0.9
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2)
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.85;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9)
+        }
+
+        /* Recent Section */
+        .recent-section {
+            margin: 0 16px 20px;
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2)
         }
 
-        .stats-card h4 {
+        .recent-header {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 14px 16px;
             font-weight: 700;
-            color: white !important;
+            font-size: 0.85rem;
+            color: #ff9800;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06)
         }
 
-        .bg-warning h4 {
-            color: #333 !important;
+        .recent-header a {
+            color: #64b5f6;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600
         }
 
-        /* Mobile fixes */
-        body {
-            padding-bottom: 80px;
+        .recent-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s
         }
 
-        @media (min-width: 992px) {
-            body {
-                padding-bottom: 20px;
+        .recent-item:hover {
+            background: rgba(255, 255, 255, 0.03)
+        }
+
+        .recent-item:last-child {
+            border-bottom: none
+        }
+
+        .recent-item .info {
+            flex: 1
+        }
+
+        .recent-item .info .name {
+            font-weight: 600;
+            font-size: 0.85rem
+        }
+
+        .recent-item .info .date {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 2px
+        }
+
+        .recent-item .amount {
+            font-weight: 700;
+            font-size: 0.9rem
+        }
+
+        .recent-item .amount.income {
+            color: #66bb6a
+        }
+
+        .recent-item .amount.expense {
+            color: #ef5350
+        }
+
+        .recent-item .badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase
+        }
+
+        .recent-item .badge.paid {
+            background: rgba(76, 175, 80, 0.15);
+            color: #66bb6a
+        }
+
+        .recent-item .badge.pending {
+            background: rgba(255, 152, 0, 0.15);
+            color: #ffa726
+        }
+
+        .empty-recent {
+            padding: 30px;
+            text-align: center;
+            color: #555;
+            font-size: 0.85rem
+        }
+
+        .empty-recent i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+            opacity: 0.3
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #555;
+            font-size: 0.75rem
+        }
+
+        .footer a {
+            color: #7c4dff;
+            text-decoration: none
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(20, 20, 40, 0.97), rgba(10, 10, 25, 0.99));
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0 8px;
+            z-index: 500;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.4)
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.62rem;
+            padding: 4px 14px;
+            border-radius: 12px;
+            transition: all 0.3s;
+            position: relative;
+            min-width: 56px
+        }
+
+        .nav-item i {
+            font-size: 1.15rem;
+            margin-bottom: 4px;
+            transition: all 0.3s
+        }
+
+        .nav-item.active {
+            color: #9c27b0
+        }
+
+        .nav-item.active i {
+            transform: translateY(-2px);
+            filter: drop-shadow(0 3px 8px rgba(156, 39, 176, 0.5))
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 3px;
+            background: #9c27b0;
+            border-radius: 0 0 3px 3px
+        }
+
+        .nav-item:hover {
+            color: rgba(255, 255, 255, 0.7)
+        }
+
+        .nav-item span {
+            font-weight: 600;
+            letter-spacing: 0.3px
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .toast {
+            padding: 14px 20px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px)
+        }
+
+        .toast.show {
+            transform: translateX(0)
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #1b5e20, #388e3c);
+            border-left: 4px solid #66bb6a
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #b71c1c, #d32f2f);
+            border-left: 4px solid #ef5350
+        }
+
+        /* Responsive */
+        @media(max-width:768px) {
+
+            .stats-grid,
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr)
             }
+
+            .stat-value {
+                font-size: 1.1rem
+            }
+        }
+
+        @media(max-width:480px) {
+
+            .stats-grid,
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                padding: 0 12px
+            }
+
+            .stat-card {
+                padding: 14px 8px
+            }
+
+            .stat-value {
+                font-size: 1rem
+            }
+
+            .welcome-banner {
+                margin: 12px;
+                padding: 22px 16px
+            }
+
+            .welcome-banner h1 {
+                font-size: 1.2rem
+            }
+        }
+
+        @media(min-width:1024px) {
+            .main-content {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding-bottom: 20px
+            }
+
+            .bottom-nav {
+                display: none
+            }
+
+            .stats-grid,
+            .action-grid {
+                grid-template-columns: repeat(4, 1fr)
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .stats-grid {
+            animation: slideUp 0.5s ease-out
+        }
+
+        .action-grid {
+            animation: slideUp 0.5s ease-out 0.1s backwards
+        }
+
+        .recent-section {
+            animation: slideUp 0.5s ease-out 0.2s backwards
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">🛕 Temple Management</a>
-            <div class="navbar-nav ms-auto d-none d-lg-flex flex-row">
-                <a href="/donate" class="btn btn-warning btn-sm me-2 fw-bold text-dark">
-                    <i class="bi bi-heart-fill text-danger"></i> Donate Now
-                </a>
-                <a href="/login" class="btn btn-outline-light btn-sm">Login</a>
-            </div>
-        </div>
-    </nav>
+    <div class="bg-container">
+        <img src="/static/images/temple-bg.jpg" class="bg-image" onerror="this.style.display='none'" alt="">
+    </div>
+    <div class="particles" id="particles"></div>
+    <div class="toast-container" id="toastContainer"></div>
 
-    <div class="container py-4">
-        <!-- Temple Header -->
-        <div class="card mb-4 bg-primary text-white border-0 shadow">
-            <div class="card-body text-center py-4" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-                <h2 id="templeName">🛕 Temple Management</h2>
-                <p id="templeAddress" style="color: rgba(255,255,255,0.9);">Welcome to Temple Management System</p>
-                <!-- <p id="templeCity" style="color: rgba(255,255,255,0.9);">id</p> -->
-                <!-- <p id="templeState" style="color: rgba(255,255,255,0.9);">id</p> -->
-                <!-- <p id="templePinCode" style="color: rgba(255,255,255,0.9);">id</p> -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <nav class="top-navbar">
+            <a href="/" class="brand">
+                <i class="fas fa-gopuram"></i>
+                <span>श्री गौरी शंकर मंदिर</span>
+            </a>
+            <div class="nav-buttons" id="navButtons">
+                <a href="/donate" class="nav-btn donate"><i class="fas fa-heart"></i> Donate Now</a>
+                <!-- Login/Logout button injected by JS -->
             </div>
-        </div>
+        </nav>
 
-        <!-- Quick Actions (Fixed Buttons) -->
-        <h5 class="mb-3" style="color: #e97da4; font-weight: 600;"><i
-                class="bi bi-lightning-charge-fill text-warning"></i>
-            Quick Actions</h5>
-
-        <div class="row g-3 mb-4">
-            <!-- DONATE BUTTON (NEW) -->
-            <div class="col-12 col-md-12 mb-2">
-                <a href="/donate"
-                    class="quick-action-btn btn-donate-highlight p-3 rounded-3 text-center d-flex align-items-center justify-content-center gap-2">
-                    <i class="bi bi-heart-fill fs-4"></i>
-                    <span class="fs-5 fw-bold">Make a Donation</span>
-                </a>
-            </div>
-
-            <!-- Admin Actions -->
-            <div class="col-6 col-md-3">
-                <a href="/donations" class="quick-action-btn btn btn-outline-success w-100 py-3">
-                    <i class="bi bi-cash-coin fs-2 d-block mb-2"></i>
-                    Donations
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="/expenses" class="quick-action-btn btn btn-outline-danger w-100 py-3">
-                    <i class="bi bi-receipt fs-2 d-block mb-2"></i>
-                    Expenses
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="/festivals" class="quick-action-btn btn btn-outline-primary w-100 py-3">
-                    <i class="bi bi-calendar-event fs-2 d-block mb-2"></i>
-                    Festivals
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="/reports" class="quick-action-btn btn btn-outline-info w-100 py-3">
-                    <i class="bi bi-bar-chart fs-2 d-block mb-2"></i>
-                    Reports
-                </a>
-            </div>
+        <!-- Welcome -->
+        <div class="welcome-banner">
+            <h1><i class="fas fa-gopuram"></i> श्री गौरी शंकर मंदिर </h1>
+            <p> Poisar, Kandivali East, Mumbai - 400101 </p>
         </div>
 
-        <!-- Stats Cards -->
-        <h5 class="mb-3" style="color: #e68b9e; font-weight: 600;"><i class="bi bi-graph-up text-primary"></i> Overview
-        </h5>
-        <div class="row g-3 mb-4">
-            <div class="col-6 col-md-3">
-                <div class="card bg-success stats-card">
-                    <div class="card-body text-center text-white p-3">
-                        <i class="bi bi-cash-coin fs-3 mb-1"></i>
-                        <h4 id="totalDonations">₹0</h4>
-                        <small style="color: rgba(255,255,255,0.9);">Total Income</small>
-                    </div>
-                </div>
+        <!-- Quick Actions -->
+        <div class="section-title"><i class="fas fa-bolt"></i> Quick Actions</div>
+        <a href="/donate" class="quick-donate"><i class="fas fa-heart"></i> Make a Donation</a>
+
+        <div class="action-grid">
+            <a href="/donations" class="action-card donations">
+                <i class="fas fa-indian-rupee-sign"></i>
+                <span>Donations</span>
+            </a>
+            <a href="/expenses" class="action-card expenses">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Expenses</span>
+            </a>
+            <a href="/festivals" class="action-card festivals">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Festivals</span>
+            </a>
+            <a href="/reports" class="action-card reports">
+                <i class="fas fa-chart-bar"></i>
+                <span>Reports</span>
+            </a>
+        </div>
+
+        <!-- Overview Stats -->
+        <div class="section-title"><i class="fas fa-chart-line"></i> Overview</div>
+        <div class="stats-grid">
+            <div class="stat-card income">
+                <div class="stat-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+                <div class="stat-value" id="totalIncome">₹0</div>
+                <div class="stat-label">Total Income</div>
             </div>
-            <div class="col-6 col-md-3">
-                <div class="card bg-danger stats-card">
-                    <div class="card-body text-center text-white p-3">
-                        <i class="bi bi-receipt fs-3 mb-1"></i>
-                        <h4 id="totalExpenses">₹0</h4>
-                        <small style="color: rgba(255,255,255,0.9);">Total Expenses</small>
-                    </div>
-                </div>
+            <div class="stat-card expense">
+                <div class="stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <div class="stat-value" id="totalExpenses">₹0</div>
+                <div class="stat-label">Total Expenses</div>
             </div>
-            <div class="col-6 col-md-3">
-                <div class="card bg-info stats-card">
-                    <div class="card-body text-center text-white p-3">
-                        <i class="bi bi-wallet2 fs-3 mb-1"></i>
-                        <h4 id="balance">₹0</h4>
-                        <small style="color: rgba(255,255,255,0.9);">Balance</small>
-                    </div>
-                </div>
+            <div class="stat-card balance">
+                <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                <div class="stat-value" id="totalBalance">₹0</div>
+                <div class="stat-label">Balance</div>
             </div>
-            <div class="col-6 col-md-3">
-                <div class="card bg-warning stats-card">
-                    <div class="card-body text-center p-3">
-                        <i class="bi bi-calendar-check fs-3 mb-1 text-dark"></i>
-                        <h4 id="upcomingFestivals">0</h4>
-                        <small style="color: #444;">Festivals</small>
-                    </div>
-                </div>
+            <div class="stat-card festival">
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="stat-value" id="totalFestivals">0</div>
+                <div class="stat-label">Festivals</div>
             </div>
+        </div>
+
+        <!-- Recent Donations -->
+        <div class="recent-section">
+            <div class="recent-header">
+                <span><i class="fas fa-hand-holding-heart"></i> Recent Donations</span>
+                <a href="/donations">View All →</a>
+            </div>
+            <div id="recentDonations">
+                <div class="empty-recent"><i class="fas fa-spinner fa-spin"></i>Loading...</div>
+            </div>
+        </div>
+
+        <!-- Recent Expenses -->
+        <div class="recent-section">
+            <div class="recent-header">
+                <span><i class="fas fa-receipt"></i> Recent Expenses</span>
+                <a href="/expenses">View All →</a>
+            </div>
+            <div id="recentExpenses">
+                <div class="empty-recent"><i class="fas fa-spinner fa-spin"></i>Loading...</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Developed by <a href="#">Vishwajeet Yadav</a>
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Nav -->
     <nav class="bottom-nav">
-        <a href="/" class="active"><i class="bi bi-house-fill"></i><span>Home</span></a>
-        <a href="/donate" style="color: #FF6B35;"><i class="bi bi-heart-fill"></i><span>Donate</span></a>
-        <a href="/donations"><i class="bi bi-cash-coin"></i><span>History</span></a>
-        <a href="/expenses"><i class="bi bi-receipt"></i><span>Expense</span></a>
-        <a href="/login"><i class="bi bi-person"></i><span>Admin</span></a>
+        <a href="/" class="nav-item active">
+            <i class="fas fa-home"></i><span>Home</span>
+        </a>
+        <a href="/donate" class="nav-item">
+            <i class="fas fa-heart"></i><span>Donate</span>
+        </a>
+        <a href="/festivals" class="nav-item">
+            <i class="fas fa-calendar-alt"></i><span>Festivals</span>
+        </a>
+        <a href="/donations" class="nav-item">
+            <i class="fas fa-indian-rupee-sign"></i><span>History</span>
+        </a>
+        <a href="/expenses" class="nav-item">
+            <i class="fas fa-file-invoice-dollar"></i><span>Expense</span>
+        </a>
     </nav>
 
-    <!-- Developer Credit -->
-    <div class="developer-credit">Developed by <a href="#">Vishwajeet_Yadav</a></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API_BASE = '/api/v1';
-        function formatCurrency(amount) { return '₹' + Number(amount).toLocaleString('en-IN'); }
+        const API = window.location.origin + '/api/v1';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            checkAuth();
+            loadDashboard();
+        });
+
+        function createParticles() {
+            const c = document.getElementById('particles');
+            for (let i = 0; i < 25; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                p.style.width = (Math.random() * 3 + 1) + 'px';
+                p.style.height = p.style.width;
+                c.appendChild(p);
+            }
+        }
+
+        async function checkAuth() {
+            try {
+                const res = await fetch(`${API}/check-auth`, { credentials: 'include' });
+                const data = await res.json();
+                const navBtns = document.getElementById('navButtons');
+
+                if (data.logged_in) {
+                    // Show logout + admin name
+                    const existingLogin = navBtns.querySelector('.login-btn');
+                    if (existingLogin) existingLogin.remove();
+
+                    const logoutBtn = document.createElement('button');
+                    logoutBtn.className = 'nav-btn logout-btn';
+                    logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+                    logoutBtn.onclick = logout;
+                    navBtns.appendChild(logoutBtn);
+
+                    // Update bottom nav - replace Login with Admin
+                    updateBottomNavForAdmin();
+                } else {
+                    const loginBtn = document.createElement('a');
+                    loginBtn.href = '/login';
+                    loginBtn.className = 'nav-btn login-btn';
+                    loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+                    navBtns.appendChild(loginBtn);
+                }
+            } catch (e) {
+                console.log('Auth check failed:', e);
+                // Show login button as fallback
+                const navBtns = document.getElementById('navButtons');
+                const loginBtn = document.createElement('a');
+                loginBtn.href = '/login';
+                loginBtn.className = 'nav-btn login-btn';
+                loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+                navBtns.appendChild(loginBtn);
+            }
+        }
+
+        function updateBottomNavForAdmin() {
+            // No changes needed - bottom nav always shows same items
+        }
+
+        async function logout() {
+            try {
+                await fetch(`${API}/logout`, { method: 'POST', credentials: 'include' });
+            } catch (e) { }
+            document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            location.reload();
+        }
 
         async function loadDashboard() {
             try {
-                const res = await fetch(API_BASE + '/dashboard/summary');
-                const data = await res.json();
-                if (data.success && data.data) {
-                    document.getElementById('totalDonations').textContent = formatCurrency(data.data.total_donations || 0);
-                    document.getElementById('totalExpenses').textContent = formatCurrency(data.data.total_expenses || 0);
-                    document.getElementById('balance').textContent = formatCurrency(data.data.balance || 0);
-                    document.getElementById('upcomingFestivals').textContent = data.data.upcoming_festivals || 0;
+                const res = await fetch(`${API}/dashboard/summary`, { credentials: 'include' });
+                const result = await res.json();
+
+                if (!result.success) throw new Error(result.error);
+
+                const d = result.data;
+
+                // Update stats
+                document.getElementById('totalIncome').textContent = '₹' + fmt(d.total_income || 0);
+                document.getElementById('totalExpenses').textContent = '₹' + fmt(d.total_expenses || 0);
+                document.getElementById('totalBalance').textContent = '₹' + fmt(d.balance || 0);
+                document.getElementById('totalFestivals').textContent = d.festival_count || 0;
+
+                // Recent donations
+                const donDiv = document.getElementById('recentDonations');
+                const donations = d.recent_donations || [];
+                if (donations.length === 0) {
+                    donDiv.innerHTML = '<div class="empty-recent"><i class="fas fa-hand-holding-heart"></i>No donations yet</div>';
+                } else {
+                    donDiv.innerHTML = donations.map(don => `
+                        <div class="recent-item">
+                            <div class="info">
+                                <div class="name">${esc(don.donor)}</div>
+                                <div class="date">${fmtDate(don.date)}</div>
+                            </div>
+                            <span class="badge ${don.status}">${don.status}</span>
+                            <div class="amount income">₹${fmt(don.amount)}</div>
+                        </div>
+                    `).join('');
                 }
-            } catch (error) { console.error('Error:', error); }
+
+                // Recent expenses
+                const expDiv = document.getElementById('recentExpenses');
+                const expenses = d.recent_expenses || [];
+                if (expenses.length === 0) {
+                    expDiv.innerHTML = '<div class="empty-recent"><i class="fas fa-receipt"></i>No expenses yet</div>';
+                } else {
+                    expDiv.innerHTML = expenses.map(exp => `
+                        <div class="recent-item">
+                            <div class="info">
+                                <div class="name">${esc(exp.title)}</div>
+                                <div class="date">${fmtDate(exp.date)} ${exp.category ? '• ' + esc(exp.category) : ''}</div>
+                            </div>
+                            <span class="badge ${exp.status}">${exp.status}</span>
+                            <div class="amount expense">₹${fmt(exp.amount)}</div>
+                        </div>
+                    `).join('');
+                }
+
+            } catch (e) {
+                console.error('Dashboard error:', e);
+                document.getElementById('recentDonations').innerHTML = '<div class="empty-recent"><i class="fas fa-exclamation-triangle"></i>Failed to load</div>';
+                document.getElementById('recentExpenses').innerHTML = '<div class="empty-recent"><i class="fas fa-exclamation-triangle"></i>Failed to load</div>';
+            }
         }
 
-        async function loadTempleInfo() {
-            try {
-                const res = await fetch(API_BASE + '/temple');
-                const data = await res.json();
-                if (data.success && data.data) {
-                    document.getElementById('templeName').textContent = '🛕 ' + data.data.name;
-                    document.getElementById('templeAddress').textContent = data.data.address;
-                }
-            } catch (e) { }
+        function fmt(n) {
+            return Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDashboard();
-            loadTempleInfo();
-        });
+        function fmtDate(d) {
+            if (!d) return '-';
+            try { return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
+            catch { return d; }
+        }
+
+        function esc(s) {
+            if (!s) return '';
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
     </script>
 </body>
 

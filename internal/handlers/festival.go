@@ -2,142 +2,90 @@ package handlers
 
 import (
 	"net/http"
+	"newapp/internal/database"
 	"newapp/internal/models"
-	"newapp/internal/repository"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type FestivalHandler struct {
-	repo         *repository.FestivalRepository
-	donationRepo *repository.DonationRepository
-	expenseRepo  *repository.ExpenseRepository
-}
-
-func NewFestivalHandler() *FestivalHandler {
-	return &FestivalHandler{
-		repo:         repository.NewFestivalRepository(),
-		donationRepo: repository.NewDonationRepository(),
-		expenseRepo:  repository.NewExpenseRepository(),
+func GetFestivals(c *gin.Context) {
+	var festivals []models.Festival
+	status := c.Query("status")
+	query := database.DB.Order("created_at DESC")
+	if status != "" && status != "all" {
+		query = query.Where("status = ?", status)
 	}
+	query.Find(&festivals)
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": festivals})
 }
 
-func (h *FestivalHandler) Create(c *gin.Context) {
+func GetFestivalReport(c *gin.Context) {
+	id := c.Param("id")
 	var festival models.Festival
-	if err := c.ShouldBindJSON(&festival); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if database.DB.First(&festival, id).Error != nil {
+		c.JSON(404, gin.H{"success": false, "error": "Festival not found"})
 		return
 	}
 
-	festival.TempleID = 1 // Default temple
+	var totalDon, totalExp float64
+	var donCount, expCount int64
+	database.DB.Model(&models.Donation{}).Where("festival_id=?", id).Select("COALESCE(SUM(amount),0)").Scan(&totalDon)
+	database.DB.Model(&models.Expense{}).Where("festival_id=?", id).Select("COALESCE(SUM(amount),0)").Scan(&totalExp)
+	database.DB.Model(&models.Donation{}).Where("festival_id=?", id).Count(&donCount)
+	database.DB.Model(&models.Expense{}).Where("festival_id=?", id).Count(&expCount)
 
-	if err := h.repo.Create(&festival); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create festival"})
-		return
-	}
+	var donations []models.Donation
+	var expenses []models.Expense
+	database.DB.Where("festival_id=?", id).Order("created_at DESC").Find(&donations)
+	database.DB.Where("festival_id=?", id).Order("created_at DESC").Find(&expenses)
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Festival created successfully",
-		"data":    festival,
-	})
-}
-
-func (h *FestivalHandler) GetAll(c *gin.Context) {
-	festivals, err := h.repo.GetAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch festivals"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"data":    festivals,
-	})
-}
-
-func (h *FestivalHandler) GetByID(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		return
-	}
-
-	festival, err := h.repo.GetByID(uint(id))
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Festival not found"})
-		return
-	}
-
-	// Get totals
-	totalDonations, _ := h.donationRepo.GetTotalByFestival(uint(id))
-	totalExpenses, _ := h.expenseRepo.GetTotalByFestival(uint(id))
-
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"data":    festival,
-		"summary": gin.H{
-			"total_donations": totalDonations,
-			"total_expenses":  totalExpenses,
-			"balance":         totalDonations - totalExpenses,
+		"data": gin.H{
+			"festival":        festival,
+			"total_donations": totalDon,
+			"total_expenses":  totalExp,
+			"balance":         totalDon - totalExp,
+			"donation_count":  donCount,
+			"expense_count":   expCount,
+			"donations":       donations,
+			"expenses":        expenses,
 		},
 	})
 }
 
-func (h *FestivalHandler) Update(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+func CreateFestival(c *gin.Context) {
+	var f models.Festival
+	if err := c.ShouldBindJSON(&f); err != nil {
+		c.JSON(400, gin.H{"success": false, "error": "Invalid data: " + err.Error()})
 		return
 	}
-
-	var festival models.Festival
-	if err := c.ShouldBindJSON(&festival); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if f.Name == "" {
+		c.JSON(400, gin.H{"success": false, "error": "Festival name required"})
 		return
 	}
-
-	festival.ID = uint(id)
-	if err := h.repo.Update(&festival); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update festival"})
-		return
+	if f.Status == "" {
+		f.Status = "upcoming"
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Festival updated successfully",
-		"data":    festival,
-	})
+	database.DB.Create(&f)
+	c.JSON(201, gin.H{"success": true, "data": f, "message": "Festival added"})
 }
 
-func (h *FestivalHandler) Delete(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+func UpdateFestival(c *gin.Context) {
+	id := c.Param("id")
+	var f models.Festival
+	if database.DB.First(&f, id).Error != nil {
+		c.JSON(404, gin.H{"success": false, "error": "Not found"})
 		return
 	}
-
-	if err := h.repo.Delete(uint(id)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete festival"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Festival deleted successfully",
-	})
+	var u models.Festival
+	c.ShouldBindJSON(&u)
+	database.DB.Model(&f).Updates(u)
+	c.JSON(200, gin.H{"success": true, "data": f, "message": "Updated"})
 }
 
-func (h *FestivalHandler) GetUpcoming(c *gin.Context) {
-	festivals, err := h.repo.GetUpcoming()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch festivals"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"data":    festivals,
-	})
+func DeleteFestival(c *gin.Context) {
+	id := c.Param("id")
+	database.DB.Delete(&models.Festival{}, id)
+	c.JSON(200, gin.H{"success": true, "message": "Deleted"})
 }

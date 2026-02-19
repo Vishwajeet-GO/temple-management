@@ -5,38 +5,26 @@ import (
 	"newapp/internal/models"
 )
 
-type FestivalRepository struct{}
-
-func NewFestivalRepository() *FestivalRepository {
-	return &FestivalRepository{}
+func CreateFestival(festival *models.Festival) error {
+	return database.DB.Create(festival).Error
 }
 
-func (r *FestivalRepository) Create(festival *models.Festival) error {
-	return database.GetDB().Create(festival).Error
-}
-
-func (r *FestivalRepository) GetAll() ([]models.Festival, error) {
+func GetAllFestivals() ([]models.Festival, error) {
 	var festivals []models.Festival
-	result := database.GetDB().Order("start_date desc").Find(&festivals)
-	return festivals, result.Error
+	err := database.DB.Order("created_at DESC").Find(&festivals).Error
+	return festivals, err
 }
 
-func (r *FestivalRepository) GetByID(id uint) (*models.Festival, error) {
+func GetFestivalByID(id uint) (*models.Festival, error) {
 	var festival models.Festival
-	result := database.GetDB().Preload("Donations").Preload("Expenses").First(&festival, id)
-	return &festival, result.Error
+	err := database.DB.First(&festival, id).Error
+	return &festival, err
 }
 
-func (r *FestivalRepository) Update(festival *models.Festival) error {
-	return database.GetDB().Save(festival).Error
+func UpdateFestival(festival *models.Festival) error {
+	return database.DB.Save(festival).Error
 }
 
-func (r *FestivalRepository) Delete(id uint) error {
-	return database.GetDB().Delete(&models.Festival{}, id).Error
-}
-
-func (r *FestivalRepository) GetUpcoming() ([]models.Festival, error) {
-	var festivals []models.Festival
-	result := database.GetDB().Where("status = ?", "upcoming").Order("start_date asc").Find(&festivals)
-	return festivals, result.Error
+func DeleteFestival(id uint) error {
+	return database.DB.Delete(&models.Festival{}, id).Error
 }

@@ -3,400 +3,470 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
     <title>Donations - Temple Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
         body {
             background-image: url("/static/images/temple-bg.jpg");
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
             background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
         body::before {
             content: "";
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: -1;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #28a745, #20c997) !important;
-            padding: 10px 0;
+        .top-nav {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32, #43a047)
         }
 
-        .table-container {
-            background: #fff;
+        .stat-card.total {
+            background: linear-gradient(135deg, #2e7d32, #4caf50)
+        }
+
+        .stat-card.entries {
+            background: linear-gradient(135deg, #1565c0, #42a5f5)
+        }
+
+        .stat-card.paid {
+            background: linear-gradient(135deg, #00838f, #26c6da)
+        }
+
+        .stat-card.pending {
+            background: linear-gradient(135deg, #f9a825, #fdd835);
+            color: #333
+        }
+
+        .modal-head {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32)
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #2e7d32, #4caf50)
+        }
+
+        .amount {
+            color: #66bb6a
+        }
+
+        .search-input:focus {
+            border-color: #4caf50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.2)
+        }
+
+        .nav-item.active {
+            color: #4caf50
+        }
+
+        .nav-item.active i {
+            filter: drop-shadow(0 3px 6px rgba(76, 175, 80, 0.5))
+        }
+
+        .nav-item.active::before {
+            background: #4caf50
+        }
+
+        .spinner {
+            border-top-color: #4caf50
+        }
+
+        .festival-select {
+            padding: 10px 14px;
             border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #800c78c2;
+            font-size: 14px;
+            background: hwb(196 3% 34% / 0.488);
+            cursor: pointer;
+            min-width: 300px;
         }
 
-        .stats-card {
-            transition: transform 0.2s;
-            border: none;
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
             border-radius: 12px;
+            border: 1px solid #a0187a78;
+            font-size: 15px;
+            background: rgba(4, 42, 49, 0.681);
         }
 
-        .stats-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .stats-card h4 {
-            font-weight: 700;
-            color: white !important;
-        }
-
-        .bg-warning h4 {
-            color: #333 !important;
-        }
-
-        .table th {
-            background: #28a745;
-            color: rgb(237, 230, 230);
-            white-space: nowrap;
-        }
-
-        .table td {
-            color: #333;
-            vertical-align: middle;
-            white-space: nowrap;
-        }
-
-        .btn-close {
-            filter: invert(1);
-        }
-
-        .modal-header {
-            background: #28a745;
-            color: white;
-        }
-
-        body {
-            padding-bottom: 80px;
-        }
-
-        @media (min-width: 992px) {
-            body {
-                padding-bottom: 20px;
-            }
+        .search-input:focus {
+            outline: none;
+            border-color: #ef5350;
+            box-shadow: 0 0 0 3px rgba(239, 83, 80, 0.1);
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-dark navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">🛕 Temple Management</a>
-            <div class="d-flex align-items-center d-none d-lg-flex">
-                <a href="/" class="btn btn-outline-light btn-sm me-2">Home</a>
-                <button class="btn btn-light btn-sm text-success fw-bold" onclick="openAddModal()">
-                    <i class="bi bi-plus-circle-fill"></i> Add Manual
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div class="particles" id="particles"></div>
 
-    <div class="container py-4">
-        <!-- Stats Cards -->
-        <div class="row g-3 mb-4">
-            <div class="col-6 col-md-3">
-                <div class="card bg-success stats-card">
-                    <div class="card-body text-center text-white p-3"><i class="bi bi-cash-coin fs-3"></i>
-                        <h4 id="totalAmount">₹0</h4><small style="opacity:0.9">Total</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="card bg-primary stats-card">
-                    <div class="card-body text-center text-white p-3"><i class="bi bi-receipt fs-3"></i>
-                        <h4 id="totalCount">0</h4><small style="opacity:0.9">Entries</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="card bg-info stats-card">
-                    <div class="card-body text-center text-white p-3"><i class="bi bi-check-circle fs-3"></i>
-                        <h4 id="paidCount">0</h4><small style="opacity:0.9">Paid</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="card bg-warning stats-card">
-                    <div class="card-body text-center p-3"><i class="bi bi-clock fs-3 text-dark"></i>
-                        <h4 id="pendingCount">0</h4><small class="text-dark">Pending</small>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
-        <!-- Donations Table -->
-        <div class="table-container">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="mb-0 text-dark"><i class="bi bi-list-ul"></i> History</h5>
-                <input type="text" class="form-control form-control-sm w-auto" id="searchInput" placeholder="Search..."
-                    onkeyup="filterTable()">
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Donor</th>
-                            <th>Amount</th>
-                            <th>Link</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="donationsBody">
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
+    <!-- Image Viewer -->
+    <div class="img-viewer" id="imgViewer" onclick="closeImgViewer()">
+        <button class="img-viewer-close"><i class="fas fa-times"></i></button>
+        <img id="imgViewerSrc" src="" alt="Preview">
+    </div>
+
+    <!-- Confirm -->
+    <div class="confirm-bg" id="confirmBg">
+        <div class="confirm-box">
+            <div class="confirm-icon"><i class="fas fa-trash-alt"></i></div>
+            <h4>Delete Donation?</h4>
+            <p>This cannot be undone.</p>
+            <div class="confirm-btns">
+                <button class="cbtn cancel" onclick="closeConfirm()">Cancel</button>
+                <button class="cbtn del" id="confirmDelBtn">Delete</button>
             </div>
         </div>
     </div>
 
-    <!-- Floating Add Button (Mobile) -->
-    <button class="btn btn-success rounded-circle shadow position-fixed d-lg-none"
-        style="bottom: 90px; right: 20px; width: 56px; height: 56px; z-index: 999;" onclick="openAddModal()">
-        <i class="bi bi-plus-lg fs-4"></i>
-    </button>
+    <div class="main">
+        <nav class="top-nav">
+            <a href="/" class="brand"><i class="fas fa-gopuram"></i><span> मंदिर दान</span></a>
+            <div class="nav-btns">
+                <a href="/" class="nav-btn home"><i class="fas fa-home"></i> Home</a>
+                <button class="nav-btn add" id="addBtn" onclick="openModal()"><i class="fas fa-plus"></i> Add</button>
+            </div>
+        </nav>
 
-    <!-- Bottom Nav -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+                <div class="stat-value" id="sTotal">₹0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card entries">
+                <div class="stat-icon"><i class="fas fa-list-ol"></i></div>
+                <div class="stat-value" id="sEntries">0</div>
+                <div class="stat-label">Entries</div>
+            </div>
+            <div class="stat-card paid">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value" id="sPaid">0</div>
+                <div class="stat-label">Paid</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-value" id="sPending">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+
+        <!-- Filter Row: Festival Select + Search -->
+        <div class="filter-row">
+            <select class="festival-select" id="festivalFilter" onchange="fetchData()">
+                <option value="all">All Festivals</option>
+            </select>
+            <div class="search-wrap">
+                <i class="fas fa-search"
+                    style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#888"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search donations..."
+                    oninput="handleSearch(this.value)" style="padding-left:40px">
+            </div>
+        </div>
+
+        <div class="table-box">
+            <div class="table-wrap">
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Donor</th>
+                                <th>Amount</th>
+                                <th>Festival</th>
+                                <th>Mode</th>
+                                <th>Image</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            <tr>
+                                <td colspan="8">
+                                    <div class="loading-box">
+                                        <div class="spinner"></div>
+                                        <div class="loading-text">Loading...</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-bg" id="modalBg">
+        <div class="modal">
+            <div class="modal-head">
+                <h3><i class="fas fa-hand-holding-heart"></i> <span id="modalTitle">Add Donation</span></h3>
+                <button class="modal-x" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+                <div class="fg"><label>Festival</label>
+                    <select class="fi" id="fFestival">
+                        <option value="0">-- No Festival --</option>
+                    </select>
+                </div>
+                <div class="frow">
+                    <div class="fg"><label>Date <span class="req">*</span></label><input type="date" class="fi"
+                            id="fDate"></div>
+                    <div class="fg"><label>Status</label><select class="fi" id="fStatus">
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                        </select></div>
+                </div>
+                <div class="fg"><label>Donor Name <span class="req">*</span></label><input type="text" class="fi"
+                        id="fDonor" placeholder="Enter donor name"></div>
+                <div class="fg"><label>Amount (₹) <span class="req">*</span></label><input type="number" class="fi"
+                        id="fAmount" placeholder="Enter amount" step="0.01" min="0"></div>
+                <div class="fg"><label>Payment Screenshot</label>
+                    <div class="file-input-wrap">
+                        <label class="file-input-label" id="fileLabel"><i class="fas fa-camera"></i><span
+                                id="fileName">Choose file...</span></label>
+                        <input type="file" id="fImage" accept="image/*" capture="environment"
+                            onchange="previewFile(this)">
+                    </div>
+                    <div class="file-preview" id="filePreview"><img id="filePreviewImg" src="" alt="Preview"></div>
+                </div>
+                <div class="fg"><label>Payment Mode</label>
+                    <select class="fi" id="fMode">
+                        <option value="cash">Cash</option>
+                        <option value="upi">UPI</option>
+                        <option value="bank">Bank Transfer</option>
+                        <option value="cheque">Cheque</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-cancel" onclick="closeModal()"><i class="fas fa-times"></i> Cancel</button>
+                <button class="btn btn-save" onclick="saveDonation()"><i class="fas fa-save"></i> <span
+                        id="saveText">Save</span></button>
+            </div>
+        </div>
+    </div>
+
     <nav class="bottom-nav">
-        <a href="/"><i class="bi bi-house"></i><span>Home</span></a>
-        <a href="/donate"><i class="bi bi-qr-code"></i><span>Pay</span></a>
-        <a href="/donations" class="active" style="color: #28a745;"><i
-                class="bi bi-cash-coin"></i><span>History</span></a>
-        <a href="/expenses"><i class="bi bi-receipt"></i><span>Expense</span></a>
-        <a href="/login"><i class="bi bi-person"></i><span>Admin</span></a>
+        <a href="/" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/donate" class="nav-item"><i class="fas fa-heart"></i><span>Donate</span></a>
+        <a href="/festivals" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Festivals</span></a>
+        <a href="/donations" class="nav-item active"><i class="fas fa-indian-rupee-sign"></i><span>History</span></a>
+        <a href="/expenses" class="nav-item"><i class="fas fa-file-invoice-dollar"></i><span>Expenses</span></a>
     </nav>
 
-    <!-- Add/Edit Modal -->
-    <div class="modal fade" id="donationModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Add Donation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form id="donationForm" onsubmit="saveDonation(event)">
-                    <div class="modal-body">
-                        <input type="hidden" id="donationId">
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-dark">Donor Name *</label>
-                            <input type="text" class="form-control" id="donorName" required>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label fw-bold text-dark">Amount (₹) *</label>
-                                <input type="number" class="form-control" id="amount" required min="1">
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label fw-bold text-dark">Date *</label>
-                                <input type="date" class="form-control" id="donationDate" required>
-                            </div>
-                        </div>
-
-                        <!-- Link to Event -->
-                        <div class="mb-3 p-2 border rounded bg-light">
-                            <label class="form-label text-success fw-bold"><i class="bi bi-link-45deg"></i> Link to
-                                Event</label>
-                            <select class="form-select border-success" id="festivalIdLink">
-                                <option value="0">-- General Fund --</option>
-                                <!-- JS Populated -->
-                            </select>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label fw-bold text-dark">Mode</label>
-                                <select class="form-select" id="paymentMode">
-                                    <option value="cash">Cash</option>
-                                    <option value="upi">UPI</option>
-                                    <option value="bank">Bank</option>
-                                </select>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label fw-bold text-dark">Status</label>
-                                <select class="form-select" id="donationStatus">
-                                    <option value="paid">Paid</option>
-                                    <option value="pending">Pending</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-dark">Phone (Optional)</label>
-                            <input type="tel" class="form-control" id="donorPhone">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success px-4">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="developer-credit">Developed by <a href="#">Vishwajeet_Yadav</a></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API_BASE = '/api/v1';
-        let donationsData = [];
-        let festivalsList = [];
-        let donationModal;
+        const API = window.location.origin + '/api/v1';
+        let searchTimer = null, deleteId = null, isAdmin = false, festivals = [];
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            donationModal = new bootstrap.Modal(document.getElementById('donationModal'));
-            document.getElementById('donationDate').valueAsDate = new Date();
-
-            // Load Festivals
-            try {
-                const fRes = await fetch(API_BASE + '/festivals');
-                const fJson = await fRes.json();
-                if (fJson.success) {
-                    festivalsList = fJson.data || [];
-                    const sel = document.getElementById('festivalIdLink');
-                    festivalsList.forEach(f => {
-                        const opt = document.createElement('option');
-                        opt.value = f.ID;
-                        opt.innerText = f.name;
-                        sel.appendChild(opt);
-                    });
-                }
-            } catch (e) { }
-
-            loadDonations();
+        document.addEventListener('DOMContentLoaded', () => {
+            setDefaultDate(); checkAuth(); loadFestivals(); fetchData();
         });
 
-        function getToken() { return localStorage.getItem('token'); }
-        function formatCurrency(val) { return '₹' + Number(val).toLocaleString('en-IN'); }
-        function formatDate(d) { return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }); }
+        function setDefaultDate() { document.getElementById('fDate').value = new Date().toISOString().split('T')[0] }
 
-        async function loadDonations() {
+        async function checkAuth() {
+            const t = localStorage.getItem('authToken');
+            if (!t) { document.getElementById('addBtn').style.display = 'none'; return }
             try {
-                const res = await fetch(API_BASE + '/donations');
-                const json = await res.json();
-                if (json.success) {
-                    donationsData = json.data || [];
-                    renderTable();
-                    updateStats();
+                const r = await fetch(`${API}/auth/check`, { headers: { 'Authorization': 'Bearer ' + t } });
+                const res = await r.json();
+                if (res.authenticated && res.user.role === 'admin') { isAdmin = true; document.getElementById('addBtn').style.display = 'flex' }
+                else { document.getElementById('addBtn').style.display = 'none' }
+            } catch (e) { document.getElementById('addBtn').style.display = 'none' }
+        }
+
+        async function loadFestivals() {
+            try {
+                const r = await fetch(`${API}/festivals`); const res = await r.json();
+                if (res.success) {
+                    festivals = res.data || [];
+                    const sel = document.getElementById('festivalFilter');
+                    const msel = document.getElementById('fFestival');
+                    festivals.forEach(f => {
+                        sel.innerHTML += `<option value="${f.id}">${f.name}</option>`;
+                        msel.innerHTML += `<option value="${f.id}">${f.name}</option>`;
+                    });
                 }
-            } catch (e) { }
+            } catch (e) { console.error(e) }
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('donationsBody');
-            if (donationsData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No donations found</td></tr>';
-                return;
+        async function fetchData() {
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '<tr><td colspan="8"><div class="loading-box"><div class="spinner"></div><div class="loading-text">Loading...</div></div></td></tr>';
+            try {
+                const search = document.getElementById('searchInput').value.trim();
+                const fid = document.getElementById('festivalFilter').value;
+                let url = `${API}/donations?`;
+                if (search) url += `search=${encodeURIComponent(search)}&`;
+                if (fid && fid !== 'all') url += `festival_id=${fid}&`;
+                const r = await fetch(url); if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                const res = await r.json(); if (!res.success) throw new Error(res.error || 'Failed');
+                updateStats(res.stats); renderTable(res.data || []);
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="8"><div class="error-state"><i class="fas fa-exclamation-triangle"></i><p>${e.message}</p><button class="retry-btn" onclick="fetchData()"><i class="fas fa-redo"></i> Retry</button></div></td></tr>`;
             }
-            tbody.innerHTML = donationsData.map(d => {
-                const statusBadge = d.notes === 'pending' ? '<span class="badge bg-warning text-dark">Pending</span>' : '<span class="badge bg-success">Paid</span>';
-                const linkBadge = d.festival_id ? '<span class="badge bg-info text-dark">Linked</span>' : '<span class="badge bg-secondary">General</span>';
-
-                return `
-                <tr>
-                    <td>${formatDate(d.date)}</td>
-                    <td>
-                        <div class="fw-bold text-dark">${d.donor_name}</div>
-                        <small class="text-muted">${d.donor_phone || ''}</small>
-                    </td>
-                    <td class="text-success fw-bold">${formatCurrency(d.amount)}</td>
-                    <td>${linkBadge}</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick="editDonation(${d.ID})"><i class="bi bi-pencil"></i></button>
-                    </td>
-                </tr>`;
-            }).join('');
         }
 
-        function updateStats() {
-            const total = donationsData.reduce((s, d) => s + d.amount, 0);
-            document.getElementById('totalAmount').innerText = formatCurrency(total);
-            document.getElementById('totalCount').innerText = donationsData.length;
-            document.getElementById('paidCount').innerText = donationsData.filter(d => d.notes !== 'pending').length;
-            document.getElementById('pendingCount').innerText = donationsData.filter(d => d.notes === 'pending').length;
+        function updateStats(s) {
+            if (!s) return;
+            document.getElementById('sTotal').textContent = '₹' + fmt(s.total || 0);
+            document.getElementById('sEntries').textContent = s.entries || 0;
+            document.getElementById('sPaid').textContent = s.paid || 0;
+            document.getElementById('sPending').textContent = s.pending || 0;
         }
 
-        window.openAddModal = function () {
-            document.getElementById('modalTitle').innerText = 'Add Donation';
-            document.getElementById('donationForm').reset();
-            document.getElementById('donationId').value = '';
-            document.getElementById('donationDate').valueAsDate = new Date();
-            document.getElementById('donationStatus').value = 'paid';
-            donationModal.show();
-        };
-
-        window.saveDonation = async function (e) {
-            e.preventDefault();
-            const token = getToken();
-            if (!token) return window.location.href = '/login';
-
-            const id = document.getElementById('donationId').value;
-            const fid = document.getElementById('festivalIdLink').value;
-
-            const data = {
-                donor_name: document.getElementById('donorName').value,
-                donor_phone: document.getElementById('donorPhone').value,
-                amount: parseFloat(document.getElementById('amount').value),
-                date: new Date(document.getElementById('donationDate').value).toISOString(),
-                payment_mode: document.getElementById('paymentMode').value,
-                notes: document.getElementById('donationStatus').value,
-                festival_id: parseInt(fid),
-                purpose: "Linked"
-            };
-
-            const url = API_BASE + '/donations' + (id ? '/' + id : '');
-            const method = id ? 'PUT' : 'POST';
-
-            await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                body: JSON.stringify(data)
-            });
-            donationModal.hide();
-            loadDonations();
-        };
-
-        window.editDonation = function (id) {
-            const d = donationsData.find(x => x.ID === id);
-            if (!d) return;
-            document.getElementById('modalTitle').innerText = 'Edit Donation';
-            document.getElementById('donationId').value = id;
-            document.getElementById('donorName').value = d.donor_name;
-            document.getElementById('donorPhone').value = d.donor_phone;
-            document.getElementById('amount').value = d.amount;
-            document.getElementById('donationDate').value = d.date.split('T')[0];
-            document.getElementById('paymentMode').value = d.payment_mode;
-            document.getElementById('donationStatus').value = d.notes === 'pending' ? 'pending' : 'paid';
-            document.getElementById('festivalIdLink').value = d.festival_id || 0;
-            donationModal.show();
+        function renderTable(data) {
+            const tbody = document.getElementById('tbody');
+            if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="fas fa-hand-holding-heart"></i><p>No donations found</p></div></td></tr>'; return }
+            tbody.innerHTML = data.map((d, i) => `
+            <tr style="animation-delay:${i * 0.04}s">
+                <td>${fmtDate(d.date)}</td>
+                <td><strong>${esc(d.donor || '-')}</strong></td>
+                <td><span class="amount">₹${fmt(d.amount)}</span></td>
+                <td><small>${d.festival ? esc(d.festival.name) : '—'}</small></td>
+                <td><span class="payment-mode">${esc(d.payment_mode || 'cash')}</span></td>
+                <td>${d.image_url ? `<img src="${d.image_url}" class="img-thumb" onclick="viewImage('${d.image_url}')">` : '—'}</td>
+                <td><span class="status-badge ${d.status}" onclick="${isAdmin ? `toggleStatus(${d.id})` : 'void(0)'}">${d.status === 'paid' ? '✓ Paid' : '⏳ Pending'}</span></td>
+                <td><div class="action-btns">
+                    ${d.image_url ? `<button class="action-btn view" onclick="viewImage('${d.image_url}')"><i class="fas fa-eye"></i></button>` : ''}
+                    <button class="action-btn edit ${isAdmin ? '' : 'disabled'}" onclick="editItem(${d.id})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete ${isAdmin ? '' : 'disabled'}" onclick="showConfirm(${d.id})"><i class="fas fa-trash"></i></button>
+                </div></td>
+            </tr>`).join('');
         }
 
-        window.filterTable = function () {
-            const term = document.getElementById('searchInput').value.toLowerCase();
-            document.querySelectorAll('#donationsBody tr').forEach(r => {
-                r.style.display = r.innerText.toLowerCase().includes(term) ? '' : 'none';
-            });
-        };
+        function handleSearch(v) { clearTimeout(searchTimer); searchTimer = setTimeout(() => fetchData(), 400) }
+
+        function viewImage(url) { document.getElementById('imgViewerSrc').src = url; document.getElementById('imgViewer').classList.add('active') }
+        function closeImgViewer() { document.getElementById('imgViewer').classList.remove('active') }
+
+        function previewFile(input) {
+            const prev = document.getElementById('filePreview'), img = document.getElementById('filePreviewImg');
+            if (input.files && input.files[0]) {
+                document.getElementById('fileName').textContent = input.files[0].name;
+                const r = new FileReader(); r.onload = e => { img.src = e.target.result; prev.style.display = 'block' }; r.readAsDataURL(input.files[0])
+            }
+            else { prev.style.display = 'none'; document.getElementById('fileName').textContent = 'Choose file...' }
+        }
+
+        function openModal() {
+            ['editId', 'fDonor', 'fAmount'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('fStatus').value = 'pending'; document.getElementById('fMode').value = 'cash';
+            document.getElementById('fFestival').value = '0'; document.getElementById('fImage').value = '';
+            document.getElementById('filePreview').style.display = 'none'; document.getElementById('fileName').textContent = 'Choose file...';
+            document.getElementById('modalTitle').textContent = 'Add Donation'; document.getElementById('saveText').textContent = 'Save';
+            setDefaultDate(); document.getElementById('modalBg').classList.add('active');
+            setTimeout(() => document.getElementById('fDonor').focus(), 300);
+        }
+        function closeModal() { document.getElementById('modalBg').classList.remove('active') }
+
+        async function editItem(id) {
+            try {
+                const r = await fetch(`${API}/donations`); const res = await r.json();
+                const d = (res.data || []).find(x => x.id === id); if (!d) { toast('Not found', 'error'); return }
+                document.getElementById('editId').value = d.id; document.getElementById('fDate').value = d.date || '';
+                document.getElementById('fDonor').value = d.donor || ''; document.getElementById('fAmount').value = d.amount || '';
+                document.getElementById('fStatus').value = d.status || 'pending'; document.getElementById('fMode').value = d.payment_mode || 'cash';
+                document.getElementById('fFestival').value = d.festival_id || '0';
+                document.getElementById('modalTitle').textContent = 'Edit Donation'; document.getElementById('saveText').textContent = 'Update';
+                if (d.image_url) { document.getElementById('filePreviewImg').src = d.image_url; document.getElementById('filePreview').style.display = 'block' }
+                document.getElementById('modalBg').classList.add('active');
+            } catch (e) { toast('Error: ' + e.message, 'error') }
+        }
+
+        async function saveDonation() {
+            const editId = document.getElementById('editId').value;
+            const donor = document.getElementById('fDonor').value.trim();
+            const amount = parseFloat(document.getElementById('fAmount').value);
+            if (!donor) { toast('Enter donor name', 'error'); return }
+            if (!amount || amount <= 0) { toast('Enter valid amount', 'error'); return }
+
+            const fd = new FormData();
+            fd.append('date', document.getElementById('fDate').value);
+            fd.append('donor', donor); fd.append('amount', amount);
+            fd.append('status', document.getElementById('fStatus').value);
+            fd.append('payment_mode', document.getElementById('fMode').value);
+            fd.append('festival_id', document.getElementById('fFestival').value);
+            const fi = document.getElementById('fImage');
+            if (fi.files && fi.files[0]) fd.append('image', fi.files[0]);
+
+            try {
+                const token = localStorage.getItem('authToken') || '';
+                let url = `${API}/donations`, method = 'POST';
+                if (editId) { url += `/${editId}`; method = 'PUT' }
+                const r = await fetch(url, { method, headers: { 'Authorization': 'Bearer ' + token }, body: fd });
+                const res = await r.json(); if (!res.success) throw new Error(res.error || 'Failed');
+                toast(res.message || 'Saved!', 'success'); closeModal(); fetchData();
+            } catch (e) { toast('Error: ' + e.message, 'error') }
+        }
+
+        async function toggleStatus(id) {
+            try {
+                const t = localStorage.getItem('authToken') || '';
+                const r = await fetch(`${API}/donations/${id}/toggle`, { method: 'PATCH', headers: { 'Authorization': 'Bearer ' + t } });
+                const res = await r.json(); if (!res.success) throw new Error(res.error);
+                toast(res.message || 'Updated', 'info'); fetchData();
+            } catch (e) { toast('Error: ' + e.message, 'error') }
+        }
+
+        function showConfirm(id) {
+            deleteId = id; document.getElementById('confirmBg').classList.add('active');
+            document.getElementById('confirmDelBtn').onclick = () => deleteItem()
+        }
+        function closeConfirm() { document.getElementById('confirmBg').classList.remove('active'); deleteId = null }
+        async function deleteItem() {
+            if (!deleteId) return;
+            try {
+                const t = localStorage.getItem('authToken') || '';
+                const r = await fetch(`${API}/donations/${deleteId}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + t } });
+                const res = await r.json(); if (!res.success) throw new Error(res.error);
+                toast('Deleted', 'success'); closeConfirm(); fetchData();
+            } catch (e) { toast('Error: ' + e.message, 'error'); closeConfirm() }
+        }
+
+        function toast(m, t = 'info') {
+            const b = document.getElementById('toastContainer'); const e = document.createElement('div'); e.className = `toast ${t}`;
+            const i = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle' };
+            e.innerHTML = `<i class="fas fa-${i[t]}"></i> ${m}`; b.appendChild(e); setTimeout(() => e.classList.add('show'), 10);
+            setTimeout(() => { e.classList.remove('show'); setTimeout(() => e.remove(), 400) }, 3000)
+        }
+
+        function fmt(n) { return Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) }
+        function fmtDate(d) { if (!d) return '-'; try { return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) } catch { return d } }
+        function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML }
+
+        document.getElementById('modalBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal() });
+        document.getElementById('confirmBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeConfirm() });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeConfirm(); closeImgViewer() } });
     </script>
 </body>
 

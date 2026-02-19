@@ -1,47 +1,35 @@
 package config
 
 import (
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	AppPort    string
-	AppEnv     string
-	DBType     string
 	DBHost     string
 	DBPort     string
 	DBUser     string
 	DBPassword string
 	DBName     string
-	JWTSecret  string
+	AppPort    string
 }
 
-func LoadConfig() *Config {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Warning: .env file not found, using system environment variables")
-	}
-
+func Load() *Config {
+	godotenv.Load()
 	return &Config{
-		AppPort:    getEnv("APP_PORT", "8080"),
-		AppEnv:     getEnv("APP_ENV", "development"),
-		DBType:     getEnv("DB_TYPE", "sqlite"),
 		DBHost:     getEnv("DB_HOST", "localhost"),
 		DBPort:     getEnv("DB_PORT", "5432"),
 		DBUser:     getEnv("DB_USER", "postgres"),
-		DBPassword: getEnv("DB_PASSWORD", "postgres"),
-		DBName:     getEnv("DB_NAME", "temple.db"),
-		JWTSecret:  getEnv("JWT_SECRET", "default-secret-key"),
+		DBPassword: getEnv("DB_PASSWORD", "postgres123"),
+		DBName:     getEnv("DB_NAME", "temple_db"),
+		AppPort:    getEnv("APP_PORT", "8080"),
 	}
 }
 
-func getEnv(key, defaultValue string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		return defaultValue
+func getEnv(key, def string) string {
+	if v, ok := os.LookupEnv(key); ok {
+		return v
 	}
-	return value
+	return def
 }

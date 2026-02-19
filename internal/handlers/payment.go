@@ -1,75 +1,104 @@
 package handlers
 
 import (
-    "fmt"
-    "net/http"
-    "path/filepath"
-    "strconv"
-    "time"
+	"fmt"
+	"net/http"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 
-    "newapp/internal/database"
-    "newapp/internal/models"
+	"newapp/internal/database"
+	"newapp/internal/models"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
-type PaymentHandler struct{}
+// SubmitDonation handles public donation from the donate page
+func SubmitDonation(c *gin.Context) {
+	var donation models.Donation
+	ct := c.ContentType()
 
-func NewPaymentHandler() *PaymentHandler {
-    return &PaymentHandler{}
+	if strings.Contains(ct, "multipart") {
+		donation.Donor = c.PostForm("donor")
+		donation.PaymentMode = c.PostForm("payment_mode")
+		donation.Link = c.PostForm("link")
+		donation.Date = time.Now().Format("2006-01-02")
+		donation.Status = "pending"
+
+		amt, err := strconv.ParseFloat(c.PostForm("amount"), 64)
+		if err == nil {
+			donation.Amount = amt
+		}
+
+		// Handle festival_id
+		if fid := c.PostForm("festival_id"); fid != "" && fid != "0" {
+			id, _ := strconv.ParseUint(fid, 10, 32)
+			uid := uint(id)
+			donation.FestivalID = &uid
+		}
+
+		// Handle screenshot upload
+		file, err := c.FormFile("screenshot")
+		if err == nil && file != nil {
+			ext := filepath.Ext(file.Filename)
+			allowedExts := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".gif": true, ".webp": true}
+			if allowedExts[strings.ToLower(ext)] {
+				fname := fmt.Sprintf("don_%s%s", uuid.New().String()[:8], ext)
+				savePath := filepath.Join("uploads", "donations", fname)
+				if c.SaveUploadedFile(file, savePath) == nil {
+					donation.ImageURL = "/" + filepath.ToSlash(savePath)
+				}
+			}
+		}
+	} else {
+		if err := c.ShouldBindJSON(&donation); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Invalid data: " + err.Error()})
+			return
+		}
+		donation.Date = time.Now().Format("2006-01-02")
+		donation.Status = "pending"
+	}
+
+	// Validate
+	if donation.Donor == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Donor name is required"})
+		return
+	}
+	if donation.Amount <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Amount must be greater than 0"})
+		return
+	}
+	if donation.PaymentMode == "" {
+		donation.PaymentMode = "cash"
+	}
+
+	// Save
+	if err := database.DB.Create(&donation).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to save donation"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"message": "Thank you for your donation! 🙏",
+		"data":    donation,
+	})
 }
 
-// Process Donation with File Upload
-func (h *PaymentHandler) ProcessDonation(c *gin.Context) {
-    // 1. Get Form Fields
-    name := c.PostForm("donor_name")
-    phone := c.PostForm("donor_phone")
-    amountStr := c.PostForm("amount")
-    purpose := c.PostForm("purpose")
-    paymentApp := c.PostForm("payment_app") // gpay, paytm, etc.
+// GetPaymentInfo returns temple payment details (UPI, QR etc)
+func GetPaymentInfo(c *gin.Context) {
+	var info models.TempleInfo
+	database.DB.First(&info)
 
-    if name == "" || amountStr == "" {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Name and Amount are required"})
-        return
-    }
-
-    amount, _ := strconv.ParseFloat(amountStr, 64)
-    receiptNo := fmt.Sprintf("RCP-%d", time.Now().Unix())
-
-    // 2. Handle File Upload (Screenshot)
-    var screenshotPath string
-    file, err := c.FormFile("screenshot")
-    if err == nil {
-        // Save file
-        filename := fmt.Sprintf("%d_%s", time.Now().Unix(), filepath.Base(file.Filename))
-        uploadPath := "web/static/uploads/" + filename
-        if err := c.SaveUploadedFile(file, uploadPath); err == nil {
-            screenshotPath = "/static/uploads/" + filename
-        }
-    }
-
-    // 3. Save to Database
-    donation := models.Donation{
-        DonorName:      name,
-        DonorPhone:     phone,
-        Amount:         amount,
-        Purpose:        purpose,
-        PaymentMode:    paymentApp, // Stores which app they used
-        ReceiptNo:      receiptNo,
-        Date:           time.Now(),
-        Notes:          "paid", // Mark as paid since they are uploading screenshot
-        ScreenshotPath: screenshotPath,
-        TempleID:       1,
-    }
-
-    if err := database.GetDB().Create(&donation).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-        return
-    }
-
-    c.JSON(http.StatusOK, gin.H{
-        "success": true, 
-        "message": "Donation received successfully!",
-        "receipt": receiptNo,
-    })
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"name":    info.Name,
+			"upi":     info.UPI,
+			"phone":   info.Phone,
+			"qr_code": info.QRCode,
+		},
+	})
 }

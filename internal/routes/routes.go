@@ -1,7 +1,10 @@
 package routes
 
 import (
-	"net/http"
+	"os"
+	"strings"
+	"time"
+
 	"newapp/internal/handlers"
 	"newapp/internal/middleware"
 
@@ -9,71 +12,85 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(r *gin.Engine) {
+func Setup() *gin.Engine {
+	r := gin.Default()
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		AllowCredentials: true,
+		AllowOrigins: []string{"https://temple-management-o0yq.onrender.com"},
+		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		MaxAge:       12 * time.Hour,
 	}))
 
+	os.MkdirAll("./uploads/donations", 0755)
+	os.MkdirAll("./uploads/expenses", 0755)
+
 	r.Static("/static", "./web/static")
-	r.LoadHTMLGlob("web/templates/*.html")
+	r.Static("/uploads", "./uploads")
 
-	// Public Pages
-	r.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
-	r.GET("/login", func(c *gin.Context) { c.HTML(http.StatusOK, "login.html", nil) })
-	r.GET("/festivals", func(c *gin.Context) { c.HTML(http.StatusOK, "festivals.html", nil) })
-	r.GET("/donations", func(c *gin.Context) { c.HTML(http.StatusOK, "donations.html", nil) })
-	r.GET("/expenses", func(c *gin.Context) { c.HTML(http.StatusOK, "expenses.html", nil) })
-	r.GET("/reports", func(c *gin.Context) { c.HTML(http.StatusOK, "reports.html", nil) })
+	// HTML pages
+	r.GET("/", func(c *gin.Context) { c.File("./web/templates/index.html") })
+	r.GET("/donations", func(c *gin.Context) { c.File("./web/templates/donations.html") })
+	r.GET("/donate", func(c *gin.Context) { c.File("./web/templates/donate.html") })
+	r.GET("/expenses", func(c *gin.Context) { c.File("./web/templates/expenses.html") })
+	r.GET("/festivals", func(c *gin.Context) { c.File("./web/templates/festivals.html") })
+	r.GET("/login", func(c *gin.Context) { c.File("./web/templates/login.html") })
+	r.GET("/reports", func(c *gin.Context) { c.File("./web/templates/reports.html") })
+	r.GET("/favicon.ico", func(c *gin.Context) { c.Status(204) })
 
-	// NEW: Donate Page
-	r.GET("/donate", func(c *gin.Context) { c.HTML(http.StatusOK, "donate.html", nil) })
-
-	api := r.Group("/api/v1")
+	v1 := r.Group("/api/v1")
 	{
-		authHandler := handlers.NewAuthHandler()
-		api.POST("/auth/login", authHandler.Login)
+		// Auth
+		v1.POST("/login", handlers.Login)
+		v1.POST("/logout", handlers.Logout)
+		v1.GET("/auth/check", handlers.AuthCheck)
 
-		// NEW: Payment Submit Route
-		paymentHandler := handlers.NewPaymentHandler()
-		api.POST("/submit-donation", paymentHandler.ProcessDonation)
+		// Dashboard
+		v1.GET("/dashboard/summary", handlers.GetDashboardSummary)
 
-		// Public Data
-		templeHandler := handlers.NewTempleHandler()
-		api.GET("/temple", templeHandler.GetTemple)
+		// Temple
+		v1.GET("/temple", handlers.GetTemple)
+		v1.PUT("/temple", middleware.AuthRequired("admin"), handlers.UpdateTemple)
 
-		festivalHandler := handlers.NewFestivalHandler()
-		api.GET("/festivals", festivalHandler.GetAll)
+		// Donations
+		v1.GET("/donations", handlers.GetDonations)
+		v1.POST("/donations", handlers.CreateDonation)
+		v1.PUT("/donations/:id", middleware.AuthRequired("admin"), handlers.UpdateDonation)
+		v1.DELETE("/donations/:id", middleware.AuthRequired("admin"), handlers.DeleteDonation)
+		v1.PATCH("/donations/:id/toggle", middleware.AuthRequired("admin"), handlers.ToggleDonation)
 
-		dashboardHandler := handlers.NewDashboardHandler()
-		api.GET("/dashboard/summary", dashboardHandler.GetSummary)
-		api.GET("/dashboard/recent-donations", dashboardHandler.GetRecentDonations)
-		api.GET("/dashboard/recent-expenses", dashboardHandler.GetRecentExpenses)
-		api.GET("/dashboard/project/:id", dashboardHandler.GetProjectStats)
+		// Expenses
+		v1.GET("/expenses", handlers.GetExpenses)
+		v1.POST("/expenses", handlers.CreateExpense)
+		v1.PUT("/expenses/:id", middleware.AuthRequired("admin"), handlers.UpdateExpense)
+		v1.DELETE("/expenses/:id", middleware.AuthRequired("admin"), handlers.DeleteExpense)
+		v1.PATCH("/expenses/:id/toggle", middleware.AuthRequired("admin"), handlers.ToggleExpense)
 
-		// Protected Routes
-		donationHandler := handlers.NewDonationHandler()
-		api.GET("/donations", donationHandler.GetAll) // Kept public for viewing based on previous requests
+		// Festivals
+		v1.GET("/festivals", handlers.GetFestivals)
+		v1.GET("/festivals/:id/report", handlers.GetFestivalReport)
+		v1.POST("/festivals", middleware.AuthRequired("admin"), handlers.CreateFestival)
+		v1.PUT("/festivals/:id", middleware.AuthRequired("admin"), handlers.UpdateFestival)
+		v1.DELETE("/festivals/:id", middleware.AuthRequired("admin"), handlers.DeleteFestival)
 
-		protected := api.Group("/")
-		protected.Use(middleware.AuthMiddleware())
-		{
-			// Protected Management Routes
-			api.POST("/donations", donationHandler.Create)
-			api.PUT("/donations/:id", donationHandler.Update)
-			api.DELETE("/donations/:id", donationHandler.Delete)
-
-			expenseHandler := handlers.NewExpenseHandler()
-			api.GET("/expenses", expenseHandler.GetAll)
-			api.POST("/expenses", expenseHandler.Create)
-			api.PUT("/expenses/:id", expenseHandler.Update)
-			api.DELETE("/expenses/:id", expenseHandler.Delete)
-
-			api.POST("/festivals", festivalHandler.Create)
-			api.PUT("/festivals/:id", festivalHandler.Update)
-			api.DELETE("/festivals/:id", festivalHandler.Delete)
-		}
+		// Public donation (from donate page)
+		v1.POST("/submit-donation", handlers.SubmitDonation)
+		v1.GET("/payment-info", handlers.GetPaymentInfo)
 	}
+
+	// Backward compat
+	r.GET("/api/donations", handlers.GetDonations)
+	r.GET("/api/expenses", handlers.GetExpenses)
+	r.GET("/api/festivals", handlers.GetFestivals)
+	r.GET("/api/dashboard/summary", handlers.GetDashboardSummary)
+
+	r.NoRoute(func(c *gin.Context) {
+		if strings.HasPrefix(c.Request.URL.Path, "/api/") {
+			c.JSON(404, gin.H{"success": false, "error": "Not found"})
+			return
+		}
+		c.File("./web/templates/index.html")
+	})
+
+	return r
 }

@@ -1,78 +1,45 @@
 package handlers
 
 import (
-    "net/http"
-    "strconv"
-    "newapp/internal/database"
-    "newapp/internal/models"
-    "github.com/gin-gonic/gin"
+	"net/http"
+
+	"newapp/internal/database"
+	"newapp/internal/models"
+
+	"github.com/gin-gonic/gin"
 )
 
-type DashboardHandler struct{}
+func GetDashboardSummary(c *gin.Context) {
+	var totalDon, totalExp float64
+	var donC, expC, festC int64
 
-func NewDashboardHandler() *DashboardHandler {
-    return &DashboardHandler{}
-}
+	database.DB.Model(&models.Donation{}).Select("COALESCE(SUM(amount),0)").Scan(&totalDon)
+	database.DB.Model(&models.Expense{}).Select("COALESCE(SUM(amount),0)").Scan(&totalExp)
+	database.DB.Model(&models.Donation{}).Count(&donC)
+	database.DB.Model(&models.Expense{}).Count(&expC)
+	database.DB.Model(&models.Festival{}).Count(&festC)
 
-func (h *DashboardHandler) GetSummary(c *gin.Context) {
-    var totalDonations, totalExpenses float64
-    var totalFestivals, upcomingFestivals int64
+	var recentDon []models.Donation
+	var recentExp []models.Expense
+	var upcoming []models.Festival
+	database.DB.Preload("Festival").Order("created_at DESC").Limit(5).Find(&recentDon)
+	database.DB.Preload("Festival").Order("created_at DESC").Limit(5).Find(&recentExp)
+	database.DB.Where("status IN ?", []string{"upcoming", "ongoing"}).Order("start_date ASC").Limit(5).Find(&upcoming)
 
-    database.GetDB().Model(&models.Donation{}).Select("COALESCE(SUM(amount), 0)").Scan(&totalDonations)
-    database.GetDB().Model(&models.Expense{}).Select("COALESCE(SUM(amount), 0)").Scan(&totalExpenses)
-    database.GetDB().Model(&models.Festival{}).Count(&totalFestivals)
-    database.GetDB().Model(&models.Festival{}).Where("status = ?", "upcoming").Count(&upcomingFestivals)
-
-    c.JSON(http.StatusOK, gin.H{
-        "success": true,
-        "data": models.DashboardSummary{
-            TotalDonations:    totalDonations,
-            TotalExpenses:     totalExpenses,
-            Balance:           totalDonations - totalExpenses,
-            TotalFestivals:    totalFestivals,
-            UpcomingFestivals: upcomingFestivals,
-        },
-    })
-}
-
-// NEW: Get Stats for a Specific Project/Festival
-func (h *DashboardHandler) GetProjectStats(c *gin.Context) {
-    idStr := c.Param("id")
-    id, _ := strconv.Atoi(idStr)
-
-    var income, expense float64
-    
-    // Get total donations linked to this festival
-    database.GetDB().Model(&models.Donation{}).Where("temple_id = ?", id).Select("COALESCE(SUM(amount), 0)").Scan(&income)
-    
-    // Note: In our current model, we are using the generic 'Purpose' string or we need to link IDs.
-    // To make this robust, we assume the Frontend sends 'festival_id' in the request.
-    // Let's query based on the Festival ID we added to models earlier.
-    
-    // We need to fix the query to check FestivalID column (assuming it exists in your DB from GORM auto-migrate)
-    // If it doesn't exist, GORM will ignore it, but let's try to filter by the 'Purpose' text for now 
-    // OR better, strict ID filtering.
-    
-    // Strict ID filtering (The correct way):
-    database.GetDB().Model(&models.Donation{}).Where("festival_id = ?", id).Select("COALESCE(SUM(amount), 0)").Scan(&income)
-    database.GetDB().Model(&models.Expense{}).Where("festival_id = ?", id).Select("COALESCE(SUM(amount), 0)").Scan(&expense)
-
-    c.JSON(http.StatusOK, gin.H{
-        "success": true,
-        "income":  income,
-        "expense": expense,
-        "balance": income - expense,
-    })
-}
-
-func (h *DashboardHandler) GetRecentDonations(c *gin.Context) {
-    var donations []models.Donation
-    database.GetDB().Order("created_at desc").Limit(5).Find(&donations)
-    c.JSON(http.StatusOK, gin.H{"success": true, "data": donations})
-}
-
-func (h *DashboardHandler) GetRecentExpenses(c *gin.Context) {
-    var expenses []models.Expense
-    database.GetDB().Order("created_at desc").Limit(5).Find(&expenses)
-    c.JSON(http.StatusOK, gin.H{"success": true, "data": expenses})
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"total_income":       totalDon,
+			"total_donations":    totalDon,
+			"total_expenses":     totalExp,
+			"balance":            totalDon - totalExp,
+			"net_balance":        totalDon - totalExp,
+			"donation_count":     donC,
+			"expense_count":      expC,
+			"festival_count":     festC,
+			"recent_donations":   recentDon,
+			"recent_expenses":    recentExp,
+			"upcoming_festivals": upcoming,
+		},
+	})
 }

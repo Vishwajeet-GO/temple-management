@@ -5,18 +5,12 @@ import (
 	"newapp/internal/models"
 )
 
-type TempleRepository struct{}
-
-func NewTempleRepository() *TempleRepository {
-	return &TempleRepository{}
+func GetTempleInfo() (*models.TempleInfo, error) {
+	var info models.TempleInfo
+	err := database.DB.First(&info).Error
+	return &info, err
 }
 
-func (r *TempleRepository) GetTemple() (*models.Temple, error) {
-	var temple models.Temple
-	result := database.GetDB().First(&temple)
-	return &temple, result.Error
-}
-
-func (r *TempleRepository) UpdateTemple(temple *models.Temple) error {
-	return database.GetDB().Save(temple).Error
+func UpdateTempleInfo(info *models.TempleInfo) error {
+	return database.DB.Save(info).Error
 }

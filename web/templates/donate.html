@@ -3,14 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donate - Temple</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Donate - श्री गौरी शंकर मंदिर</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="/static/css/global.css" rel="stylesheet">
     <style>
         body {
-            background: url('/static/images/temple-bg.jpg') center/cover no-repeat fixed;
+            background-image: url("/static/images/temple-bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
         body::before {
@@ -20,260 +25,1584 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 0;
+            background-color: rgba(0, 0, 0, 0.55);
+            z-index: -1;
         }
 
-        .step-container {
+        .top-nav {
+            background: linear-gradient(135deg, #e65100, #ff9800, #ffb74d);
+        }
+
+        .nav-item.active {
+            color: #ff9800;
+        }
+
+        .nav-item.active i {
+            filter: drop-shadow(0 3px 6px rgba(255, 152, 0, 0.5));
+        }
+
+        .nav-item.active::before {
+            background: #ff9800;
+        }
+
+        /* Donate Container */
+        .donate-container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 16px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        /* Header Card */
+        .donate-header {
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            border-radius: 20px 20px 0 0;
+            padding: 30px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .donate-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: shimmer 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .donate-header .heart-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 1.8rem;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .donate-header h2 {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .donate-header p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Form Card */
+        .donate-form-card {
+            background: rgba(30, 30, 50, 0.92);
+            border-radius: 0 0 20px 20px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-top: none;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+        }
+
+        /* Section Label */
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #ff9800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Quick Amount Buttons */
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .quick-amt-btn {
+            padding: 12px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 152, 0, 0.25);
+            background: rgba(255, 152, 0, 0.08);
+            color: #ffb74d;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .quick-amt-btn:hover {
+            background: rgba(255, 152, 0, 0.15);
+            border-color: rgba(255, 152, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .quick-amt-btn.active {
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+        }
+
+        /* Form Inputs */
+        .donate-fg {
+            margin-bottom: 18px;
+        }
+
+        .donate-fg label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .donate-fg label .req {
+            color: #f44336;
+        }
+
+        .donate-input {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .donate-input:focus {
+            border-color: #ff9800;
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.15);
+        }
+
+        .donate-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .donate-input.amount-input {
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: 1px;
+            padding: 16px;
+        }
+
+        select.donate-input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ff9800' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        select.donate-input option {
+            background: #1e1e3a;
+            color: #fff;
+        }
+
+        /* Payment Mode Buttons */
+        .pm-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .pm-btn {
+            padding: 14px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pm-btn i {
+            font-size: 1.3rem;
+        }
+
+        .pm-btn span {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .pm-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .pm-btn.active {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.1));
+            border-color: #ff9800;
+            color: #ff9800;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.15);
+        }
+
+        /* UPI Section */
+        .upi-section {
             display: none;
-            animation: fadeIn 0.5s;
+            margin-bottom: 20px;
+            animation: slideUp 0.3s ease-out;
         }
 
-        .step-container.active {
+        .upi-section.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from {
+        /* UPI Apps */
+        .upi-apps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .upi-app-btn {
+            padding: 12px 6px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .upi-app-btn:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .upi-app-btn:active {
+            transform: scale(0.95);
+        }
+
+        .upi-app-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .upi-app-icon.gpay {
+            background: linear-gradient(135deg, #4285f4, #34a853, #fbbc04, #ea4335);
+        }
+
+        .upi-app-icon.phonepe {
+            background: linear-gradient(135deg, #5f259f, #7b42b6);
+        }
+
+        .upi-app-icon.paytm {
+            background: linear-gradient(135deg, #00baf2, #0097cc);
+        }
+
+        .upi-app-icon.bhim {
+            background: linear-gradient(135deg, #00897b, #26a69a);
+        }
+
+        .upi-app-name {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        /* UPI ID Card */
+        .upi-id-card {
+            background: rgba(255, 152, 0, 0.08);
+            border: 1px solid rgba(255, 152, 0, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .upi-id-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upi-id-info i {
+            color: #ff9800;
+            font-size: 1.1rem;
+        }
+
+        .upi-id-text {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffb74d;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* QR Code */
+        .qr-container {
+            text-align: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .qr-container p {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 10px;
+        }
+
+        .qr-placeholder {
+            width: 160px;
+            height: 160px;
+            background: #fff;
+            border-radius: 12px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .qr-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .qr-scan-text {
+            margin-top: 10px;
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed rgba(255, 152, 0, 0.25);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-area:hover {
+            border-color: rgba(255, 152, 0, 0.5);
+            background: rgba(255, 152, 0, 0.05);
+        }
+
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-icon {
+            font-size: 2rem;
+            color: #ff9800;
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+
+        .file-upload-text {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .file-upload-text strong {
+            color: #ff9800;
+        }
+
+        .file-preview {
+            margin-top: 10px;
+            display: none;
+            position: relative;
+        }
+
+        .file-preview img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .file-preview .remove-file {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f44336;
+            color: #fff;
+            border: none;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-name {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+        }
+
+        /* Submit Button */
+        .donate-submit {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 25px rgba(255, 152, 0, 0.35);
+            margin-top: 10px;
+        }
+
+        .donate-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 152, 0, 0.5);
+        }
+
+        .donate-submit:active {
+            transform: scale(0.97);
+        }
+
+        .donate-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success Card */
+        .success-card {
+            display: none;
+            text-align: center;
+            padding: 40px 24px;
+            background: rgba(30, 30, 50, 0.92);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            animation: successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: scale(0.8);
                 opacity: 0;
             }
 
-            to {
+            100% {
+                transform: scale(1);
                 opacity: 1;
             }
         }
 
-        .upi-btn {
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1b5e20, #43a047);
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background: white;
-            font-weight: 600;
-            color: #333;
+            margin: 0 auto 20px;
+            font-size: 2.5rem;
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+            animation: successBounce 0.6s ease-out 0.3s backwards;
+        }
+
+        @keyframes successBounce {
+            0% {
+                transform: scale(0);
+            }
+
+            60% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .success-card h3 {
+            color: #66bb6a;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .success-card p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .success-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 16px 0;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .success-card .donate-again-btn {
+            padding: 12px 30px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .success-card .donate-again-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .success-card .home-link {
+            display: block;
+            margin-top: 12px;
+            color: rgba(255, 255, 255, 0.4);
             text-decoration: none;
+            font-size: 0.82rem;
+            transition: color 0.3s;
         }
 
-        .upi-btn:hover {
-            background: #f8f9fa;
-            border-color: #28a745;
+        .success-card .home-link:hover {
+            color: #fff;
         }
 
-        .upi-btn i {
-            font-size: 24px;
-            margin-right: 10px;
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2000;
+            overflow: hidden;
         }
 
-        .upi-gpay {
-            border-left: 5px solid #4285F4;
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation: confettiFall linear forwards;
         }
 
-        .upi-phonepe {
-            border-left: 5px solid #5F259F;
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
         }
 
-        .upi-paytm {
-            border-left: 5px solid #00BAF2;
+        /* Recent Donors */
+        .recent-donors {
+            margin-top: 20px;
+            animation: slideUp 0.6s ease-out 0.2s backwards;
+        }
+
+        .donors-card {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+        }
+
+        .donors-header {
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #ff9800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .donor-item {
+            padding: 12px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .donor-item:last-child {
+            border-bottom: none;
+        }
+
+        .donor-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .donor-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .donor-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .donor-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .donor-date {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .donor-amount {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #66bb6a;
+        }
+
+        .empty-donors {
+            padding: 30px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.82rem;
+        }
+
+        /* Temple Info */
+        .temple-info-card {
+            margin-top: 16px;
+            animation: slideUp 0.6s ease-out 0.3s backwards;
+        }
+
+        .temple-card {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+        }
+
+        .temple-card h4 {
+            color: #ff9800;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .temple-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 0.82rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .temple-detail:last-child {
+            border-bottom: none;
+        }
+
+        .temple-detail i {
+            color: #ff9800;
+            width: 16px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .temple-detail .td-label {
+            color: rgba(255, 255, 255, 0.4);
+            min-width: 60px;
+        }
+
+        .temple-detail .td-value {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .donate-container {
+                padding: 10px;
+            }
+
+            .quick-amounts {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+
+            .quick-amt-btn {
+                padding: 10px 6px;
+                font-size: 0.82rem;
+            }
+
+            .pm-grid {
+                gap: 6px;
+            }
+
+            .upi-apps {
+                gap: 6px;
+            }
+
+            .upi-app-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
+            }
+
+            .donate-header {
+                padding: 24px 18px;
+            }
+
+            .donate-form-card {
+                padding: 18px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .donate-container {
+                max-width: 550px;
+            }
+        }
+
+        /* Divider */
+        .section-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 20px 0;
+        }
+
+        /* Or Divider */
+        .or-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .or-divider span {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 
 <body>
-    <div class="container py-4" style="max-width: 600px;">
-        <div class="card shadow-sm">
-            <div class="card-header bg-success text-white text-center py-3">
-                <h4 class="mb-0"><i class="bi bi-heart-fill"></i> Make a Donation</h4>
-            </div>
-            <div class="card-body p-4">
+    <div class="particles" id="particles"></div>
+    <div class="toast-box" id="toastBox"></div>
+    <div class="confetti-container" id="confettiContainer"></div>
 
-                <!-- STEP 1: Details & Amount -->
-                <div id="step1" class="step-container active">
-                    <h5 class="mb-3">1. Enter Details</h5>
-                    <form id="detailsForm">
-                        <div class="mb-3">
-                            <label class="form-label">Your Name</label>
-                            <input type="text" class="form-control" id="dName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="dPhone" required pattern="[0-9]{10}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Amount (₹)</label>
-                            <input type="number" class="form-control form-control-lg fw-bold text-success" id="dAmount"
-                                required min="1">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Purpose</label>
-                            <select class="form-select" id="dPurpose">
-                                <option value="General">General</option>
-                                <option value="Annadaan">Annadaan</option>
-                                <option value="Festival">Festival</option>
-                                <option value="Construction">Construction</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100 py-2">Next: Select Payment <i
-                                class="bi bi-arrow-right"></i></button>
-                    </form>
+    <div class="main">
+        <!-- Top Nav -->
+        <nav class="top-nav">
+            <a href="/" class="brand"><i class="fas fa-gopuram"></i><span>श्री गौरी शंकर मंदिर</span></a>
+            <div class="nav-btns">
+                <a href="/" class="nav-btn home"><i class="fas fa-home"></i> Home</a>
+            </div>
+        </nav>
+
+        <div class="donate-container">
+
+            <!-- Donate Form -->
+            <div id="donateForm">
+                <!-- Header -->
+                <div class="donate-header">
+                    <div class="heart-icon"><i class="fas fa-heart"></i></div>
+                    <h2>Make a Donation</h2>
+                    <p>Your contribution helps maintain our temple</p>
                 </div>
 
-                <!-- STEP 2: Select UPI App -->
-                <div id="step2" class="step-container">
-                    <h5 class="mb-3">2. Pay via UPI</h5>
-                    <p class="text-muted">Click an app below to pay <strong>₹<span id="payAmount"></span></strong></p>
+                <!-- Form Body -->
+                <div class="donate-form-card">
+                    <input type="hidden" id="dMode" value="cash">
 
-                    <div id="upiLinks">
-                        <!-- Links generated by JS -->
+                    <!-- Festival Selection -->
+                    <div class="donate-fg">
+                        <label><i class="fas fa-calendar-alt"></i> Festival (Optional)</label>
+                        <select class="donate-input" id="dFestival">
+                            <option value="0">-- General Donation --</option>
+                        </select>
                     </div>
 
-                    <div class="text-center mt-3">
-                        <p class="small text-muted">OR Scan QR Code</p>
-                        <!-- REPLACE src with your actual QR code image path -->
-                        <img src="/static/images/qr-code.jpg" alt="Temple QR"
-                            style="width: 150px; border: 1px solid #ddd; padding: 5px;">
-                        <p class="small mt-1">UPI ID: <strong>8097890684@mbk</strong></p>
+                    <!-- Name -->
+                    <div class="donate-fg">
+                        <label>Your Name <span class="req">*</span></label>
+                        <input type="text" class="donate-input" id="dName" placeholder="Enter your full name"
+                            autocomplete="name">
                     </div>
 
-                    <button class="btn btn-outline-primary w-100 mt-3" onclick="goToStep3()">
-                        <i class="bi bi-upload"></i> I have paid, Upload Screenshot
+                    <!-- Quick Amount -->
+                    <div class="section-label"><i class="fas fa-bolt"></i> Quick Select Amount</div>
+                    <div class="quick-amounts">
+                        <button class="quick-amt-btn" onclick="selectAmount(101, this)">₹101</button>
+                        <button class="quick-amt-btn" onclick="selectAmount(251, this)">₹251</button>
+                        <button class="quick-amt-btn" onclick="selectAmount(501, this)">₹501</button>
+                        <button class="quick-amt-btn" onclick="selectAmount(1001, this)">₹1,001</button>
+                        <button class="quick-amt-btn" onclick="selectAmount(2100, this)">₹2,100</button>
+                        <button class="quick-amt-btn" onclick="selectAmount(5100, this)">₹5,100</button>
+                    </div>
+
+                    <!-- Custom Amount -->
+                    <div class="donate-fg">
+                        <label>Amount (₹) <span class="req">*</span></label>
+                        <input type="number" class="donate-input amount-input" id="dAmount" placeholder="₹ Enter amount"
+                            step="1" min="1" oninput="clearQuickSelect()">
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <!-- Payment Method -->
+                    <div class="section-label"><i class="fas fa-credit-card"></i> Payment Method</div>
+                    <div class="pm-grid">
+                        <div class="pm-btn active" onclick="selectMode(this, 'cash')">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Cash</span>
+                        </div>
+                        <div class="pm-btn" onclick="selectMode(this, 'upi')">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>UPI</span>
+                        </div>
+                        <div class="pm-btn" onclick="selectMode(this, 'bank')">
+                            <i class="fas fa-university"></i>
+                            <span>Bank</span>
+                        </div>
+                        <div class="pm-btn" onclick="selectMode(this, 'cheque')">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Cheque</span>
+                        </div>
+                    </div>
+
+                    <!-- UPI Section (shown when UPI selected) -->
+                    <div class="upi-section" id="upiSection">
+
+                        <!-- Pay via UPI Apps -->
+                        <div class="section-label"><i class="fas fa-mobile-alt"></i> Pay via UPI App</div>
+                        <div class="upi-apps" id="upiApps">
+                            <a class="upi-app-btn" id="gpayBtn" onclick="openUPIApp('gpay')">
+                                <div class="upi-app-icon gpay">G</div>
+                                <span class="upi-app-name">GPay</span>
+                            </a>
+                            <a class="upi-app-btn" id="phonepeBtn" onclick="openUPIApp('phonepe')">
+                                <div class="upi-app-icon phonepe"><i class="fas fa-bolt"></i></div>
+                                <span class="upi-app-name">PhonePe</span>
+                            </a>
+                            <a class="upi-app-btn" id="paytmBtn" onclick="openUPIApp('paytm')">
+                                <div class="upi-app-icon paytm">₹</div>
+                                <span class="upi-app-name">Paytm</span>
+                            </a>
+                            <a class="upi-app-btn" id="bhimBtn" onclick="openUPIApp('bhim')">
+                                <div class="upi-app-icon bhim">B</div>
+                                <span class="upi-app-name">BHIM</span>
+                            </a>
+                        </div>
+
+                        <div class="or-divider"><span>or copy UPI ID</span></div>
+
+                        <!-- UPI ID -->
+                        <div class="upi-id-card">
+                            <div class="upi-id-info">
+                                <i class="fas fa-at"></i>
+                                <span class="upi-id-text" id="upiText">8097890684@mbk</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyUPI()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <!-- ADD THIS BANK SECTION BELOW -->
+
+
+                        <!-- QR Code -->
+                        <div class="qr-container" id="qrContainer">
+                            <p>Scan QR Code to Pay</p>
+                            <div class="qr-placeholder">
+                                <img id="qrImage" src="static/images/qr-code.jpg.jpeg" alt="QR Code">
+                            </div>
+                            <div class="qr-scan-text">Open any UPI app and scan this code</div>
+                        </div>
+                    </div>
+                    <!-- Bank Details Section -->
+                    <div class="bank-section" id="bankSection" style="display:none;margin-bottom:20px;">
+                        <div class="section-label"><i class="fas fa-university"></i> Bank Account Details</div>
+
+                        <div
+                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(33,150,243,0.2);border-radius:14px;overflow:hidden;">
+                            <div
+                                style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;">
+                                <span style="font-size:0.75rem;color:rgba(255,255,255,0.45);font-weight:600;"><i
+                                        class="fas fa-university"
+                                        style="color:#42a5f5;margin-right:8px;font-size:0.72rem;"></i>Bank Name</span>
+                                <span style="font-size:0.88rem;color:#fff;font-weight:700;">IDFC First Bank</span>
+                            </div>
+                            <div
+                                style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;">
+                                <span style="font-size:0.75rem;color:rgba(255,255,255,0.45);font-weight:600;"><i
+                                        class="fas fa-user"
+                                        style="color:#42a5f5;margin-right:8px;font-size:0.72rem;"></i>Account
+                                    Holder</span>
+                                <span style="font-size:0.88rem;color:#fff;font-weight:700;">Vishwajeet Yadav</span>
+                            </div>
+                            <div
+                                style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;">
+                                <span style="font-size:0.75rem;color:rgba(255,255,255,0.45);font-weight:600;"><i
+                                        class="fas fa-hashtag"
+                                        style="color:#42a5f5;margin-right:8px;font-size:0.72rem;"></i>Account No.</span>
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <span id="bankAccount"
+                                        style="font-size:0.88rem;color:#42a5f5;font-weight:700;letter-spacing:0.5px;">10248120083</span>
+                                    <button onclick="copyText('bankAccount','Account number')"
+                                        style="padding:6px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#1565c0,#42a5f5);color:#fff;font-size:0.72rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;"><i
+                                            class="fas fa-copy"></i> Copy</button>
+                                </div>
+                            </div>
+                            <div
+                                style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;">
+                                <span style="font-size:0.75rem;color:rgba(255,255,255,0.45);font-weight:600;"><i
+                                        class="fas fa-code"
+                                        style="color:#42a5f5;margin-right:8px;font-size:0.72rem;"></i>IFSC Code</span>
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <span id="bankIFSC"
+                                        style="font-size:0.88rem;color:#42a5f5;font-weight:700;letter-spacing:0.5px;">IDFB0040501</span>
+                                    <button onclick="copyText('bankIFSC','IFSC code')"
+                                        style="padding:6px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#1565c0,#42a5f5);color:#fff;font-size:0.72rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;"><i
+                                            class="fas fa-copy"></i> Copy</button>
+                                </div>
+                            </div>
+                            <div
+                                style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;">
+                                <span style="font-size:0.75rem;color:rgba(255,255,255,0.45);font-weight:600;"><i
+                                        class="fas fa-map-marker-alt"
+                                        style="color:#42a5f5;margin-right:8px;font-size:0.72rem;"></i>Branch</span>
+                                <span style="font-size:0.88rem;color:#fff;font-weight:700;">Mumbai-Borivali East</span>
+                            </div>
+                            <div
+                                style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
+                                <span style="font-size:0.75rem;color:rgba(255,255,255,0.45);font-weight:600;"><i
+                                        class="fas fa-wallet"
+                                        style="color:#42a5f5;margin-right:8px;font-size:0.72rem;"></i>Account
+                                    Type</span>
+                                <span style="font-size:0.88rem;color:#fff;font-weight:700;">Savings</span>
+                            </div>
+                        </div>
+
+                        <div
+                            style="margin-top:12px;padding:12px 16px;background:rgba(33,150,243,0.08);border:1px solid rgba(33,150,243,0.15);border-radius:10px;font-size:0.75rem;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:8px;">
+                            <i class="fas fa-info-circle" style="color:#42a5f5;font-size:0.85rem;"></i>
+                            After transfer, please upload the screenshot below for confirmation
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <!-- Screenshot Upload -->
+                    <div class="donate-fg">
+                        <label><i class="fas fa-camera"></i> Payment Screenshot (Optional)</label>
+                        <div class="file-upload-area" id="uploadArea">
+                            <input type="file" id="dScreenshot" accept="image/*" capture="environment"
+                                onchange="previewSS(this)">
+                            <div class="file-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <div class="file-upload-text">
+                                <strong>Tap to upload</strong> or take a photo<br>
+                                <small style="color:rgba(255,255,255,0.25)">JPG, PNG up to 5MB</small>
+                            </div>
+                        </div>
+                        <div class="file-preview" id="ssPrev">
+                            <button class="remove-file" onclick="removeFile()"><i class="fas fa-times"></i></button>
+                            <img id="ssPrevImg" src="" alt="Preview">
+                        </div>
+                        <div class="file-name" id="ssName"></div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button class="donate-submit" id="submitBtn" onclick="submitDonation()">
+                        <i class="fas fa-heart"></i> Donate Now
                     </button>
-                    <button class="btn btn-link w-100 mt-2 text-muted" onclick="showStep(1)">Back</button>
                 </div>
-
-                <!-- STEP 3: Upload Screenshot -->
-                <div id="step3" class="step-container">
-                    <h5 class="mb-3">3. Confirm Donation</h5>
-                    <p class="text-muted">Please upload the payment screenshot for verification.</p>
-
-                    <form id="confirmForm">
-                        <div class="mb-3">
-                            <label class="form-label">Upload Screenshot</label>
-                            <input type="file" class="form-control" id="dScreenshot" accept="image/*" required>
-                        </div>
-                        <div id="previewArea" class="mb-3 text-center d-none">
-                            <img id="imgPreview" src="#"
-                                style="max-width: 100%; max-height: 200px; border-radius: 8px;">
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100 py-3 fw-bold">
-                            Submit Donation <i class="bi bi-check-circle-fill"></i>
-                        </button>
-                    </form>
-                    <button class="btn btn-link w-100 mt-2 text-muted" onclick="showStep(2)">Back</button>
-                </div>
-
-                <!-- SUCCESS -->
-                <div id="stepSuccess" class="step-container text-center">
-                    <i class="bi bi-check-circle-fill text-success" style="font-size: 60px;"></i>
-                    <h4 class="mt-3">Thank You!</h4>
-                    <p>Your donation details and screenshot have been submitted successfully.</p>
-                    <a href="/" class="btn btn-outline-success mt-3">Back to Home</a>
-                </div>
-
             </div>
+
+            <!-- Success Card -->
+            <div class="success-card" id="successCard">
+                <div class="success-icon"><i class="fas fa-check"></i></div>
+                <h3>Thank You! 🙏</h3>
+                <p>Your donation has been received</p>
+                <div class="success-amount" id="successAmount">₹0</div>
+                <p style="font-size:0.78rem;color:rgba(255,255,255,0.35)">
+                    <i class="fas fa-info-circle"></i> Your donation will be verified shortly
+                </p>
+                <button class="donate-again-btn" onclick="resetForm()">
+                    <i class="fas fa-redo"></i> Donate Again
+                </button>
+                <a href="/" class="home-link"><i class="fas fa-home"></i> Back to Home</a>
+            </div>
+
+            <!-- Recent Donors -->
+            <div class="recent-donors">
+                <div class="donors-card">
+                    <div class="donors-header">
+                        <i class="fas fa-users"></i> Recent Donors
+                    </div>
+                    <div id="recentDonors">
+                        <div class="empty-donors">
+                            <i class="fas fa-spinner fa-spin" style="display:block;margin-bottom:8px"></i>
+                            Loading...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Temple Info -->
+            <div class="temple-info-card">
+                <div class="temple-card">
+                    <h4><i class="fas fa-gopuram"></i> Temple Details</h4>
+                    <div class="temple-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span class="td-label">Address</span>
+                        <span class="td-value" id="templeAddress">Poisar, Kandivali East, Mumbai</span>
+                    </div>
+                    <div class="temple-detail">
+                        <i class="fas fa-phone"></i>
+                        <span class="td-label">Phone</span>
+                        <span class="td-value" id="templePhone">-</span>
+                    </div>
+                    <div class="temple-detail">
+                        <i class="fas fa-at"></i>
+                        <span class="td-label">UPI</span>
+                        <span class="td-value" id="templeUPI">8097890684@mbk</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- Developer Credit (Bottom) -->
-    <div class="developer-credit">
-        Developed by <a href="#">Vishwajeet_Yadav</a>
-    </div>
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <a href="/" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/donate" class="nav-item active"><i class="fas fa-heart"></i><span>Donate</span></a>
+        <a href="/festivals" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Festivals</span></a>
+        <a href="/donations" class="nav-item"><i class="fas fa-indian-rupee-sign"></i><span>History</span></a>
+        <a href="/expenses" class="nav-item"><i class="fas fa-file-invoice-dollar"></i><span>Expenses</span></a>
+    </nav>
 
     <script>
-        // CONFIGURATION: CHANGE THESE
-        const UPI_ID = "your-upi-id@okaxis"; // CHANGE THIS
-        const PAYEE_NAME = "Temple Trust";   // CHANGE THIS
+        const API = window.location.origin + '/api/v1';
+        const UPI_ID = '8097890684@mbk';
+        const TEMPLE_NAME = 'Sri Gauri Shankar Mandir';
 
-        let donationData = {};
-
-        function showStep(step) {
-            document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
-            document.getElementById('step' + step).classList.add('active');
-        }
-
-        document.getElementById('detailsForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            donationData.name = document.getElementById('dName').value;
-            donationData.phone = document.getElementById('dPhone').value;
-            donationData.amount = document.getElementById('dAmount').value;
-            donationData.purpose = document.getElementById('dPurpose').value;
-
-            document.getElementById('payAmount').innerText = donationData.amount;
-            generateLinks();
-            showStep(2);
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            loadPaymentInfo();
+            loadFestivals();
+            loadRecentDonors();
         });
 
-        function generateLinks() {
-            const container = document.getElementById('upiLinks');
-            const note = `Donation by ${donationData.name}`;
-
-            // Base URI
-            const baseParams = `pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${donationData.amount}&cu=INR&tn=${encodeURIComponent(note)}`;
-
-            // Generate Deep Links
-            const apps = [
-                { name: "Google Pay", id: "gpay", scheme: "gpay://upi/pay?" + baseParams, icon: "bi-google" },
-                { name: "PhonePe", id: "phonepe", scheme: "phonepe://pay?" + baseParams, icon: "bi-phone" },
-                { name: "Paytm", id: "paytm", scheme: "paytmmp://pay?" + baseParams, icon: "bi-wallet2" },
-                { name: "BHIM / Other", id: "bhim", scheme: "upi://pay?" + baseParams, icon: "bi-bank" }
-            ];
-
-            container.innerHTML = apps.map(app => `
-                <a href="${app.scheme}" class="upi-btn upi-${app.id}" onclick="donationData.app = '${app.name}'">
-                    <i class="bi ${app.icon}"></i> Pay with ${app.name}
-                </a>
-            `).join('');
-        }
-
-        function goToStep3() {
-            showStep(3);
-        }
-
-        // Image Preview
-        document.getElementById('dScreenshot').onchange = evt => {
-            const [file] = document.getElementById('dScreenshot').files;
-            if (file) {
-                document.getElementById('imgPreview').src = URL.createObjectURL(file);
-                document.getElementById('previewArea').classList.remove('d-none');
+        // ==================== PARTICLES ====================
+        function createParticles() {
+            const c = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                p.style.width = (Math.random() * 3 + 1) + 'px';
+                p.style.height = p.style.width;
+                p.style.background = 'rgba(255, 152, 0, 0.5)';
+                p.style.boxShadow = '0 0 6px rgba(255, 152, 0, 0.3)';
+                c.appendChild(p);
             }
-        };
+        }
 
-        // Final Submit
-        document.getElementById('confirmForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
+        // ==================== LOAD DATA ====================
+        async function loadPaymentInfo() {
+            const upi = '8097890684@mbk';
+            const phone = '8097890684';
+
+            document.getElementById('upiText').textContent = upi;
+            document.getElementById('templeUPI').textContent = upi;
+            document.getElementById('templePhone').textContent = phone;
+
+            // Still try to load QR from server
+            try {
+                const r = await fetch(`${API}/payment-info`);
+                const res = await r.json();
+                if (res.success && res.data && res.data.qr_code) {
+                    document.getElementById('qrImage').src = res.data.qr_code;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadFestivals() {
+            try {
+                const r = await fetch(`${API}/festivals`);
+                const res = await r.json();
+                if (res.success && res.data) {
+                    const sel = document.getElementById('dFestival');
+                    res.data.forEach(f => {
+                        if (f.status === 'upcoming' || f.status === 'ongoing') {
+                            const opt = document.createElement('option');
+                            opt.value = f.id;
+                            opt.textContent = `🎪 ${f.name} (${f.status})`;
+                            sel.appendChild(opt);
+                        }
+                    });
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadRecentDonors() {
+            try {
+                const r = await fetch(`${API}/donations`);
+                const res = await r.json();
+                const container = document.getElementById('recentDonors');
+
+                if (res.success && res.data && res.data.length > 0) {
+                    const recent = res.data.slice(0, 5);
+                    container.innerHTML = recent.map(d => {
+                        const initials = (d.donor || 'A').substring(0, 2).toUpperCase();
+                        return `
+                            <div class="donor-item">
+                                <div class="donor-info">
+                                    <div class="donor-avatar">${initials}</div>
+                                    <div>
+                                        <div class="donor-name">${esc(d.donor || 'Anonymous')}</div>
+                                        <div class="donor-date">${fmtDate(d.date)}</div>
+                                    </div>
+                                </div>
+                                <div class="donor-amount">₹${fmt(d.amount)}</div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = '<div class="empty-donors"><i class="fas fa-heart" style="display:block;margin-bottom:8px;opacity:0.3"></i>Be the first to donate!</div>';
+                }
+            } catch (e) {
+                document.getElementById('recentDonors').innerHTML = '<div class="empty-donors">Unable to load</div>';
+            }
+        }
+
+        // ==================== QUICK AMOUNT ====================
+        function selectAmount(amount, el) {
+            document.querySelectorAll('.quick-amt-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('dAmount').value = amount;
+        }
+
+        function clearQuickSelect() {
+            document.querySelectorAll('.quick-amt-btn').forEach(b => b.classList.remove('active'));
+        }
+
+        // ==================== PAYMENT MODE ====================
+        function selectMode(el, mode) {
+            document.querySelectorAll('.pm-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('dMode').value = mode;
+
+            // Hide all sections
+            document.getElementById('upiSection').style.display = 'none';
+            document.getElementById('upiSection').classList.remove('active');
+            document.getElementById('bankSection').style.display = 'none';
+
+            // Show relevant section
+            if (mode === 'upi') {
+                document.getElementById('upiSection').style.display = 'block';
+                document.getElementById('upiSection').classList.add('active');
+            } else if (mode === 'bank') {
+                document.getElementById('bankSection').style.display = 'block';
+            }
+        }
+
+        // ==================== UPI APPS ====================
+        function openUPIApp(app) {
+            const amount = parseFloat(document.getElementById('dAmount').value);
+            const name = document.getElementById('dName').value.trim() || 'Donor';
+
+            if (!amount || amount <= 0) {
+                toast('Please enter amount first', 'error');
+                document.getElementById('dAmount').focus();
+                return;
+            }
+
+            const upiId = document.getElementById('upiText').textContent || UPI_ID;
+            const note = `Donation to ${TEMPLE_NAME}`;
+
+            let url = '';
+
+            switch (app) {
+                case 'gpay':
+                    url = `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+                    break;
+                case 'phonepe':
+                    url = `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+                    break;
+                case 'paytm':
+                    url = `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+                    break;
+                case 'bhim':
+                    url = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+                    break;
+                default:
+                    url = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+            }
+
+            // Try to open the app
+            const link = document.createElement('a');
+            link.href = url;
+            link.click();
+
+            // Fallback: if app not installed
+            setTimeout(() => {
+                toast(`If ${app} didn't open, please copy UPI ID and pay manually`, 'info');
+            }, 2000);
+        }
+
+        function copyText(elementId, label) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                toast(label + ' copied! ✅', 'success');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                toast(label + ' copied! ✅', 'success');
+            });
+        }
+
+        // ==================== COPY UPI ====================
+        function copyUPI() {
+            const upi = document.getElementById('upiText').textContent;
+            navigator.clipboard.writeText(upi).then(() => {
+                toast('UPI ID copied! ✅', 'success');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = upi;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                toast('UPI ID copied! ✅', 'success');
+            });
+        }
+
+        // ==================== FILE UPLOAD ====================
+        function previewSS(input) {
+            const prev = document.getElementById('ssPrev');
+            const img = document.getElementById('ssPrevImg');
+            const nameEl = document.getElementById('ssName');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                // Check size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    toast('File too large. Max 5MB allowed', 'error');
+                    input.value = '';
+                    return;
+                }
+                nameEl.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = e => { img.src = e.target.result; prev.style.display = 'block'; };
+                reader.readAsDataURL(file);
+            } else {
+                prev.style.display = 'none';
+                nameEl.textContent = '';
+            }
+        }
+
+        function removeFile() {
+            document.getElementById('dScreenshot').value = '';
+            document.getElementById('ssPrev').style.display = 'none';
+            document.getElementById('ssName').textContent = '';
+        }
+
+        // ==================== SUBMIT DONATION ====================
+        async function submitDonation() {
+            const name = document.getElementById('dName').value.trim();
+            const amount = parseFloat(document.getElementById('dAmount').value);
+            const mode = document.getElementById('dMode').value;
+            const festivalId = document.getElementById('dFestival').value;
+            const btn = document.getElementById('submitBtn');
+
+            if (!name) {
+                toast('Please enter your name', 'error');
+                document.getElementById('dName').focus();
+                return;
+            }
+            if (!amount || amount <= 0) {
+                toast('Please enter a valid amount', 'error');
+                document.getElementById('dAmount').focus();
+                return;
+            }
+
             btn.disabled = true;
-            btn.innerHTML = 'Uploading...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
-            const formData = new FormData();
-            formData.append('donor_name', donationData.name);
-            formData.append('donor_phone', donationData.phone);
-            formData.append('amount', donationData.amount);
-            formData.append('purpose', donationData.purpose);
-            formData.append('payment_app', donationData.app || 'Manual');
-            formData.append('screenshot', document.getElementById('dScreenshot').files[0]);
+            const fd = new FormData();
+            fd.append('donor', name);
+            fd.append('amount', amount);
+            fd.append('payment_mode', mode);
+            if (festivalId && festivalId !== '0') {
+                fd.append('festival_id', festivalId);
+            }
+
+            const ss = document.getElementById('dScreenshot');
+            if (ss.files && ss.files[0]) {
+                fd.append('screenshot', ss.files[0]);
+            }
 
             try {
-                const response = await fetch('/api/v1/submit-donation', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
+                const r = await fetch(`${API}/submit-donation`, { method: 'POST', body: fd });
+                const res = await r.json();
 
-                if (result.success) {
-                    showStep('Success');
-                } else {
-                    alert('Error: ' + result.error);
-                    btn.disabled = false;
-                    btn.innerHTML = 'Submit Donation';
-                }
-            } catch (err) {
-                alert('Connection failed');
+                if (!res.success) throw new Error(res.error || 'Failed');
+
+                // Show success
+                document.getElementById('successAmount').textContent = '₹' + fmt(amount);
+                document.getElementById('donateForm').style.display = 'none';
+                document.getElementById('successCard').style.display = 'block';
+                showConfetti();
+                toast('Donation received! Thank you 🙏', 'success');
+
+                // Reload recent donors
+                setTimeout(() => loadRecentDonors(), 1000);
+
+            } catch (e) {
+                toast('Error: ' + e.message, 'error');
+            } finally {
                 btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-heart"></i> Donate Now';
+            }
+        }
+
+        // ==================== CONFETTI ====================
+        function showConfetti() {
+            const container = document.getElementById('confettiContainer');
+            const colors = ['#ff9800', '#f44336', '#4caf50', '#2196f3', '#9c27b0', '#ffd54f', '#e91e63', '#00bcd4'];
+
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '-10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                confetti.style.animationDelay = (Math.random() * 1.5) + 's';
+                container.appendChild(confetti);
+            }
+
+            // Clean up after animation
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // ==================== RESET FORM ====================
+        function resetForm() {
+            document.getElementById('donateForm').style.display = 'block';
+            document.getElementById('successCard').style.display = 'none';
+            document.getElementById('dName').value = '';
+            document.getElementById('dAmount').value = '';
+            document.getElementById('dMode').value = 'cash';
+            document.getElementById('dFestival').value = '0';
+            document.getElementById('dScreenshot').value = '';
+            document.getElementById('ssPrev').style.display = 'none';
+            document.getElementById('ssName').textContent = '';
+            document.querySelectorAll('.pm-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.pm-btn').classList.add('active');
+            document.querySelectorAll('.quick-amt-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('upiSection').classList.remove('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==================== TOAST ====================
+        function toast(msg, type = 'info') {
+            const box = document.getElementById('toastBox');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            const icons = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle' };
+            t.innerHTML = `<i class="fas fa-${icons[type] || 'info-circle'}"></i> ${msg}`;
+            box.appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
+        }
+
+        // ==================== HELPERS ====================
+        function fmt(n) {
+            return Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        function fmtDate(d) {
+            if (!d) return '-';
+            try {
+                return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+            } catch { return d; }
+        }
+
+        function esc(s) {
+            if (!s) return '';
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        // Enter key support
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.getElementById('donateForm').style.display !== 'none') {
+                submitDonation();
             }
         });
     </script>
