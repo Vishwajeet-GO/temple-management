@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"newapp/internal/config"
@@ -15,12 +16,27 @@ import (
 var DB *gorm.DB
 
 func Initialize(cfg *config.Config) {
-	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Kolkata",
-		cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName,
-	)
+	var dsn string
 
-	log.Printf("🔌 Connecting to PostgreSQL: %s@%s:%s/%s", cfg.DBUser, cfg.DBHost, cfg.DBPort, cfg.DBName)
+	// Priority 1: DATABASE_URL (Render provides this)
+	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
+		dsn = dbURL
+		log.Println("🔌 Connecting using DATABASE_URL")
+	} else if cfg.DBHost != "localhost" {
+		// Priority 2: Individual env vars (non-localhost = production)
+		dsn = fmt.Sprintf(
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=require TimeZone=Asia/Kolkata",
+			cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName,
+		)
+		log.Printf("🔌 Connecting to PostgreSQL: %s@%s:%s/%s", cfg.DBUser, cfg.DBHost, cfg.DBPort, cfg.DBName)
+	} else {
+		// Priority 3: Localhost (development)
+		dsn = fmt.Sprintf(
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Kolkata",
+			cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName,
+		)
+		log.Printf("🔌 Connecting to local PostgreSQL: %s@%s:%s/%s", cfg.DBUser, cfg.DBHost, cfg.DBPort, cfg.DBName)
+	}
 
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -60,6 +76,10 @@ func Initialize(cfg *config.Config) {
 	// Default temple
 	DB.Model(&models.TempleInfo{}).Count(&count)
 	if count == 0 {
-		DB.Create(&models.TempleInfo{Name: "Temple Management", UPI: "8097890684@mbk"})
+		DB.Create(&models.TempleInfo{
+			Name:  "श्री गौरी शंकर मंदिर",
+			UPI:   "8097890684@mbk",
+			Phone: "8097890684",
+		})
 	}
 }
