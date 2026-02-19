@@ -84,8 +84,9 @@ func Initialize(cfg *config.Config) {
 	}
 
 	// Default temple
-	DB.Model(&models.TempleInfo{}).Count(&count)
-	if count == 0 {
+	var templeCount int64
+	DB.Model(&models.TempleInfo{}).Count(&templeCount)
+	if templeCount == 0 {
 		DB.Create(&models.TempleInfo{
 			Name:  "श्री गौरी शंकर मंदिर",
 			UPI:   "8097890684@mbk",
