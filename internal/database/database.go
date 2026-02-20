@@ -55,6 +55,17 @@ func Initialize(cfg *config.Config) {
 
 	log.Println("✅ PostgreSQL connected")
 
+	// Drop old tables and recreate (REMOVE THIS AFTER FIRST DEPLOY)
+	log.Println("⚠️ Dropping old tables for fresh migration...")
+	DB.Migrator().DropTable(
+		&models.Donation{},
+		&models.Expense{},
+		&models.Festival{},
+		&models.User{},
+		&models.TempleInfo{},
+	)
+	log.Println("✅ Old tables dropped")
+
 	// Migrate
 	DB.AutoMigrate(
 		&models.User{},
@@ -65,23 +76,23 @@ func Initialize(cfg *config.Config) {
 	)
 	log.Println("✅ Tables migrated")
 
-	// Default admin
-	var count int64
-	DB.Model(&models.User{}).Count(&count)
-	if count == 0 {
-		DB.Create(&models.User{Username: "admin", Password: "admin123", Role: "admin"})
-		log.Println("✅ Default admin: admin / admin123")
-	}
+	// // Default admin
+	// var count int64
+	// DB.Model(&models.User{}).Count(&count)
+	// if count == 0 {
+	// 	DB.Create(&models.User{Username: "admin", Password: "admin123", Role: "admin"})
+	// 	log.Println("✅ Default admin: admin / admin123")
+	// }
 
 	// Force reset admin password (remove this after first deploy)
-	// var adminUser models.User
-	// if DB.Where("username = ?", "admin").First(&adminUser).Error == nil {
-	// 	DB.Model(&adminUser).Update("password", "admin123")
-	// 	log.Println("✅ Admin password reset to: admin123")
-	// } else {
-	// 	DB.Create(&models.User{Username: "admin", Password: "admin123", Role: "admin"})
-	// 	log.Println("✅ Default admin created: admin / admin123")
-	// }
+	var adminUser models.User
+	if DB.Where("username = ?", "admin").First(&adminUser).Error == nil {
+		DB.Model(&adminUser).Update("password", "admin123")
+		log.Println("✅ Admin password reset to: admin123")
+	} else {
+		DB.Create(&models.User{Username: "admin", Password: "admin123", Role: "admin"})
+		log.Println("✅ Default admin created: admin / admin123")
+	}
 
 	// Default temple
 	var templeCount int64
