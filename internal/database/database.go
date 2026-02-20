@@ -73,6 +73,7 @@ func Initialize(cfg *config.Config) {
 		&models.Donation{},
 		&models.Expense{},
 		&models.TempleInfo{},
+		&models.GalleryItem{},
 	)
 	log.Println("✅ Tables migrated")
 

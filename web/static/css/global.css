@@ -1,3 +1,117 @@
+/* ==================== OM LOADER ==================== */
+.om-loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0a0a1a;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.om-loader-overlay.hide {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.om-symbol {
+    font-size: 4rem;
+    color: #ffd54f;
+    animation: omPulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(255, 213, 79, 0.5));
+    margin-bottom: 20px;
+}
+
+@keyframes omPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 20px rgba(255, 213, 79, 0.5));
+    }
+
+    50% {
+        transform: scale(1.15);
+        filter: drop-shadow(0 0 40px rgba(255, 213, 79, 0.8));
+    }
+}
+
+.om-rings {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+}
+
+.om-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px solid transparent;
+}
+
+.om-ring:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    border-top-color: #ff9800;
+    border-right-color: #ff9800;
+    animation: omSpin 1s linear infinite;
+}
+
+.om-ring:nth-child(2) {
+    width: 100px;
+    height: 100px;
+    border-bottom-color: #ffd54f;
+    border-left-color: #ffd54f;
+    animation: omSpin 1s linear infinite reverse;
+}
+
+.om-ring:nth-child(3) {
+    width: 120px;
+    height: 120px;
+    border-top-color: #9c27b0;
+    border-right-color: #9c27b0;
+    animation: omSpin 1s linear infinite;
+}
+
+@keyframes omSpin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.om-loader-text {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 15px;
+    animation: textFade 1s ease-in-out infinite;
+}
+
+@keyframes textFade {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
 * {
     margin: 0;
     padding: 0;

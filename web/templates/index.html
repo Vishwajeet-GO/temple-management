@@ -734,10 +734,996 @@
         .recent-section {
             animation: slideUp 0.5s ease-out 0.2s backwards
         }
+
+        /* ==================== FLOATING AUDIO PLAYER ==================== */
+        .audio-player-float {
+            position: fixed;
+            bottom: 75px;
+            right: 16px;
+            z-index: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .audio-toggle-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #ff6f00, #ff9800);
+            color: #fff;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 152, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .audio-toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .audio-toggle-btn.playing {
+            animation: audioPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes audioPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 4px 20px rgba(255, 152, 0, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 4px 30px rgba(255, 152, 0, 0.8), 0 0 40px rgba(255, 152, 0, 0.3);
+            }
+        }
+
+        .audio-panel {
+            background: rgba(20, 20, 40, 0.95);
+            border-radius: 16px;
+            width: 300px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+        }
+
+        .audio-panel.open {
+            max-height: 500px;
+        }
+
+        .audio-panel-header {
+            padding: 14px 16px;
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .audio-panel-header h4 {
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .audio-panel-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .audio-panel-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        /* Now Playing */
+        .now-playing {
+            padding: 12px 16px;
+            background: rgba(255, 152, 0, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: none;
+        }
+
+        .now-playing.active {
+            display: block;
+        }
+
+        .now-playing-title {
+            font-size: 0.78rem;
+            color: #ff9800;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .now-playing-title .bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 14px;
+        }
+
+        .now-playing-title .bar {
+            width: 3px;
+            background: #ff9800;
+            border-radius: 2px;
+            animation: barAnim 0.8s ease-in-out infinite;
+        }
+
+        .now-playing-title .bar:nth-child(1) {
+            height: 60%;
+            animation-delay: 0s;
+        }
+
+        .now-playing-title .bar:nth-child(2) {
+            height: 100%;
+            animation-delay: 0.2s;
+        }
+
+        .now-playing-title .bar:nth-child(3) {
+            height: 40%;
+            animation-delay: 0.4s;
+        }
+
+        .now-playing-title .bar:nth-child(4) {
+            height: 80%;
+            animation-delay: 0.1s;
+        }
+
+        @keyframes barAnim {
+
+            0%,
+            100% {
+                height: 40%;
+            }
+
+            50% {
+                height: 100%;
+            }
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .audio-ctrl-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .audio-ctrl-btn:hover {
+            background: rgba(255, 152, 0, 0.3);
+        }
+
+        .audio-ctrl-btn.play-pause {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            font-size: 1rem;
+        }
+
+        .audio-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 8px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .audio-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff9800, #ffb74d);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Track List */
+        .track-list {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .track-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .track-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .track-item.active {
+            background: rgba(255, 152, 0, 0.1);
+        }
+
+        .track-item.active .track-name {
+            color: #ff9800;
+        }
+
+        .track-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 152, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #ff9800;
+            flex-shrink: 0;
+        }
+
+        .track-item.active .track-icon {
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            color: #fff;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-artist {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 2px;
+        }
+
+        .track-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .track-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 152, 0, 0.3);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 480px) {
+            .audio-panel {
+                width: 280px;
+            }
+
+            .audio-player-float {
+                right: 12px;
+                bottom: 70px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .audio-player-float {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        /* ==================== BELL SOUND ==================== */
+        .bell-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+
+        .bell-welcome {
+            text-align: center;
+            animation: bellPop 0.5s ease-out;
+        }
+
+        @keyframes bellPop {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .bell-icon-big {
+            font-size: 4rem;
+            color: #ffd54f;
+            animation: bellSwing 1s ease-in-out infinite;
+            display: block;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 0 20px rgba(255, 213, 79, 0.5));
+        }
+
+        @keyframes bellSwing {
+
+            0%,
+            100% {
+                transform: rotate(-15deg);
+            }
+
+            50% {
+                transform: rotate(15deg);
+            }
+        }
+
+        .bell-welcome h2 {
+            color: #fff;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .bell-welcome p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .bell-enter-btn {
+            padding: 12px 30px;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(135deg, #ff9800, #e65100);
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bell-enter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5);
+        }
+
+        /* ==================== AARTI SCHEDULE CARD ==================== */
+        .aarti-schedule-card {
+            margin: 0 16px 20px;
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            animation: slideUp 0.5s ease-out 0.15s backwards;
+        }
+
+        .aarti-header {
+            padding: 14px 18px;
+            background: linear-gradient(135deg, rgba(255, 111, 0, 0.15), rgba(255, 152, 0, 0.08));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .aarti-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .aarti-header-left i {
+            color: #ffd54f;
+            font-size: 1.1rem;
+            animation: bellSwing 2s ease-in-out infinite;
+        }
+
+        .aarti-header-left span {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #ff9800;
+        }
+
+        .aarti-live-badge {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .aarti-live-badge.live {
+            display: flex;
+            background: linear-gradient(135deg, #c62828, #e53935);
+            color: #fff;
+            animation: livePulse 2s ease-in-out infinite;
+        }
+
+        .aarti-live-badge.upcoming {
+            display: flex;
+            background: rgba(255, 152, 0, 0.2);
+            color: #ffb74d;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+
+        @keyframes livePulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #fff;
+            animation: dotBlink 1s infinite;
+        }
+
+        @keyframes dotBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .aarti-body {
+            padding: 16px 18px;
+        }
+
+        /* Timer Display */
+        .aarti-timer {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .aarti-timer-label {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .aarti-countdown {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .aarti-time-box {
+            text-align: center;
+        }
+
+        .aarti-time-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ff9800;
+            line-height: 1;
+            text-shadow: 0 0 15px rgba(255, 152, 0, 0.3);
+            min-width: 50px;
+            display: block;
+        }
+
+        .aarti-time-unit {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .aarti-time-separator {
+            font-size: 1.5rem;
+            color: rgba(255, 152, 0, 0.4);
+            font-weight: 700;
+            align-self: flex-start;
+            margin-top: 2px;
+            animation: separatorBlink 1s infinite;
+        }
+
+        @keyframes separatorBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* Schedule List */
+        .aarti-schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .aarti-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.3s;
+        }
+
+        .aarti-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .aarti-item.today-active {
+            background: rgba(255, 152, 0, 0.08);
+            border-color: rgba(255, 152, 0, 0.2);
+        }
+
+        .aarti-item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .aarti-item-icon.daily {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.1));
+            color: #ff9800;
+        }
+
+        .aarti-item-icon.thursday {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.1));
+            color: #ef5350;
+        }
+
+        .aarti-item-icon.saturday {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(33, 150, 243, 0.1));
+            color: #42a5f5;
+        }
+
+        .aarti-item-info {
+            flex: 1;
+        }
+
+        .aarti-item-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .aarti-item-desc {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 2px;
+        }
+
+        .aarti-item-time {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #ffb74d;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .aarti-item-day {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: right;
+        }
+
+        /* ==================== FESTIVAL COUNTDOWN ==================== */
+        .festival-countdown-card {
+            margin: 0 16px 20px;
+            background: linear-gradient(135deg, rgba(74, 20, 140, 0.3), rgba(123, 31, 162, 0.2));
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(156, 39, 176, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            animation: slideUp 0.5s ease-out 0.25s backwards;
+            position: relative;
+        }
+
+        .festival-countdown-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+            animation: shimmer 5s ease-in-out infinite alternate;
+        }
+
+        .countdown-header {
+            padding: 16px 18px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .countdown-festival-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .countdown-festival-name i {
+            color: #ffd54f;
+        }
+
+        .countdown-date {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 18px 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .countdown-box {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 14px 12px;
+            text-align: center;
+            min-width: 65px;
+            transition: all 0.3s;
+        }
+
+        .countdown-box:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .countdown-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ce93d8;
+            line-height: 1;
+            text-shadow: 0 0 10px rgba(206, 147, 216, 0.3);
+        }
+
+        .countdown-unit {
+            font-size: 0.58rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 6px;
+        }
+
+        /* ==================== FLOWER PETALS ==================== */
+        .petal {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            animation: petalFall linear forwards;
+        }
+
+        .petal-inner {
+            font-size: 1rem;
+            animation: petalSpin linear infinite;
+        }
+
+        @keyframes petalFall {
+            0% {
+                transform: translateY(-5vh) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            90% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translateY(105vh) translateX(var(--drift));
+                opacity: 0;
+            }
+        }
+
+        @keyframes petalSpin {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            25% {
+                transform: rotate(90deg) scale(0.8);
+            }
+
+            50% {
+                transform: rotate(180deg) scale(1);
+            }
+
+            75% {
+                transform: rotate(270deg) scale(0.8);
+            }
+
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        /* ==================== DIYA ANIMATION ==================== */
+        .diya-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 10px 0;
+            margin: -10px 0 10px;
+        }
+
+        .diya {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .diya-flame {
+            position: relative;
+            width: 12px;
+            height: 20px;
+        }
+
+        .diya-flame::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 20px;
+            background: linear-gradient(to top, #ff6f00, #ffab00, #fff9c4);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 0.5s ease-in-out infinite alternate;
+            box-shadow: 0 0 10px #ff9800, 0 0 20px rgba(255, 152, 0, 0.5), 0 0 40px rgba(255, 152, 0, 0.2);
+        }
+
+        .diya-flame::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 10px;
+            background: linear-gradient(135deg, #e65100, #bf360c);
+            border-radius: 0 0 50% 50%;
+        }
+
+        @keyframes flicker {
+            0% {
+                transform: scaleY(1) scaleX(1) rotate(-2deg);
+            }
+
+            25% {
+                transform: scaleY(1.1) scaleX(0.9) rotate(1deg);
+            }
+
+            50% {
+                transform: scaleY(0.95) scaleX(1.05) rotate(-1deg);
+            }
+
+            75% {
+                transform: scaleY(1.05) scaleX(0.95) rotate(2deg);
+            }
+
+            100% {
+                transform: scaleY(1) scaleX(1) rotate(0deg);
+            }
+        }
+
+        .diya-glow {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 152, 0, 0.3) 0%, transparent 70%);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.8;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .aarti-time-value {
+                font-size: 1.4rem;
+            }
+
+            .countdown-value {
+                font-size: 1.3rem;
+            }
+
+            .countdown-box {
+                min-width: 55px;
+                padding: 10px 8px;
+            }
+
+            .countdown-timer {
+                gap: 6px;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Om Loader -->
+    <!-- Om Loader -->
+    <div id="omLoader"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a1a;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s,visibility 0.5s;">
+        <div style="position:absolute;width:120px;height:120px;">
+            <div
+                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;border:2px solid transparent;border-top-color:#ff9800;border-right-color:#ff9800;animation:omS 1s linear infinite;">
+            </div>
+            <div
+                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border-radius:50%;border:2px solid transparent;border-bottom-color:#ffd54f;border-left-color:#ffd54f;animation:omS 1s linear infinite reverse;">
+            </div>
+            <div
+                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;border:2px solid transparent;border-top-color:#9c27b0;border-right-color:#9c27b0;animation:omS 1s linear infinite;">
+            </div>
+        </div>
+        <div
+            style="font-size:4rem;color:#ffd54f;animation:omP 1s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,213,79,0.5));margin-bottom:20px;z-index:1;">
+            ॐ</div>
+        <div
+            style="color:rgba(255,255,255,0.4);font-size:0.8rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;animation:omT 1s ease-in-out infinite;">
+            ॥ श्री गौरी शंकर मंदिर ॥</div>
+        <style>
+            @keyframes omS {
+                0% {
+                    transform: translate(-50%, -50%) rotate(0deg)
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) rotate(360deg)
+                }
+            }
+
+            @keyframes omP {
+
+                0%,
+                100% {
+                    transform: scale(1);
+                    filter: drop-shadow(0 0 20px rgba(255, 213, 79, 0.5))
+                }
+
+                50% {
+                    transform: scale(1.15);
+                    filter: drop-shadow(0 0 40px rgba(255, 213, 79, 0.8))
+                }
+            }
+
+            @keyframes omT {
+
+                0%,
+                100% {
+                    opacity: 0.4
+                }
+
+                50% {
+                    opacity: 1
+                }
+            }
+        </style>
+    </div>
+    <div class="om-rings">
+        <div class="om-ring"></div>
+        <div class="om-ring"></div>
+        <div class="om-ring"></div>
+    </div>
+    <div class="om-symbol">ॐ</div>
+    <div class="om-loader-text">॥ श्री गौरी शंकर मंदिर ॥</div>
+    </div>
+
+    <!-- Bell Welcome -->
+    <div class="bell-overlay" id="bellOverlay">
+        <div class="bell-welcome">
+            <i class="fas fa-bell bell-icon-big"></i>
+            <h2>🙏 श्री गौरी शंकर मंदिर</h2>
+            <p>Poisar, Kandivali East, Mumbai</p>
+            <button class="bell-enter-btn" onclick="enterSite()">
+                <i class="fas fa-door-open"></i> Enter Temple
+            </button>
+        </div>
+    </div>
     <div class="bg-container">
         <img src="/static/images/temple-bg.jpg" class="bg-image" onerror="this.style.display='none'" alt="">
     </div>
@@ -761,6 +1747,140 @@
         <div class="welcome-banner">
             <h1><i class="fas fa-gopuram"></i> श्री गौरी शंकर मंदिर </h1>
             <p> Poisar, Kandivali East, Mumbai - 400101 </p>
+
+
+            <!-- Diya Container -->
+            <div class="diya-container">
+                <div class="diya">
+                    <div class="diya-glow"></div>
+                    <div class="diya-flame"></div>
+                </div>
+                <div class="diya">
+                    <div class="diya-glow"></div>
+                    <div class="diya-flame"></div>
+                </div>
+                <div class="diya">
+                    <div class="diya-glow"></div>
+                    <div class="diya-flame"></div>
+                </div>
+                <div class="diya">
+                    <div class="diya-glow"></div>
+                    <div class="diya-flame"></div>
+                </div>
+                <div class="diya">
+                    <div class="diya-glow"></div>
+                    <div class="diya-flame"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Festival Countdown -->
+        <div class="festival-countdown-card" id="festivalCountdown">
+            <div class="countdown-header">
+                <div class="countdown-festival-name">
+                    <i class="fas fa-om"></i>
+                    <span id="countdownFestName">Loading...</span>
+                </div>
+                <div class="countdown-date" id="countdownFestDate"></div>
+            </div>
+            <div class="countdown-timer" id="countdownTimer">
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cdDays">00</div>
+                    <div class="countdown-unit">Days</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cdHours">00</div>
+                    <div class="countdown-unit">Hours</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cdMins">00</div>
+                    <div class="countdown-unit">Minutes</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-value" id="cdSecs">00</div>
+                    <div class="countdown-unit">Seconds</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aarti Schedule -->
+        <div class="section-title"><i class="fas fa-bell"></i> आरती / पाठ समय</div>
+        <div class="aarti-schedule-card">
+            <div class="aarti-header">
+                <div class="aarti-header-left">
+                    <i class="fas fa-bell"></i>
+                    <span>आरती एवं पाठ</span>
+                </div>
+                <div class="aarti-live-badge" id="aartiBadge">
+                    <div class="live-dot"></div>
+                    <span id="aartiBadgeText">LIVE</span>
+                </div>
+            </div>
+            <div class="aarti-body">
+                <!-- Timer -->
+                <div class="aarti-timer">
+                    <div class="aarti-timer-label" id="aartiTimerLabel">अगली आरती तक</div>
+                    <div class="aarti-countdown">
+                        <div class="aarti-time-box">
+                            <span class="aarti-time-value" id="aartiHrs">00</span>
+                            <div class="aarti-time-unit">Hours</div>
+                        </div>
+                        <span class="aarti-time-separator">:</span>
+                        <div class="aarti-time-box">
+                            <span class="aarti-time-value" id="aartiMins">00</span>
+                            <div class="aarti-time-unit">Minutes</div>
+                        </div>
+                        <span class="aarti-time-separator">:</span>
+                        <div class="aarti-time-box">
+                            <span class="aarti-time-value" id="aartiSecs">00</span>
+                            <div class="aarti-time-unit">Seconds</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule List -->
+                <div class="aarti-schedule-list">
+                    <!-- Daily Aarti -->
+                    <div class="aarti-item" id="dailyAarti">
+                        <div class="aarti-item-icon daily"><i class="fas fa-om"></i></div>
+                        <div class="aarti-item-info">
+                            <div class="aarti-item-title">संध्या आरती</div>
+                            <div class="aarti-item-desc">शिव पूजा एवं आरती</div>
+                        </div>
+                        <div>
+                            <div class="aarti-item-time">7:30 PM</div>
+                            <div class="aarti-item-day">Every day</div>
+                        </div>
+                    </div>
+
+                    <!-- Thursday Event -->
+                    <div class="aarti-item" id="thursdayEvent">
+                        <div class="aarti-item-icon thursday"><i class="fas fa-pray"></i></div>
+                        <div class="aarti-item-info">
+                            <div class="aarti-item-title">हनुमान पाठ</div>
+                            <div class="aarti-item-desc">हनुमान चालीसा, राम स्तुति, हनुमान अष्टक, रामावतार, आरती एवं भजन
+                            </div>
+                        </div>
+                        <div>
+                            <div class="aarti-item-time">8:00 - 10:30 PM</div>
+                            <div class="aarti-item-day">Every Tuesday</div>
+                        </div>
+                    </div>
+
+                    <!-- Saturday Event -->
+                    <div class="aarti-item" id="saturdayEvent">
+                        <div class="aarti-item-icon saturday"><i class="fas fa-book-open"></i></div>
+                        <div class="aarti-item-info">
+                            <div class="aarti-item-title">सुंदरकांड पाठ</div>
+                            <div class="aarti-item-desc">सुंदरकांड पाठ एवं आरती</div>
+                        </div>
+                        <div>
+                            <div class="aarti-item-time">8:00 PM</div>
+                            <div class="aarti-item-day">Every Saturday</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Quick Actions -->
@@ -783,6 +1903,10 @@
             <a href="/reports" class="action-card reports">
                 <i class="fas fa-chart-bar"></i>
                 <span>Reports</span>
+            </a>
+            <a href="/gallery" class="action-card" style="color:#e91e63">
+                <i class="fas fa-camera" style="color:#e91e63"></i>
+                <span>Gallery</span>
             </a>
         </div>
 
@@ -838,6 +1962,53 @@
         </div>
     </div>
 
+    <!-- Floating Audio Player -->
+    <div class="audio-player-float" id="audioPlayer">
+        <!-- Panel -->
+        <div class="audio-panel" id="audioPanel">
+            <div class="audio-panel-header">
+                <h4><i class="fas fa-om"></i> Temple Aarti</h4>
+                <button class="audio-panel-close" onclick="toggleAudioPanel()"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- Now Playing -->
+            <div class="now-playing" id="nowPlaying">
+                <div class="now-playing-title">
+                    <div class="bars">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                    <span id="currentTrackName">-</span>
+                </div>
+                <div class="audio-controls">
+                    <button class="audio-ctrl-btn" onclick="prevTrack()"><i class="fas fa-backward"></i></button>
+                    <button class="audio-ctrl-btn play-pause" id="playPauseBtn" onclick="togglePlay()">
+                        <i class="fas fa-play" id="playIcon"></i>
+                    </button>
+                    <button class="audio-ctrl-btn" onclick="nextTrack()"><i class="fas fa-forward"></i></button>
+                </div>
+                <div class="audio-progress" onclick="seekAudio(event)">
+                    <div class="audio-progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Track List -->
+            <div class="track-list" id="trackList">
+                <!-- Tracks populated by JS -->
+            </div>
+        </div>
+
+        <!-- Toggle Button -->
+        <button class="audio-toggle-btn" id="audioToggleBtn" onclick="toggleAudioPanel()">
+            <i class="fas fa-music"></i>
+        </button>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="audioElement" preload="none"></audio>
+
     <!-- Bottom Nav -->
     <nav class="bottom-nav">
         <a href="/" class="nav-item active">
@@ -858,6 +2029,15 @@
     </nav>
 
     <script>
+
+        // Om Loader - Hide after page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const l = document.getElementById('omLoader');
+                if (l) { l.style.opacity = '0'; l.style.visibility = 'hidden'; setTimeout(() => l.remove(), 500); }
+            }, 600);
+        });
+
         const API = window.location.origin + '/api/v1';
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1004,6 +2184,501 @@
             d.textContent = s;
             return d.innerHTML;
         }
+
+        // ==================== AUDIO PLAYER ====================
+        const tracks = [
+            {
+                name: 'ॐ जय शिव ओमकारा',
+                artist: 'शिव आरती',
+                icon: 'fas fa-om',
+                url: '/static/audio/Om Jai Shiv Omkara.mp3.mp3'
+            },
+            {
+                name: 'हनुमान चालीसा',
+                artist: 'गुरुवार विशेष',
+                icon: 'fas fa-pray',
+                url: '/static/audio/श्री हनुमान चालीसा.mp3'
+            },
+            {
+                name: 'श्री राम चंद्र कृपालु भजमनती',
+                artist: 'राम आरती',
+                icon: 'fas fa-sun',
+                url: '/static/audio/श्री राम चंद्र कृपालु भजमन.mp3'
+            },
+            {
+                name: 'ॐ जय गणेश देवा',
+                artist: 'गणेश आरती',
+                icon: 'fas fa-om',
+                url: '/static/audio/jay ganesh deva.mp3.mp3'
+            },
+            {
+                name: 'ॐ जय लक्ष्मी माता',
+                artist: 'लक्ष्मी आरती',
+                icon: 'fas fa-star',
+                url: '/static/audio/om jay lakshmi mata.mp3.mp3'
+            },
+            {
+                name: 'शिव तांडव स्तोत्रम्',
+                artist: 'महादेव स्तोत्र',
+                icon: 'fas fa-fire',
+                url: '/static/audio/shiv tandav stotram.mp3.mp3'
+            },
+            {
+                name: 'हनुमान आरती',
+                artist: 'गुरुवार विशेष',
+                icon: 'fas fa-pray',
+                url: '/static/audio/aarti keeje hanuman.mp3.mp3'
+            },
+            {
+                name: "भए प्रगट कृपाला दीनदयाला",
+                artist: "rajan ji maharaj",
+                icon: "fas fa-om",
+                url: "/static/audio/bhay pragat kripala.mp3.mp3"
+            },
+            {
+                name: "आरती कुंज बिहारी की",
+                artist: "Hariharan",
+                icon: "fas fa-om",
+                url: "/static/audio/aarti kunj bihari ki.mp3.mp3"
+            }
+        ];
+
+        let currentTrackIndex = -1;
+        let isPlaying = false;
+        let isPanelOpen = false;
+        const audio = document.getElementById('audioElement');
+
+        // Initialize track list
+        function initTrackList() {
+            const list = document.getElementById('trackList');
+            list.innerHTML = tracks.map((t, i) => `
+                <div class="track-item" id="track_${i}" onclick="playTrack(${i})">
+                    <div class="track-icon"><i class="${t.icon}"></i></div>
+                    <div class="track-info">
+                        <div class="track-name">${t.name}</div>
+                        <div class="track-artist">${t.artist}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAudioPanel() {
+            const panel = document.getElementById('audioPanel');
+            isPanelOpen = !isPanelOpen;
+            if (isPanelOpen) {
+                panel.classList.add('open');
+            } else {
+                panel.classList.remove('open');
+            }
+        }
+
+        function playTrack(index) {
+            if (index < 0 || index >= tracks.length) return;
+
+            // Remove active from all
+            document.querySelectorAll('.track-item').forEach(t => t.classList.remove('active'));
+
+            currentTrackIndex = index;
+            const track = tracks[index];
+
+            // Set active
+            const trackEl = document.getElementById(`track_${index}`);
+            if (trackEl) trackEl.classList.add('active');
+
+            // Update now playing
+            document.getElementById('currentTrackName').textContent = track.name;
+            document.getElementById('nowPlaying').classList.add('active');
+
+            // Play audio
+            audio.src = track.url;
+            audio.play().then(() => {
+                isPlaying = true;
+                updatePlayButton();
+                document.getElementById('audioToggleBtn').classList.add('playing');
+            }).catch(e => {
+                console.error('Audio play error:', e);
+                // Try alternate URL format
+                toast('Unable to play. Try another track.', 'info');
+            });
+        }
+
+        function togglePlay() {
+            if (currentTrackIndex === -1) {
+                playTrack(0);
+                return;
+            }
+
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+            } else {
+                audio.play();
+                isPlaying = true;
+            }
+            updatePlayButton();
+        }
+
+        function updatePlayButton() {
+            const icon = document.getElementById('playIcon');
+            const toggleBtn = document.getElementById('audioToggleBtn');
+            if (isPlaying) {
+                icon.className = 'fas fa-pause';
+                toggleBtn.classList.add('playing');
+            } else {
+                icon.className = 'fas fa-play';
+                toggleBtn.classList.remove('playing');
+            }
+        }
+
+        function nextTrack() {
+            const next = (currentTrackIndex + 1) % tracks.length;
+            playTrack(next);
+        }
+
+        function prevTrack() {
+            const prev = currentTrackIndex <= 0 ? tracks.length - 1 : currentTrackIndex - 1;
+            playTrack(prev);
+        }
+
+        function seekAudio(e) {
+            if (!audio.duration) return;
+            const rect = e.target.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = percent * audio.duration;
+        }
+
+        // Audio events
+        audio.addEventListener('timeupdate', () => {
+            if (!audio.duration) return;
+            const percent = (audio.currentTime / audio.duration) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+        });
+
+        audio.addEventListener('ended', () => {
+            nextTrack();
+        });
+
+        audio.addEventListener('pause', () => {
+            isPlaying = false;
+            updatePlayButton();
+        });
+
+        audio.addEventListener('play', () => {
+            isPlaying = true;
+            updatePlayButton();
+        });
+
+        // Initialize
+        initTrackList();
+
+        // ==================== BELL WELCOME ====================
+        function enterSite() {
+            const overlay = document.getElementById('bellOverlay');
+            // Play bell sound
+            try {
+                const bellAudio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
+                bellAudio.volume = 0.4;
+                bellAudio.play().catch(() => { });
+            } catch (e) { }
+
+            overlay.style.opacity = '0';
+            overlay.style.transition = 'opacity 0.5s';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                // Start petals after entering
+                startPetals();
+            }, 500);
+
+            // Remember for this session
+            sessionStorage.setItem('bellShown', 'true');
+        }
+
+        // Skip bell if already shown in this session
+        if (sessionStorage.getItem('bellShown')) {
+            document.getElementById('bellOverlay').style.display = 'none';
+            setTimeout(() => startPetals(), 2000);
+        }
+
+        // ==================== FLOWER PETALS ====================
+        function startPetals() {
+            const petals = ['🌸', '🌺', '🌼', '🪷', '💮'];
+
+            function createPetal() {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.style.left = Math.random() * 100 + '%';
+                petal.style.setProperty('--drift', (Math.random() * 100 - 50) + 'px');
+                petal.style.animationDuration = (Math.random() * 8 + 8) + 's';
+                petal.style.animationDelay = (Math.random() * 2) + 's';
+
+                const inner = document.createElement('span');
+                inner.className = 'petal-inner';
+                inner.textContent = petals[Math.floor(Math.random() * petals.length)];
+                inner.style.animationDuration = (Math.random() * 3 + 3) + 's';
+
+                petal.appendChild(inner);
+                document.body.appendChild(petal);
+
+                // Remove after animation
+                setTimeout(() => petal.remove(), 16000);
+            }
+
+            // Create petals periodically
+            setInterval(createPetal, 3000);
+
+            // Create a few immediately
+            for (let i = 0; i < 3; i++) {
+                setTimeout(createPetal, i * 800);
+            }
+        }
+
+        // ==================== FESTIVAL COUNTDOWN ====================
+        const upcomingFestivals = [
+            { name: 'श्री राम नवमी', date: '2026-03-26', icon: 'fas fa-om' },
+            // Add more festivals here
+        ];
+
+        function updateFestivalCountdown() {
+            const now = new Date();
+            let nextFest = null;
+
+            for (const fest of upcomingFestivals) {
+                const festDate = new Date(fest.date + 'T00:00:00');
+                if (festDate > now) {
+                    nextFest = fest;
+                    break;
+                }
+            }
+
+            // Also check from API
+            if (!nextFest) {
+                document.getElementById('festivalCountdown').style.display = 'none';
+                return;
+            }
+
+            const festDate = new Date(nextFest.date + 'T00:00:00');
+            const diff = festDate - now;
+
+            if (diff <= 0) {
+                document.getElementById('countdownFestName').textContent = '🎉 ' + nextFest.name + ' आज है!';
+                document.getElementById('countdownFestDate').textContent = '';
+                document.getElementById('countdownTimer').style.display = 'none';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('countdownFestName').textContent = nextFest.name;
+            document.getElementById('countdownFestDate').textContent = festDate.toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('cdDays').textContent = String(days).padStart(2, '0');
+            document.getElementById('cdHours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('cdMins').textContent = String(mins).padStart(2, '0');
+            document.getElementById('cdSecs').textContent = String(secs).padStart(2, '0');
+        }
+
+        // Also load from API
+        async function loadUpcomingFestival() {
+            try {
+                const r = await fetch(`${API}/festivals`);
+                const res = await r.json();
+                if (res.success && res.data) {
+                    const now = new Date();
+                    const upcoming = res.data
+                        .filter(f => f.status === 'upcoming' && new Date(f.start_date) > now)
+                        .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+                    if (upcoming.length > 0) {
+                        const next = upcoming[0];
+                        // Add to festivals array if not already there
+                        const exists = upcomingFestivals.find(f => f.name === next.name);
+                        if (!exists) {
+                            upcomingFestivals.unshift({
+                                name: next.name,
+                                date: next.start_date.split('T')[0],
+                                icon: 'fas fa-om'
+                            });
+                        }
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        loadUpcomingFestival();
+        updateFestivalCountdown();
+        setInterval(updateFestivalCountdown, 1000);
+
+        // ==================== AARTI TIMER ====================
+        function updateAartiTimer() {
+            const now = new Date();
+            const day = now.getDay(); // 0=Sun, 1=Mon, ..., 4=Thu, 6=Sat
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const currentMinutes = hours * 60 + minutes;
+
+            // Daily aarti at 19:30 (7:30 PM)
+            const dailyAartiTime = 19 * 60 + 30; // 7:30 PM in minutes
+
+            // Thursday event 20:00-22:30
+            const thursdayStart = 20 * 60; // 8:00 PM
+            const thursdayEnd = 22 * 60 + 30; // 10:30 PM
+
+            // Saturday event 20:00
+            const saturdayStart = 20 * 60; // 8:00 PM
+
+            const badge = document.getElementById('aartiBadge');
+            const badgeText = document.getElementById('aartiBadgeText');
+            const timerLabel = document.getElementById('aartiTimerLabel');
+
+            // Highlight today's items
+            document.getElementById('dailyAarti').classList.add('today-active');
+            document.getElementById('thursdayEvent').classList.toggle('today-active', day === 4);
+            document.getElementById('saturdayEvent').classList.toggle('today-active', day === 6);
+
+            // Check if aarti is LIVE now
+            let isLive = false;
+            let nextEventMinutes = dailyAartiTime;
+
+            // Check daily aarti (assume 30 min duration)
+            if (currentMinutes >= dailyAartiTime && currentMinutes <= dailyAartiTime + 30) {
+                isLive = true;
+                timerLabel.textContent = '🔴 आरती चल रही है!';
+                badge.className = 'aarti-live-badge live';
+                badgeText.textContent = 'LIVE';
+            }
+
+            // Check Thursday event
+            if (day === 4 && currentMinutes >= thursdayStart && currentMinutes <= thursdayEnd) {
+                isLive = true;
+                timerLabel.textContent = '🔴 हनुमान पाठ चल रहा है!';
+                badge.className = 'aarti-live-badge live';
+                badgeText.textContent = 'LIVE';
+            }
+
+            // Check Saturday event
+            if (day === 6 && currentMinutes >= saturdayStart && currentMinutes <= saturdayStart + 120) {
+                isLive = true;
+                timerLabel.textContent = '🔴 सुंदरकांड पाठ चल रहा है!';
+                badge.className = 'aarti-live-badge live';
+                badgeText.textContent = 'LIVE';
+            }
+
+            if (!isLive) {
+                // Calculate next event
+                let targetTime;
+
+                if (currentMinutes < dailyAartiTime) {
+                    // Today's aarti hasn't happened yet
+                    targetTime = dailyAartiTime;
+                    timerLabel.textContent = 'अगली आरती तक';
+                    badge.className = 'aarti-live-badge upcoming';
+                    badgeText.textContent = 'आज 7:30 PM';
+                } else {
+                    // Today's aarti is over, show tomorrow's
+                    targetTime = dailyAartiTime + 24 * 60; // Tomorrow
+                    timerLabel.textContent = 'अगली आरती तक (कल)';
+                    badge.className = 'aarti-live-badge upcoming';
+                    badgeText.textContent = 'कल 7:30 PM';
+                }
+
+                // Special: if Thursday/Saturday is coming, mention it
+                if (day === 4 && currentMinutes < thursdayStart) {
+                    badge.className = 'aarti-live-badge upcoming';
+                    badgeText.textContent = 'आज हनुमान पाठ 8 PM';
+                }
+                if (day === 6 && currentMinutes < saturdayStart) {
+                    badge.className = 'aarti-live-badge upcoming';
+                    badgeText.textContent = 'आज सुंदरकांड 8 PM';
+                }
+
+                const diffMinutes = currentMinutes < dailyAartiTime
+                    ? dailyAartiTime - currentMinutes
+                    : (24 * 60 - currentMinutes) + dailyAartiTime;
+
+                const h = Math.floor(diffMinutes / 60);
+                const m = diffMinutes % 60;
+                const s = 59 - now.getSeconds();
+
+                document.getElementById('aartiHrs').textContent = String(h).padStart(2, '0');
+                document.getElementById('aartiMins').textContent = String(m).padStart(2, '0');
+                document.getElementById('aartiSecs').textContent = String(s).padStart(2, '0');
+            } else {
+                document.getElementById('aartiHrs').textContent = '🔴';
+                document.getElementById('aartiMins').textContent = 'LIVE';
+                document.getElementById('aartiSecs').textContent = '🔴';
+            }
+        }
+
+        updateAartiTimer();
+        setInterval(updateAartiTimer, 1000);
+
+        // ==================== FLOWER PETALS ====================
+        function startPetals() {
+            const petals = ['🌸', '🌺', '🌼', '🪷', '💮', '🌻'];
+
+            function createPetal() {
+                const petal = document.createElement('div');
+                petal.style.position = 'fixed';
+                petal.style.left = Math.random() * 100 + '%';
+                petal.style.top = '-30px';
+                petal.style.fontSize = (Math.random() * 14 + 10) + 'px';
+                petal.style.pointerEvents = 'none';
+                petal.style.zIndex = '2';
+                petal.style.opacity = '0';
+                petal.textContent = petals[Math.floor(Math.random() * petals.length)];
+
+                document.body.appendChild(petal);
+
+                const duration = Math.random() * 8000 + 8000;
+                const drift = (Math.random() - 0.5) * 200;
+                const startLeft = parseFloat(petal.style.left);
+                const startTime = Date.now();
+
+                function animate() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = elapsed / duration;
+
+                    if (progress >= 1) {
+                        petal.remove();
+                        return;
+                    }
+
+                    // Move down
+                    const y = progress * (window.innerHeight + 50);
+                    // Drift sideways with sine wave
+                    const x = Math.sin(progress * Math.PI * 3) * drift;
+                    // Rotate
+                    const rotate = progress * 720;
+                    // Fade in/out
+                    let opacity = 0.7;
+                    if (progress < 0.1) opacity = progress * 7;
+                    if (progress > 0.85) opacity = (1 - progress) * 5;
+
+                    petal.style.transform = `translateY(${y}px) translateX(${x}px) rotate(${rotate}deg)`;
+                    petal.style.opacity = opacity;
+
+                    requestAnimationFrame(animate);
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            // Create petals every 2.5 seconds
+            setInterval(createPetal, 2500);
+
+            // Create initial batch
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createPetal, i * 600);
+            }
+        }
+
+        // Start petals after 2 seconds
+        setTimeout(() => {
+            startPetals();
+        }, 2000);
+
     </script>
 </body>
 

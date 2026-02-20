@@ -59,3 +59,13 @@ type TempleInfo struct {
 	UPI     string `json:"upi"`
 	QRCode  string `json:"qr_code"`
 }
+
+type GalleryItem struct {
+	ID        uint      `json:"id" gorm:"primaryKey"`
+	Title     string    `json:"title"`
+	Category  string    `json:"category" gorm:"default:temple"`
+	Type      string    `json:"type" gorm:"default:photo"` // photo or video
+	URL       string    `json:"url"`
+	Thumbnail string    `json:"thumbnail"`
+	CreatedAt time.Time `json:"created_at"`
+}

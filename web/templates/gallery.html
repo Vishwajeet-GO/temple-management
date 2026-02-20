@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Gallery - Temple Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/global.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("/static/images/temple-bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        .top-nav {
+            background: linear-gradient(135deg, #ad1457, #d81b60, #e91e63);
+        }
+
+        .nav-item.active {
+            color: #e91e63;
+        }
+
+        .nav-item.active i {
+            filter: drop-shadow(0 3px 6px rgba(233, 30, 99, 0.5));
+        }
+
+        .nav-item.active::before {
+            background: #e91e63;
+        }
+
+        /* Filter Tabs */
+        .gallery-filters {
+            display: flex;
+            gap: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .gallery-filters::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-btn {
+            padding: 8px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #ad1457, #e91e63);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            padding: 0 4px 20px;
+            min-height: 200px;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            overflow: hidden;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+            z-index: 2;
+        }
+
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .gallery-item:hover img,
+        .gallery-item:hover video {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 8px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-overlay-title {
+            font-size: 0.65rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .gallery-overlay-cat {
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .video-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .delete-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(244, 67, 54, 0.8);
+            color: #fff;
+            border: none;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 3;
+        }
+
+        .delete-badge:hover {
+            background: #f44336;
+            transform: scale(1.1);
+        }
+
+        .admin-mode .delete-badge {
+            display: flex;
+        }
+
+        .gallery-item.large {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            padding: 20px;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox img,
+        .lightbox video {
+            max-width: 95%;
+            max-height: 85vh;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+
+        .lb-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lb-close:hover {
+            background: rgba(244, 67, 54, 0.5);
+            transform: rotate(90deg);
+        }
+
+        .lb-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lb-nav:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .lb-prev {
+            left: 15px;
+        }
+
+        .lb-next {
+            right: 15px;
+        }
+
+        .lb-caption {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            padding: 0 16px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .upload-section.show {
+            display: block;
+        }
+
+        .upload-card {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+        }
+
+        .upload-card h4 {
+            color: #e91e63;
+            font-size: 0.9rem;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .upload-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .upload-fg label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #aaa;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .upload-fi {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .upload-fi:focus {
+            border-color: #e91e63;
+        }
+
+        select.upload-fi {
+            cursor: pointer;
+            appearance: none;
+        }
+
+        select.upload-fi option {
+            background: #1e1e3a;
+            color: #fff;
+        }
+
+        .upload-drop {
+            border: 2px dashed rgba(233, 30, 99, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .upload-drop:hover {
+            border-color: rgba(233, 30, 99, 0.6);
+            background: rgba(233, 30, 99, 0.05);
+        }
+
+        .upload-drop input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-drop i {
+            font-size: 2rem;
+            color: #e91e63;
+            opacity: 0.7;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .upload-drop-text {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.82rem;
+        }
+
+        .upload-drop-text strong {
+            color: #e91e63;
+        }
+
+        .upload-preview {
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+            position: relative;
+        }
+
+        .upload-preview img,
+        .upload-preview video {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .upload-preview .remove-preview {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f44336;
+            color: #fff;
+            border: none;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-file-name {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 6px;
+        }
+
+        .upload-btn {
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #ad1457, #e91e63);
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Empty */
+        .gallery-empty {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .gallery-empty i {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.2;
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 3px;
+            }
+
+            .upload-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+                padding: 0 16px 20px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .gallery-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Om Loader -->
+    <div id="omLoader"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a1a;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s,visibility 0.5s;">
+        <div style="position:absolute;width:120px;height:120px;">
+            <div
+                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;border:2px solid transparent;border-top-color:#ff9800;border-right-color:#ff9800;animation:omS 1s linear infinite;">
+            </div>
+            <div
+                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border-radius:50%;border:2px solid transparent;border-bottom-color:#ffd54f;border-left-color:#ffd54f;animation:omS 1s linear infinite reverse;">
+            </div>
+            <div
+                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;border:2px solid transparent;border-top-color:#9c27b0;border-right-color:#9c27b0;animation:omS 1s linear infinite;">
+            </div>
+        </div>
+        <div
+            style="font-size:4rem;color:#ffd54f;animation:omP 1s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,213,79,0.5));margin-bottom:20px;z-index:1;">
+            ॐ</div>
+        <div
+            style="color:rgba(255,255,255,0.4);font-size:0.8rem;font-weight:600;letter-spacing:2px;animation:omT 1s ease-in-out infinite;">
+            ॥ श्री गौरी शंकर मंदिर ॥</div>
+        <style>
+            @keyframes omS {
+                0% {
+                    transform: translate(-50%, -50%) rotate(0deg)
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) rotate(360deg)
+                }
+            }
+
+            @keyframes omP {
+
+                0%,
+                100% {
+                    transform: scale(1)
+                }
+
+                50% {
+                    transform: scale(1.15)
+                }
+            }
+
+            @keyframes omT {
+
+                0%,
+                100% {
+                    opacity: 0.4
+                }
+
+                50% {
+                    opacity: 1
+                }
+            }
+        </style>
+    </div>
+
+    <div class="particles" id="particles"></div>
+    <div class="toast-box" id="toastBox"></div>
+
+    <!-- Confirm Delete -->
+    <div class="confirm-bg" id="confirmBg">
+        <div class="confirm-box">
+            <div class="confirm-icon"><i class="fas fa-trash-alt"></i></div>
+            <h4>Delete this item?</h4>
+            <p>This cannot be undone.</p>
+            <div class="confirm-btns">
+                <button class="cbtn cancel" onclick="closeConfirm()">Cancel</button>
+                <button class="cbtn del" id="confirmDelBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <button class="lb-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+        <button class="lb-nav lb-prev" onclick="prevImage(event)"><i class="fas fa-chevron-left"></i></button>
+        <div id="lightboxContent"></div>
+        <button class="lb-nav lb-next" onclick="nextImage(event)"><i class="fas fa-chevron-right"></i></button>
+        <div class="lb-caption" id="lbCaption"></div>
+    </div>
+
+    <div class="main">
+        <nav class="top-nav">
+            <a href="/" class="brand"><i class="fas fa-gopuram"></i><span>मंदिर गैलरी</span></a>
+            <div class="nav-btns">
+                <a href="/" class="nav-btn home"><i class="fas fa-home"></i> Home</a>
+                <button class="nav-btn add" id="uploadToggleBtn"
+                    style="display:none;background:linear-gradient(135deg,#ad1457,#e91e63);" onclick="toggleUpload()">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload
+                </button>
+            </div>
+        </nav>
+
+        <!-- Upload Section (Admin Only) -->
+        <div class="upload-section" id="uploadSection">
+            <div class="upload-card">
+                <h4><i class="fas fa-cloud-upload-alt"></i> Upload Photo / Video</h4>
+                <div class="upload-form">
+                    <div class="upload-fg">
+                        <label>Title</label>
+                        <input type="text" class="upload-fi" id="uploadTitle" placeholder="Enter title">
+                    </div>
+                    <div class="upload-row">
+                        <div class="upload-fg">
+                            <label>Category</label>
+                            <select class="upload-fi" id="uploadCategory">
+                                <option value="temple">🛕 Temple</option>
+                                <option value="festival">🎪 Festival</option>
+                                <option value="aarti">🔥 Aarti</option>
+                                <option value="decoration">🌸 Decoration</option>
+                                <option value="event">👥 Event</option>
+                            </select>
+                        </div>
+                        <div class="upload-fg">
+                            <label>Type</label>
+                            <select class="upload-fi" id="uploadType" onchange="updateAccept()">
+                                <option value="photo">📷 Photo</option>
+                                <option value="video">🎬 Video</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="upload-drop" id="uploadDrop">
+                        <input type="file" id="uploadFile" accept="image/*" onchange="previewUpload(this)">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div class="upload-drop-text">
+                            <strong>Tap to choose</strong> or take photo<br>
+                            <small style="color:rgba(255,255,255,0.2)">Photos: JPG, PNG (5MB) | Videos: MP4
+                                (20MB)</small>
+                        </div>
+                    </div>
+                    <div class="upload-preview" id="uploadPreview">
+                        <button class="remove-preview" onclick="clearUpload()"><i class="fas fa-times"></i></button>
+                        <img id="uploadPreviewImg" src="" style="display:none;">
+                        <video id="uploadPreviewVid" src="" controls style="display:none;"></video>
+                    </div>
+                    <div class="upload-file-name" id="uploadFileName"></div>
+                    <button class="upload-btn" id="uploadBtn" onclick="doUpload()">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="gallery-filters">
+            <button class="filter-btn active" onclick="filterGallery('all',this)"><i class="fas fa-th"></i> All</button>
+            <button class="filter-btn" onclick="filterGallery('temple',this)"><i class="fas fa-gopuram"></i>
+                Temple</button>
+            <button class="filter-btn" onclick="filterGallery('festival',this)"><i class="fas fa-calendar-alt"></i>
+                Festivals</button>
+            <button class="filter-btn" onclick="filterGallery('aarti',this)"><i class="fas fa-fire"></i> Aarti</button>
+            <button class="filter-btn" onclick="filterGallery('decoration',this)"><i class="fas fa-palette"></i>
+                Decoration</button>
+            <button class="filter-btn" onclick="filterGallery('event',this)"><i class="fas fa-users"></i>
+                Events</button>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid" id="galleryGrid">
+            <div class="gallery-empty">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <a href="/" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/donate" class="nav-item"><i class="fas fa-heart"></i><span>Donate</span></a>
+        <a href="/festivals" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Festivals</span></a>
+        <a href="/gallery" class="nav-item active"><i class="fas fa-camera"></i><span>Gallery</span></a>
+        <a href="/donations" class="nav-item"><i class="fas fa-indian-rupee-sign"></i><span>History</span></a>
+    </nav>
+
+    <script>
+        // Om Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const l = document.getElementById('omLoader');
+                if (l) { l.style.opacity = '0'; l.style.visibility = 'hidden'; setTimeout(() => l.remove(), 500); }
+            }, 600);
+        });
+
+        // Particles
+        const pc = document.getElementById('particles');
+        for (let i = 0; i < 15; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            p.style.animationDelay = (Math.random() * 10) + 's';
+            p.style.width = (Math.random() * 3 + 1) + 'px';
+            p.style.height = p.style.width;
+            p.style.background = 'rgba(233,30,99,0.5)';
+            pc.appendChild(p);
+        }
+
+        const API = window.location.origin + '/api/v1';
+        let galleryData = [];
+        let filteredData = [];
+        let currentFilter = 'all';
+        let currentIndex = 0;
+        let isAdmin = false;
+        let deleteId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadGallery();
+        });
+
+        // ==================== AUTH ====================
+        async function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            if (!token) return;
+            try {
+                const r = await fetch(`${API}/auth/check`, { headers: { 'Authorization': 'Bearer ' + token } });
+                const res = await r.json();
+                if (res.authenticated && res.user.role === 'admin') {
+                    isAdmin = true;
+                    document.getElementById('uploadToggleBtn').style.display = 'flex';
+                    document.getElementById('galleryGrid').classList.add('admin-mode');
+                }
+            } catch (e) { }
+        }
+
+        function getToken() { return localStorage.getItem('authToken'); }
+
+        // ==================== LOAD GALLERY ====================
+        async function loadGallery() {
+            try {
+                const r = await fetch(`${API}/gallery`);
+                const res = await r.json();
+                if (res.success) {
+                    galleryData = res.data || [];
+                    renderGallery();
+                }
+            } catch (e) {
+                document.getElementById('galleryGrid').innerHTML = `
+                    <div class="gallery-empty">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Failed to load gallery</p>
+                    </div>`;
+            }
+        }
+
+        // ==================== RENDER ====================
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            filteredData = currentFilter === 'all'
+                ? galleryData
+                : galleryData.filter(i => i.category === currentFilter);
+
+            if (filteredData.length === 0) {
+                grid.innerHTML = `
+                    <div class="gallery-empty">
+                        <i class="fas fa-camera"></i>
+                        <p>No photos yet</p>
+                        <small style="color:rgba(255,255,255,0.2)">${isAdmin ? 'Click Upload to add photos & videos' : 'Photos coming soon'}</small>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = filteredData.map((item, i) => `
+                <div class="gallery-item ${i === 0 ? 'large' : ''}" onclick="openLightbox(${i})">
+                    ${item.type === 'video'
+                    ? `<video src="${item.url}" muted></video><div class="video-badge"><i class="fas fa-play"></i> Video</div>`
+                    : `<img src="${item.url}" alt="${esc(item.title)}" loading="lazy">`
+                }
+                    <div class="gallery-overlay">
+                        <div class="gallery-overlay-title">${esc(item.title)}</div>
+                        <div class="gallery-overlay-cat">${item.category}</div>
+                    </div>
+                    <button class="delete-badge" onclick="event.stopPropagation();showConfirm(${item.id})" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filterGallery(cat, el) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            renderGallery();
+        }
+
+        // ==================== UPLOAD ====================
+        function toggleUpload() {
+            const sec = document.getElementById('uploadSection');
+            sec.classList.toggle('show');
+        }
+
+        function updateAccept() {
+            const type = document.getElementById('uploadType').value;
+            const fileInput = document.getElementById('uploadFile');
+            fileInput.accept = type === 'video' ? 'video/mp4,video/webm,video/quicktime' : 'image/*';
+            clearUpload();
+        }
+
+        function previewUpload(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            const type = document.getElementById('uploadType').value;
+            const prev = document.getElementById('uploadPreview');
+            const img = document.getElementById('uploadPreviewImg');
+            const vid = document.getElementById('uploadPreviewVid');
+
+            document.getElementById('uploadFileName').textContent = file.name;
+
+            if (type === 'video') {
+                vid.src = URL.createObjectURL(file);
+                vid.style.display = 'block';
+                img.style.display = 'none';
+            } else {
+                const reader = new FileReader();
+                reader.onload = e => { img.src = e.target.result; };
+                reader.readAsDataURL(file);
+                img.style.display = 'block';
+                vid.style.display = 'none';
+            }
+            prev.style.display = 'block';
+        }
+
+        function clearUpload() {
+            document.getElementById('uploadFile').value = '';
+            document.getElementById('uploadPreview').style.display = 'none';
+            document.getElementById('uploadFileName').textContent = '';
+            document.getElementById('uploadPreviewImg').style.display = 'none';
+            document.getElementById('uploadPreviewVid').style.display = 'none';
+        }
+
+        async function doUpload() {
+            const title = document.getElementById('uploadTitle').value.trim();
+            const category = document.getElementById('uploadCategory').value;
+            const type = document.getElementById('uploadType').value;
+            const fileInput = document.getElementById('uploadFile');
+            const btn = document.getElementById('uploadBtn');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                toast('Please select a file', 'error');
+                return;
+            }
+            if (!title) {
+                toast('Please enter a title', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+
+            const fd = new FormData();
+            fd.append('title', title);
+            fd.append('category', category);
+            fd.append('type', type);
+            fd.append('file', fileInput.files[0]);
+
+            try {
+                const token = getToken();
+                const r = await fetch(`${API}/gallery`, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: fd
+                });
+                const res = await r.json();
+                if (!res.success) throw new Error(res.error || 'Upload failed');
+
+                toast(res.message || 'Uploaded!', 'success');
+                document.getElementById('uploadTitle').value = '';
+                clearUpload();
+                loadGallery();
+            } catch (e) {
+                toast('Error: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload';
+            }
+        }
+
+        // ==================== DELETE ====================
+        function showConfirm(id) {
+            deleteId = id;
+            document.getElementById('confirmBg').classList.add('active');
+            document.getElementById('confirmDelBtn').onclick = () => deleteItem();
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirmBg').classList.remove('active');
+            deleteId = null;
+        }
+
+        async function deleteItem() {
+            if (!deleteId) return;
+            try {
+                const token = getToken();
+                const r = await fetch(`${API}/gallery/${deleteId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const res = await r.json();
+                if (!res.success) throw new Error(res.error);
+                toast('Deleted!', 'success');
+                closeConfirm();
+                loadGallery();
+            } catch (e) {
+                toast('Error: ' + e.message, 'error');
+                closeConfirm();
+            }
+        }
+
+        // ==================== LIGHTBOX ====================
+        function openLightbox(index) {
+            currentIndex = index;
+            updateLightbox();
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function updateLightbox() {
+            const item = filteredData[currentIndex];
+            if (!item) return;
+            const content = document.getElementById('lightboxContent');
+            if (item.type === 'video') {
+                content.innerHTML = `<video src="${item.url}" controls autoplay style="max-width:95%;max-height:85vh;border-radius:12px;"></video>`;
+            } else {
+                content.innerHTML = `<img src="${item.url}" alt="${esc(item.title)}" style="max-width:95%;max-height:85vh;border-radius:12px;">`;
+            }
+            document.getElementById('lbCaption').textContent = item.title;
+        }
+
+        function closeLightbox(e) {
+            if (e && e.target !== e.currentTarget && !e.target.closest('.lb-close')) return;
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+            const vid = document.querySelector('#lightboxContent video');
+            if (vid) vid.pause();
+        }
+
+        function nextImage(e) {
+            if (e) e.stopPropagation();
+            currentIndex = (currentIndex + 1) % filteredData.length;
+            updateLightbox();
+        }
+
+        function prevImage(e) {
+            if (e) e.stopPropagation();
+            currentIndex = currentIndex <= 0 ? filteredData.length - 1 : currentIndex - 1;
+            updateLightbox();
+        }
+
+        document.addEventListener('keydown', e => {
+            if (!document.getElementById('lightbox').classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'ArrowLeft') prevImage();
+        });
+
+        // Touch swipe
+        let touchX = 0;
+        document.getElementById('lightbox').addEventListener('touchstart', e => { touchX = e.changedTouches[0].screenX; });
+        document.getElementById('lightbox').addEventListener('touchend', e => {
+            const diff = e.changedTouches[0].screenX - touchX;
+            if (Math.abs(diff) > 50) { diff > 0 ? prevImage() : nextImage(); }
+        });
+
+        // ==================== HELPERS ====================
+        function toast(m, t = 'info') {
+            const box = document.getElementById('toastBox');
+            const el = document.createElement('div');
+            el.className = `toast ${t}`;
+            const icons = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle' };
+            el.innerHTML = `<i class="fas fa-${icons[t]}"></i> ${m}`;
+            box.appendChild(el);
+            setTimeout(() => el.classList.add('show'), 10);
+            setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, 3000);
+        }
+
+        function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+        document.getElementById('confirmBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeConfirm(); });
+    </script>
+</body>
+
+</html>

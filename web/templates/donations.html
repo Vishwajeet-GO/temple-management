@@ -121,6 +121,75 @@
 </head>
 
 <body>
+
+    <!-- Om Loader -->
+    <!-- Om Loader -->
+    <div id="omLoader"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a1a;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s,visibility 0.5s;">
+        <div style="position:absolute;width:120px;height:120px;">
+            <div
+                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;border:2px solid transparent;border-top-color:#ff9800;border-right-color:#ff9800;animation:omS 1s linear infinite;">
+            </div>
+            <div
+                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border-radius:50%;border:2px solid transparent;border-bottom-color:#ffd54f;border-left-color:#ffd54f;animation:omS 1s linear infinite reverse;">
+            </div>
+            <div
+                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;border:2px solid transparent;border-top-color:#9c27b0;border-right-color:#9c27b0;animation:omS 1s linear infinite;">
+            </div>
+        </div>
+        <div
+            style="font-size:4rem;color:#ffd54f;animation:omP 1s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,213,79,0.5));margin-bottom:20px;z-index:1;">
+            ॐ</div>
+        <div
+            style="color:rgba(255,255,255,0.4);font-size:0.8rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;animation:omT 1s ease-in-out infinite;">
+            ॥ श्री गौरी शंकर मंदिर ॥</div>
+        <style>
+            @keyframes omS {
+                0% {
+                    transform: translate(-50%, -50%) rotate(0deg)
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) rotate(360deg)
+                }
+            }
+
+            @keyframes omP {
+
+                0%,
+                100% {
+                    transform: scale(1);
+                    filter: drop-shadow(0 0 20px rgba(255, 213, 79, 0.5))
+                }
+
+                50% {
+                    transform: scale(1.15);
+                    filter: drop-shadow(0 0 40px rgba(255, 213, 79, 0.8))
+                }
+            }
+
+            @keyframes omT {
+
+                0%,
+                100% {
+                    opacity: 0.4
+                }
+
+                50% {
+                    opacity: 1
+                }
+            }
+        </style>
+    </div>
+    <div class="om-rings">
+        <div class="om-ring"></div>
+        <div class="om-ring"></div>
+        <div class="om-ring"></div>
+    </div>
+    <div class="om-symbol">ॐ</div>
+    <div class="om-loader-text">॥ श्री गौरी शंकर मंदिर ॥</div>
+    </div>
+
     <div class="particles" id="particles"></div>
 
     <!-- Toast Container -->
@@ -284,6 +353,16 @@
     </nav>
 
     <script>
+
+        // Om Loader - Hide after page loads
+        window.addEventListener('load', () => {
+            // New
+            setTimeout(() => {
+                const l = document.getElementById('omLoader');
+                if (l) { l.style.opacity = '0'; l.style.visibility = 'hidden'; setTimeout(() => l.remove(), 500); }
+            }, 600);  // ✅ Fast
+        });
+
         const API = window.location.origin + '/api/v1';
         let searchTimer = null, deleteId = null, isAdmin = false, festivals = [];
 

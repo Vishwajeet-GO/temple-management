@@ -37,6 +37,7 @@ func Setup() *gin.Engine {
 	r.GET("/login", func(c *gin.Context) { c.File("./web/templates/login.html") })
 	r.GET("/reports", func(c *gin.Context) { c.File("./web/templates/reports.html") })
 	r.GET("/favicon.ico", func(c *gin.Context) { c.Status(204) })
+	r.GET("/gallery", func(c *gin.Context) { c.File("./web/templates/gallery.html") })
 
 	v1 := r.Group("/api/v1")
 	{
@@ -72,6 +73,11 @@ func Setup() *gin.Engine {
 		v1.POST("/festivals", middleware.AuthRequired("admin"), handlers.CreateFestival)
 		v1.PUT("/festivals/:id", middleware.AuthRequired("admin"), handlers.UpdateFestival)
 		v1.DELETE("/festivals/:id", middleware.AuthRequired("admin"), handlers.DeleteFestival)
+
+		// Gallery
+		v1.GET("/gallery", handlers.GetGallery)
+		v1.POST("/gallery", middleware.AuthRequired("admin"), handlers.UploadGallery)
+		v1.DELETE("/gallery/:id", middleware.AuthRequired("admin"), handlers.DeleteGalleryItem)
 
 		// Public donation (from donate page)
 		v1.POST("/submit-donation", handlers.SubmitDonation)
