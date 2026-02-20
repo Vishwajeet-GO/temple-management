@@ -56,15 +56,15 @@ func Initialize(cfg *config.Config) {
 	log.Println("✅ PostgreSQL connected")
 
 	// Drop old tables and recreate (REMOVE THIS AFTER FIRST DEPLOY)
-	log.Println("⚠️ Dropping old tables for fresh migration...")
-	DB.Migrator().DropTable(
-		&models.Donation{},
-		&models.Expense{},
-		&models.Festival{},
-		&models.User{},
-		&models.TempleInfo{},
-	)
-	log.Println("✅ Old tables dropped")
+	// log.Println("⚠️ Dropping old tables for fresh migration...")
+	// DB.Migrator().DropTable(
+	// 	&models.Donation{},
+	// 	&models.Expense{},
+	// 	&models.Festival{},
+	// 	&models.User{},
+	// 	&models.TempleInfo{},
+	// )
+	// log.Println("✅ Old tables dropped")
 
 	// Migrate
 	DB.AutoMigrate(
