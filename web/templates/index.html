@@ -882,7 +882,7 @@
 
         async function checkAuth() {
             try {
-                const res = await fetch(`${API}/check-auth`, { credentials: 'include' });
+                const res = await fetch(`${API}/auth/check`, { credentials: 'include' });
                 const data = await res.json();
                 const navBtns = document.getElementById('navButtons');
 
