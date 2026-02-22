@@ -84,6 +84,11 @@ func Setup() *gin.Engine {
 		v1.GET("/payment-info", handlers.GetPaymentInfo)
 	}
 
+	// Admin
+	v1.GET("/admin/dashboard", middleware.AuthRequired("admin"), handlers.GetAdminDashboard)
+	v1.PUT("/admin/password", middleware.AuthRequired("admin"), handlers.UpdatePassword)
+
+	r.GET("/admin", func(c *gin.Context) { c.File("./web/templates/admin.html") })
 	// Backward compat
 	r.GET("/api/donations", handlers.GetDonations)
 	r.GET("/api/expenses", handlers.GetExpenses)

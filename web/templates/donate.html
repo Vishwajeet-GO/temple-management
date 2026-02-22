@@ -932,76 +932,91 @@
             font-weight: 600;
             letter-spacing: 1px;
         }
+
+
+        #omLoader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a1a;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center
+        }
+
+        .om-r {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            border: 2px solid transparent
+        }
+
+        .om-r1 {
+            width: 80px;
+            height: 80px;
+            border-top-color: #ff9800;
+            border-right-color: #ff9800;
+            animation: omS 1.5s linear infinite
+        }
+
+        .om-r2 {
+            width: 100px;
+            height: 100px;
+            border-bottom-color: #ffd54f;
+            border-left-color: #ffd54f;
+            animation: omS 2s linear infinite reverse
+        }
+
+        .om-r3 {
+            width: 120px;
+            height: 120px;
+            border-top-color: #9c27b0;
+            border-right-color: #9c27b0;
+            animation: omS 2.5s linear infinite
+        }
+
+        @keyframes omS {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg)
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg)
+            }
+        }
+
+        @keyframes omP {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.8
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 1
+            }
+        }
     </style>
 </head>
 
 <body>
     <!-- Om Loader -->
-    <!-- Om Loader -->
-    <div id="omLoader"
-        style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a1a;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s,visibility 0.5s;">
-        <div style="position:absolute;width:120px;height:120px;">
+    <div id="omLoader">
+        <div style="position:relative;width:120px;height:120px;margin-bottom:20px">
+            <div class="om-r om-r1"></div>
+            <div class="om-r om-r2"></div>
+            <div class="om-r om-r3"></div>
             <div
-                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;border:2px solid transparent;border-top-color:#ff9800;border-right-color:#ff9800;animation:omS 1s linear infinite;">
-            </div>
-            <div
-                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border-radius:50%;border:2px solid transparent;border-bottom-color:#ffd54f;border-left-color:#ffd54f;animation:omS 1s linear infinite reverse;">
-            </div>
-            <div
-                style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;border:2px solid transparent;border-top-color:#9c27b0;border-right-color:#9c27b0;animation:omS 1s linear infinite;">
-            </div>
+                style="position:absolute;top:23%;left:28%;transform:translate(-50%,-50%);font-size:3rem;color:#ffd54f;animation:omP 2s ease-in-out infinite">
+                ॐ</div>
         </div>
-        <div
-            style="font-size:4rem;color:#ffd54f;animation:omP 1s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,213,79,0.5));margin-bottom:20px;z-index:1;">
-            ॐ</div>
-        <div
-            style="color:rgba(255,255,255,0.4);font-size:0.8rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;animation:omT 1s ease-in-out infinite;">
-            ॥ श्री गौरी शंकर मंदिर ॥</div>
-        <style>
-            @keyframes omS {
-                0% {
-                    transform: translate(-50%, -50%) rotate(0deg)
-                }
-
-                100% {
-                    transform: translate(-50%, -50%) rotate(360deg)
-                }
-            }
-
-            @keyframes omP {
-
-                0%,
-                100% {
-                    transform: scale(1);
-                    filter: drop-shadow(0 0 20px rgba(255, 213, 79, 0.5))
-                }
-
-                50% {
-                    transform: scale(1.15);
-                    filter: drop-shadow(0 0 40px rgba(255, 213, 79, 0.8))
-                }
-            }
-
-            @keyframes omT {
-
-                0%,
-                100% {
-                    opacity: 0.4
-                }
-
-                50% {
-                    opacity: 1
-                }
-            }
-        </style>
-    </div>
-    <div class="om-rings">
-        <div class="om-ring"></div>
-        <div class="om-ring"></div>
-        <div class="om-ring"></div>
-    </div>
-    <div class="om-symbol">ॐ</div>
-    <div class="om-loader-text">॥ श्री गौरी शंकर मंदिर ॥</div>
     </div>
 
     <div class="particles" id="particles"></div>
@@ -1302,12 +1317,11 @@
     <script>
 
         // Om Loader - Hide after page loads
-        window.addEventListener('load', () => {
-            // New
-            setTimeout(() => {
-                const l = document.getElementById('omLoader');
-                if (l) { l.style.opacity = '0'; l.style.visibility = 'hidden'; setTimeout(() => l.remove(), 500); }
-            }, 600);  // ✅ Fast
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                var el = document.getElementById('omLoader');
+                if (el) el.style.display = 'none';
+            }, 600);
         });
 
         const API = window.location.origin + '/api/v1';
@@ -1440,7 +1454,7 @@
         // ==================== UPI APPS ====================
         function openUPIApp(app) {
             const amount = parseFloat(document.getElementById('dAmount').value);
-            const name = document.getElementById('dName').value.trim() || 'Donor';
+            const name = document.getElementById('dName').value.trim() || 'Devotee';
 
             if (!amount || amount <= 0) {
                 toast('Please enter amount first', 'error');
@@ -1448,37 +1462,46 @@
                 return;
             }
 
-            const upiId = document.getElementById('upiText').textContent || UPI_ID;
-            const note = `Donation to ${TEMPLE_NAME}`;
+            const upiId = document.getElementById('upiText').textContent || '8097890684@mbk';
+            const payeeName = encodeURIComponent('Sri Gauri Shankar Mandir');
+            const note = encodeURIComponent('Donation to Sri Gauri Shankar Mandir');
+            const amountFixed = amount.toFixed(2);
 
-            let url = '';
+            // Universal UPI intent (works on all apps)
+            const upiURL = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amountFixed}&cu=INR&tn=${note}`;
 
-            switch (app) {
-                case 'gpay':
-                    url = `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
-                    break;
-                case 'phonepe':
-                    url = `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
-                    break;
-                case 'paytm':
-                    url = `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
-                    break;
-                case 'bhim':
-                    url = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
-                    break;
-                default:
-                    url = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(TEMPLE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent(note)}`;
+            // App specific deep links
+            const appLinks = {
+                gpay: `https://pay.google.com/gp/v/app/pay?pa=${upiId}&pn=${payeeName}&am=${amountFixed}&cu=INR&tn=${note}`,
+                phonepe: `phonepe://pay?pa=${upiId}&pn=${payeeName}&am=${amountFixed}&cu=INR&tn=${note}`,
+                paytm: `paytmmp://pay?pa=${upiId}&pn=${payeeName}&am=${amountFixed}&cu=INR&tn=${note}`,
+                bhim: upiURL
+            };
+
+            // Try app-specific link first, fallback to universal
+            const primaryLink = appLinks[app] || upiURL;
+
+            // For mobile devices
+            if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                // Try universal UPI intent (lets user choose app)
+                window.location.href = upiURL;
+
+                // If specific app requested and universal didn't work
+                setTimeout(() => {
+                    if (app !== 'bhim') {
+                        window.location.href = primaryLink;
+                    }
+                }, 1000);
+            } else {
+                // Desktop - show instructions
+                toast('Please open ' + app.toUpperCase() + ' on your phone and pay to UPI ID: ' + upiId, 'info');
+                copyUPI();
             }
 
-            // Try to open the app
-            const link = document.createElement('a');
-            link.href = url;
-            link.click();
-
-            // Fallback: if app not installed
+            // Reminder to upload screenshot
             setTimeout(() => {
-                toast(`If ${app} didn't open, please copy UPI ID and pay manually`, 'info');
-            }, 2000);
+                toast('After payment, please upload screenshot below', 'info');
+            }, 3000);
         }
 
         function copyText(elementId, label) {

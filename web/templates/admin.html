@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Admin Panel - Temple Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/global.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-image: url("/static/images/temple-bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.55);
+            z-index: -1;
+        }
+
+        .top-nav {
+            background: linear-gradient(135deg, #1a237e, #283593, #3949ab);
+        }
+
+        .nav-item.active {
+            color: #5c6bc0;
+        }
+
+        .nav-item.active i {
+            filter: drop-shadow(0 3px 6px rgba(92, 107, 192, 0.5));
+        }
+
+        .nav-item.active::before {
+            background: #5c6bc0;
+        }
+
+        /* Tab Navigation */
+        .admin-tabs {
+            display: flex;
+            gap: 0;
+            padding: 16px 16px 0;
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .admin-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .admin-tab {
+            padding: 12px 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .admin-tab:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .admin-tab:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .admin-tab.active {
+            background: rgba(92, 107, 192, 0.15);
+            color: #7986cb;
+            border-bottom-color: #5c6bc0;
+        }
+
+        .admin-tab:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 16px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Admin Stats */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .admin-stat {
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .admin-stat:hover {
+            transform: translateY(-3px);
+        }
+
+        .admin-stat .as-icon {
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+            opacity: 0.9;
+        }
+
+        .admin-stat .as-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .admin-stat .as-label {
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+            font-weight: 600;
+        }
+
+        .admin-stat.s1 {
+            background: linear-gradient(135deg, #1b5e20, #43a047);
+        }
+
+        .admin-stat.s2 {
+            background: linear-gradient(135deg, #b71c1c, #ef5350);
+        }
+
+        .admin-stat.s3 {
+            background: linear-gradient(135deg, #1a237e, #5c6bc0);
+        }
+
+        .admin-stat.s4 {
+            background: linear-gradient(135deg, #e65100, #ffa726);
+        }
+
+        /* Month Stats */
+        .month-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .month-stat {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .month-stat .ms-label {
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .month-stat .ms-value {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .month-stat .ms-value.green {
+            color: #66bb6a;
+        }
+
+        .month-stat .ms-value.red {
+            color: #ef5350;
+        }
+
+        .month-stat .ms-value.blue {
+            color: #5c6bc0;
+        }
+
+        /* Cards */
+        .admin-card {
+            background: rgba(30, 30, 50, 0.85);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            margin-bottom: 16px;
+        }
+
+        .admin-card-header {
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-card-header .title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #7986cb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-card-body {
+            padding: 16px 18px;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+
+        /* Top Donors */
+        .donor-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .donor-row:last-child {
+            border-bottom: none;
+        }
+
+        .donor-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .donor-rank {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(92, 107, 192, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #7986cb;
+        }
+
+        .donor-rank.gold {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffc107;
+        }
+
+        .donor-rank.silver {
+            background: rgba(158, 158, 158, 0.15);
+            color: #bdbdbd;
+        }
+
+        .donor-rank.bronze {
+            background: rgba(255, 152, 0, 0.15);
+            color: #ff9800;
+        }
+
+        .donor-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .donor-count {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .donor-total {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #66bb6a;
+        }
+
+        /* Festival Breakdown */
+        .fest-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .fest-row:last-child {
+            border-bottom: none;
+        }
+
+        .fest-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .fest-status {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 8px;
+        }
+
+        .fest-status.upcoming {
+            background: rgba(255, 152, 0, 0.15);
+            color: #ffa726;
+        }
+
+        .fest-status.ongoing {
+            background: rgba(76, 175, 80, 0.15);
+            color: #66bb6a;
+        }
+
+        .fest-status.completed {
+            background: rgba(158, 158, 158, 0.15);
+            color: #bdbdbd;
+        }
+
+        .fest-amounts {
+            display: flex;
+            gap: 16px;
+        }
+
+        .fest-amt {
+            text-align: right;
+        }
+
+        .fest-amt-val {
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .fest-amt-val.green {
+            color: #66bb6a;
+        }
+
+        .fest-amt-val.red {
+            color: #ef5350;
+        }
+
+        .fest-amt-label {
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Pending Badge */
+        .pending-badge {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: rgba(255, 152, 0, 0.15);
+            color: #ffa726;
+        }
+
+        /* Settings Form */
+        .settings-section {
+            margin-bottom: 24px;
+        }
+
+        .settings-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #7986cb;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .settings-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .settings-fg {
+            margin-bottom: 14px;
+        }
+
+        .settings-fg label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .settings-fi {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.88rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .settings-fi:focus {
+            border-color: #5c6bc0;
+            box-shadow: 0 0 15px rgba(92, 107, 192, 0.15);
+        }
+
+        .settings-fi::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        textarea.settings-fi {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .settings-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            color: #fff;
+        }
+
+        .settings-btn.primary {
+            background: linear-gradient(135deg, #1a237e, #5c6bc0);
+            box-shadow: 0 4px 15px rgba(92, 107, 192, 0.3);
+        }
+
+        .settings-btn.danger {
+            background: linear-gradient(135deg, #b71c1c, #ef5350);
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .settings-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .settings-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Activity Item */
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.don {
+            background: rgba(76, 175, 80, 0.15);
+            color: #66bb6a;
+        }
+
+        .activity-icon.exp {
+            background: rgba(244, 67, 54, 0.15);
+            color: #ef5350;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .activity-sub {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 2px;
+        }
+
+        .activity-amount {
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .activity-amount.green {
+            color: #66bb6a;
+        }
+
+        .activity-amount.red {
+            color: #ef5350;
+        }
+
+        /* Not Authorized */
+        .not-auth {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .not-auth i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.2;
+            display: block;
+            color: #f44336;
+        }
+
+        .not-auth h3 {
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .not-auth a {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #1a237e, #5c6bc0);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .admin-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .month-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .settings-row {
+                grid-template-columns: 1fr;
+            }
+
+            .fest-row {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-stat .as-value {
+                font-size: 1rem;
+            }
+
+            .admin-stat {
+                padding: 12px 8px;
+            }
+
+            .month-stat .ms-value {
+                font-size: 0.95rem;
+            }
+        }
+
+        #omLoader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a1a;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center
+        }
+
+        .om-r {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            border: 2px solid transparent
+        }
+
+        .om-r1 {
+            width: 80px;
+            height: 80px;
+            border-top-color: #ff9800;
+            border-right-color: #ff9800;
+            animation: omS 1.5s linear infinite
+        }
+
+        .om-r2 {
+            width: 100px;
+            height: 100px;
+            border-bottom-color: #ffd54f;
+            border-left-color: #ffd54f;
+            animation: omS 2s linear infinite reverse
+        }
+
+        .om-r3 {
+            width: 120px;
+            height: 120px;
+            border-top-color: #9c27b0;
+            border-right-color: #9c27b0;
+            animation: omS 2.5s linear infinite
+        }
+
+        @keyframes omS {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg)
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg)
+            }
+        }
+
+        @keyframes omP {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.8
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Om Loader -->
+    <div id="omLoader">
+        <div style="position:relative;width:120px;height:120px;margin-bottom:20px">
+            <div class="om-r om-r1"></div>
+            <div class="om-r om-r2"></div>
+            <div class="om-r om-r3"></div>
+            <div
+                style="position:absolute;top:23%;left:28%;transform:translate(-50%,-50%);font-size:3rem;color:#ffd54f;animation:omP 2s ease-in-out infinite">
+                ॐ</div>
+        </div>
+    </div>
+    <style>
+        #omLoader .om-r {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            border: 2px solid transparent
+        }
+
+        .om-r1 {
+            width: 80px;
+            height: 80px;
+            border-top-color: #ff9800;
+            border-right-color: #ff9800;
+            animation: omS 1.5s linear infinite
+        }
+
+        .om-r2 {
+            width: 100px;
+            height: 100px;
+            border-bottom-color: #ffd54f;
+            border-left-color: #ffd54f;
+            animation: omS 2s linear infinite reverse
+        }
+
+        .om-r3 {
+            width: 120px;
+            height: 120px;
+            border-top-color: #9c27b0;
+            border-right-color: #9c27b0;
+            animation: omS 2.5s linear infinite
+        }
+
+        @keyframes omS {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg)
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg)
+            }
+        }
+
+        @keyframes omP {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.15);
+                opacity: 1
+            }
+        }
+    </style>
+
+    <div class="particles" id="particles"></div>
+    <div class="toast-box" id="toastBox"></div>
+
+    <div class="main">
+        <nav class="top-nav">
+            <a href="/" class="brand"><i class="fas fa-gopuram"></i><span>Admin Panel</span></a>
+            <div class="nav-btns">
+                <a href="/" class="nav-btn home"><i class="fas fa-home"></i> Home</a>
+            </div>
+        </nav>
+
+        <!-- Auth Check -->
+        <div id="authContent" style="display:none;">
+
+            <!-- Admin Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchTab('dashboard',this)"><i class="fas fa-chart-bar"></i>
+                    Dashboard</button>
+                <button class="admin-tab" onclick="switchTab('activity',this)"><i class="fas fa-history"></i>
+                    Activity</button>
+                <button class="admin-tab" onclick="switchTab('settings',this)"><i class="fas fa-cog"></i>
+                    Settings</button>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="tab-dashboard">
+                <!-- Overall Stats -->
+                <div class="admin-stats">
+                    <div class="admin-stat s1">
+                        <div class="as-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                        <div class="as-value" id="adTotalDon">₹0</div>
+                        <div class="as-label">Total Donations</div>
+                    </div>
+                    <div class="admin-stat s2">
+                        <div class="as-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <div class="as-value" id="adTotalExp">₹0</div>
+                        <div class="as-label">Total Expenses</div>
+                    </div>
+                    <div class="admin-stat s3">
+                        <div class="as-icon"><i class="fas fa-wallet"></i></div>
+                        <div class="as-value" id="adBalance">₹0</div>
+                        <div class="as-label">Balance</div>
+                    </div>
+                    <div class="admin-stat s4">
+                        <div class="as-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="as-value" id="adFestCount">0</div>
+                        <div class="as-label">Festivals</div>
+                    </div>
+                </div>
+
+                <!-- This Month -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="title"><i class="fas fa-calendar-day"></i> This Month</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="month-stats">
+                            <div class="month-stat">
+                                <div class="ms-label">Donations</div>
+                                <div class="ms-value green" id="adMonthDon">₹0</div>
+                            </div>
+                            <div class="month-stat">
+                                <div class="ms-label">Expenses</div>
+                                <div class="ms-value red" id="adMonthExp">₹0</div>
+                            </div>
+                            <div class="month-stat">
+                                <div class="ms-label">Balance</div>
+                                <div class="ms-value blue" id="adMonthBal">₹0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Chart -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="title"><i class="fas fa-chart-line"></i> 6-Month Trend</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- Category Chart + Top Donors -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="title"><i class="fas fa-chart-pie"></i> Expense Categories</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="chart-container"><canvas id="categoryChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="title"><i class="fas fa-trophy"></i> Top Donors</div>
+                    </div>
+                    <div class="admin-card-body" id="topDonorsBody">
+                        <div style="text-align:center;color:rgba(255,255,255,0.3);padding:20px">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Festival Breakdown -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="title"><i class="fas fa-om"></i> Festival Breakdown</div>
+                    </div>
+                    <div class="admin-card-body" id="festBreakdownBody">
+                        <div style="text-align:center;color:rgba(255,255,255,0.3);padding:20px">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Tab -->
+            <div class="tab-content" id="tab-activity">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="title"><i class="fas fa-hand-holding-heart"></i> Recent Donations</div>
+                        <span class="pending-badge" id="pendingDonBadge">0 pending</span>
+                    </div>
+                    <div class="admin-card-body" id="recentDonBody">Loading...</div>
+                </div>
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="title"><i class="fas fa-file-invoice-dollar"></i> Recent Expenses</div>
+                        <span class="pending-badge" id="pendingExpBadge">0 pending</span>
+                    </div>
+                    <div class="admin-card-body" id="recentExpBody">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="tab-settings">
+                <!-- Temple Info -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="title"><i class="fas fa-gopuram"></i> Temple Information</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="settings-fg">
+                            <label>Temple Name</label>
+                            <input type="text" class="settings-fi" id="sTempleName" value="श्री गौरी शंकर मंदिर">
+                        </div>
+                        <div class="settings-fg">
+                            <label>Address</label>
+                            <textarea class="settings-fi"
+                                id="sTempleAddr">Nirmal Singh Chawl, Gaondevi Road, Poisar, Kandivali East</textarea>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-fg">
+                                <label>City</label>
+                                <input type="text" class="settings-fi" id="sTempleCity" value="Mumbai">
+                            </div>
+                            <div class="settings-fg">
+                                <label>State</label>
+                                <input type="text" class="settings-fi" id="sTempleState" value="Maharashtra">
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-fg">
+                                <label>Phone</label>
+                                <input type="text" class="settings-fi" id="sTemplePhone"
+                                    placeholder="Enter phone number">
+                            </div>
+                            <div class="settings-fg">
+                                <label>UPI ID</label>
+                                <input type="text" class="settings-fi" id="sTempleUPI" value="8097890684@mbk">
+                            </div>
+                        </div>
+                        <button class="settings-btn primary" onclick="saveTempleInfo()">
+                            <i class="fas fa-save"></i> Save Temple Info
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Change Password -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="title"><i class="fas fa-lock"></i> Change Password</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="settings-fg">
+                            <label>Current Password</label>
+                            <input type="password" class="settings-fi" id="sOldPass"
+                                placeholder="Enter current password">
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-fg">
+                                <label>New Password</label>
+                                <input type="password" class="settings-fi" id="sNewPass" placeholder="Min 6 characters">
+                            </div>
+                            <div class="settings-fg">
+                                <label>Confirm Password</label>
+                                <input type="password" class="settings-fi" id="sConfPass"
+                                    placeholder="Repeat new password">
+                            </div>
+                        </div>
+                        <button class="settings-btn danger" onclick="changePassword()">
+                            <i class="fas fa-key"></i> Change Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Not Authorized -->
+        <div id="notAuth" style="display:none;">
+            <div class="not-auth">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Admin Access Required</h3>
+                <p>Please login as admin to access this page</p>
+                <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="/" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/festivals" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Festivals</span></a>
+        <a href="/donations" class="nav-item"><i class="fas fa-indian-rupee-sign"></i><span>History</span></a>
+        <a href="/expenses" class="nav-item"><i class="fas fa-file-invoice-dollar"></i><span>Expenses</span></a>
+        <a href="/admin" class="nav-item active"><i class="fas fa-user-shield"></i><span>Admin</span></a>
+    </nav>
+
+    <script>
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                var el = document.getElementById('omLoader');
+                if (el) el.style.display = 'none';
+            }, 600);
+        });
+
+        const API = window.location.origin + '/api/v1';
+        let monthlyChart = null, categoryChart = null;
+
+        // Particles
+        const pc = document.getElementById('particles');
+        for (let i = 0; i < 15; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            p.style.animationDelay = (Math.random() * 10) + 's';
+            p.style.width = (Math.random() * 3 + 1) + 'px';
+            p.style.height = p.style.width;
+            p.style.background = 'rgba(92,107,192,0.5)';
+            pc.appendChild(p);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { checkAuth(); });
+
+        function getToken() { return localStorage.getItem('authToken'); }
+
+        async function checkAuth() {
+            const token = getToken();
+            if (!token) { showNotAuth(); return; }
+            try {
+                const r = await fetch(`${API}/auth/check`, { headers: { 'Authorization': 'Bearer ' + token } });
+                const res = await r.json();
+                if (res.authenticated && res.user.role === 'admin') {
+                    document.getElementById('authContent').style.display = 'block';
+                    loadAdminDashboard();
+                    loadTempleInfo();
+                } else { showNotAuth(); }
+            } catch (e) { showNotAuth(); }
+        }
+
+        function showNotAuth() { document.getElementById('notAuth').style.display = 'block'; }
+
+        function switchTab(tab, el) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+        }
+
+        // ==================== DASHBOARD ====================
+        async function loadAdminDashboard() {
+            try {
+                const token = getToken();
+                const r = await fetch(`${API}/admin/dashboard`, { headers: { 'Authorization': 'Bearer ' + token } });
+                const res = await r.json();
+                if (!res.success) throw new Error(res.error);
+                const d = res.data;
+
+                // Stats
+                document.getElementById('adTotalDon').textContent = '₹' + fmt(d.total_donations);
+                document.getElementById('adTotalExp').textContent = '₹' + fmt(d.total_expenses);
+                document.getElementById('adBalance').textContent = '₹' + fmt(d.balance);
+                document.getElementById('adFestCount').textContent = d.festival_count;
+
+                // Month
+                document.getElementById('adMonthDon').textContent = '₹' + fmt(d.month_donations);
+                document.getElementById('adMonthExp').textContent = '₹' + fmt(d.month_expenses);
+                document.getElementById('adMonthBal').textContent = '₹' + fmt(d.month_balance);
+
+                // Pending
+                document.getElementById('pendingDonBadge').textContent = (d.pending_donations || 0) + ' pending';
+                document.getElementById('pendingExpBadge').textContent = (d.pending_expenses || 0) + ' pending';
+
+                // Charts
+                renderMonthlyChart(d.monthly_chart || []);
+                renderCategoryChart(d.category_expenses || []);
+
+                // Top Donors
+                renderTopDonors(d.top_donors || []);
+
+                // Festival Breakdown
+                renderFestBreakdown(d.festival_breakdown || []);
+
+                // Activity
+                renderActivity(d.recent_donations || [], d.recent_expenses || []);
+
+            } catch (e) { console.error(e); toast('Failed to load dashboard', 'error'); }
+        }
+
+        function renderMonthlyChart(data) {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            if (monthlyChart) monthlyChart.destroy();
+            monthlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.month),
+                    datasets: [
+                        { label: 'Donations', data: data.map(d => d.donations), backgroundColor: 'rgba(102,187,106,0.7)', borderRadius: 6 },
+                        { label: 'Expenses', data: data.map(d => d.expenses), backgroundColor: 'rgba(239,83,80,0.7)', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#aaa', font: { size: 11 } } } },
+                    scales: {
+                        x: { ticks: { color: '#888', font: { size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: '#888', callback: v => '₹' + fmt(v) }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+        }
+
+        function renderCategoryChart(data) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            if (categoryChart) categoryChart.destroy();
+            const colors = ['#ef5350', '#42a5f5', '#ffa726', '#66bb6a', '#ab47bc', '#26c6da', '#ff7043', '#9ccc65', '#5c6bc0', '#ec407a'];
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.map(d => d.category || 'Other'),
+                    datasets: [{ data: data.map(d => d.total), backgroundColor: colors.slice(0, data.length), borderWidth: 0, hoverOffset: 8 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '55%',
+                    plugins: { legend: { position: 'right', labels: { color: '#aaa', font: { size: 10 }, padding: 12, usePointStyle: true } } }
+                }
+            });
+        }
+
+        function renderTopDonors(donors) {
+            const body = document.getElementById('topDonorsBody');
+            if (!donors.length) { body.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.3);padding:20px">No donors yet</div>'; return; }
+            const rankClass = ['gold', 'silver', 'bronze', '', ''];
+            body.innerHTML = donors.map((d, i) => `
+                <div class="donor-row">
+                    <div class="donor-info">
+                        <div class="donor-rank ${rankClass[i] || ''}">${i + 1}</div>
+                        <div>
+                            <div class="donor-name">${esc(d.donor)}</div>
+                            <div class="donor-count">${d.count} donation${d.count > 1 ? 's' : ''}</div>
+                        </div>
+                    </div>
+                    <div class="donor-total">₹${fmt(d.total)}</div>
+                </div>`).join('');
+        }
+
+        function renderFestBreakdown(festivals) {
+            const body = document.getElementById('festBreakdownBody');
+            if (!festivals.length) { body.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.3);padding:20px">No festivals</div>'; return; }
+            body.innerHTML = festivals.map(f => `
+                <div class="fest-row">
+                    <div>
+                        <div class="fest-name">${esc(f.name)}</div>
+                        <span class="fest-status ${f.status}">${f.status}</span>
+                    </div>
+                    <div class="fest-amounts">
+                        <div class="fest-amt"><div class="fest-amt-val green">₹${fmt(f.donations)}</div><div class="fest-amt-label">Donations</div></div>
+                        <div class="fest-amt"><div class="fest-amt-val red">₹${fmt(f.expenses)}</div><div class="fest-amt-label">Expenses</div></div>
+                    </div>
+                </div>`).join('');
+        }
+
+        function renderActivity(donations, expenses) {
+            const donBody = document.getElementById('recentDonBody');
+            const expBody = document.getElementById('recentExpBody');
+
+            donBody.innerHTML = donations.length ? donations.map(d => `
+                <div class="activity-item">
+                    <div class="activity-icon don"><i class="fas fa-hand-holding-heart"></i></div>
+                    <div class="activity-info">
+                        <div class="activity-title">${esc(d.donor)}</div>
+                        <div class="activity-sub">${fmtDate(d.date)} ${d.festival ? '• ' + esc(d.festival.name) : ''} • ${d.status}</div>
+                    </div>
+                    <div class="activity-amount green">₹${fmt(d.amount)}</div>
+                </div>`).join('') : '<div style="text-align:center;color:rgba(255,255,255,0.3);padding:20px">No donations</div>';
+
+            expBody.innerHTML = expenses.length ? expenses.map(e => `
+                <div class="activity-item">
+                    <div class="activity-icon exp"><i class="fas fa-receipt"></i></div>
+                    <div class="activity-info">
+                        <div class="activity-title">${esc(e.title)}</div>
+                        <div class="activity-sub">${fmtDate(e.date)} ${e.category ? '• ' + esc(e.category) : ''} • ${e.status}</div>
+                    </div>
+                    <div class="activity-amount red">₹${fmt(e.amount)}</div>
+                </div>`).join('') : '<div style="text-align:center;color:rgba(255,255,255,0.3);padding:20px">No expenses</div>';
+        }
+
+        // ==================== SETTINGS ====================
+        async function loadTempleInfo() {
+            try {
+                const r = await fetch(`${API}/temple`);
+                const res = await r.json();
+                if (res.success && res.data) {
+                    const d = res.data;
+                    if (d.name) document.getElementById('sTempleName').value = d.name;
+                    if (d.address) document.getElementById('sTempleAddr').value = d.address;
+                    if (d.phone) document.getElementById('sTemplePhone').value = d.phone;
+                    if (d.upi) document.getElementById('sTempleUPI').value = d.upi;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function saveTempleInfo() {
+            const data = {
+                name: document.getElementById('sTempleName').value.trim(),
+                address: document.getElementById('sTempleAddr').value.trim(),
+                phone: document.getElementById('sTemplePhone').value.trim(),
+                upi: document.getElementById('sTempleUPI').value.trim(),
+            };
+            try {
+                const token = getToken();
+                const r = await fetch(`${API}/temple`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify(data)
+                });
+                const res = await r.json();
+                if (!res.success) throw new Error(res.error);
+                toast('Temple info saved!', 'success');
+            } catch (e) { toast('Error: ' + e.message, 'error'); }
+        }
+
+        async function changePassword() {
+            const oldPass = document.getElementById('sOldPass').value;
+            const newPass = document.getElementById('sNewPass').value;
+            const confPass = document.getElementById('sConfPass').value;
+
+            if (!oldPass) { toast('Enter current password', 'error'); return; }
+            if (!newPass || newPass.length < 6) { toast('New password must be at least 6 characters', 'error'); return; }
+            if (newPass !== confPass) { toast('Passwords do not match', 'error'); return; }
+
+            try {
+                const token = getToken();
+                const r = await fetch(`${API}/admin/password`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ old_password: oldPass, new_password: newPass })
+                });
+                const res = await r.json();
+                if (!res.success) throw new Error(res.error);
+                toast('Password changed successfully!', 'success');
+                document.getElementById('sOldPass').value = '';
+                document.getElementById('sNewPass').value = '';
+                document.getElementById('sConfPass').value = '';
+            } catch (e) { toast('Error: ' + e.message, 'error'); }
+        }
+
+        // ==================== HELPERS ====================
+        function fmt(n) { return Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+        function fmtDate(d) { if (!d) return '-'; try { return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }); } catch { return d; } }
+        function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+        function toast(m, t = 'info') {
+            const box = document.getElementById('toastBox');
+            const el = document.createElement('div');
+            el.className = `toast ${t}`;
+            const icons = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle' };
+            el.innerHTML = `<i class="fas fa-${icons[t]}"></i> ${m}`;
+            box.appendChild(el);
+            setTimeout(() => el.classList.add('show'), 10);
+            setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, 3000);
+        }
+    </script>
+</body>
+
+</html>
