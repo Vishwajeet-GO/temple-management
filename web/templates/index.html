@@ -2076,23 +2076,35 @@
 
         async function checkAuth() {
             try {
-                const res = await fetch(`${API}/auth/check`, { credentials: 'include' });
+                const token = localStorage.getItem('authToken');
+                const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+
+                const res = await fetch(`${API}/auth/check`, { headers, credentials: 'include' });
                 const data = await res.json();
                 const navBtns = document.getElementById('navButtons');
 
-                if (data.logged_in) {
+                if (data.authenticated) { // Backend uses 'authenticated' not 'logged_in'
                     // Show logout + admin name
                     const existingLogin = navBtns.querySelector('.login-btn');
                     if (existingLogin) existingLogin.remove();
+
+                    // Add Admin Panel link if role is admin
+                    if (data.user && data.user.role === 'admin') {
+                        const adminBtn = document.createElement('a');
+                        adminBtn.href = '/admin';
+                        adminBtn.className = 'nav-btn admin-btn';
+                        adminBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin Panel';
+                        navBtns.appendChild(adminBtn);
+
+                        // Update bottom nav
+                        updateBottomNavForAdmin();
+                    }
 
                     const logoutBtn = document.createElement('button');
                     logoutBtn.className = 'nav-btn logout-btn';
                     logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
                     logoutBtn.onclick = logout;
                     navBtns.appendChild(logoutBtn);
-
-                    // Update bottom nav - replace Login with Admin
-                    updateBottomNavForAdmin();
                 } else {
                     const loginBtn = document.createElement('a');
                     loginBtn.href = '/login';
@@ -2104,16 +2116,28 @@
                 console.log('Auth check failed:', e);
                 // Show login button as fallback
                 const navBtns = document.getElementById('navButtons');
-                const loginBtn = document.createElement('a');
-                loginBtn.href = '/login';
-                loginBtn.className = 'nav-btn login-btn';
-                loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
-                navBtns.appendChild(loginBtn);
+                if (navBtns && !navBtns.querySelector('.login-btn')) {
+                    const loginBtn = document.createElement('a');
+                    loginBtn.href = '/login';
+                    loginBtn.className = 'nav-btn login-btn';
+                    loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+                    navBtns.appendChild(loginBtn);
+                }
             }
         }
 
         function updateBottomNavForAdmin() {
-            // No changes needed - bottom nav always shows same items
+            const bottomNav = document.querySelector('.bottom-nav');
+            if (bottomNav) {
+                // Check if admin link already exists
+                if (!bottomNav.querySelector('a[href="/admin"]')) {
+                    const adminLink = document.createElement('a');
+                    adminLink.href = '/admin';
+                    adminLink.className = 'nav-item';
+                    adminLink.innerHTML = '<i class="fas fa-user-shield"></i><span>Admin</span>';
+                    bottomNav.appendChild(adminLink);
+                }
+            }
         }
 
         async function logout() {

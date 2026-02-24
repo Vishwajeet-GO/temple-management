@@ -618,7 +618,6 @@
             }
         }
 
-        // ==================== AUTH ====================
         async function checkAuth() {
             const token = localStorage.getItem('authToken');
             if (!token) {
@@ -634,6 +633,7 @@
                 if (res.authenticated && res.user.role === 'admin') {
                     isAdmin = true;
                     document.getElementById('addBtn').style.display = 'flex';
+                    updateNavForAdmin();
                 } else {
                     isAdmin = false;
                     document.getElementById('addBtn').style.display = 'none';
@@ -641,6 +641,29 @@
             } catch (e) {
                 isAdmin = false;
                 document.getElementById('addBtn').style.display = 'none';
+            }
+        }
+
+        function updateNavForAdmin() {
+            // Add to top nav
+            const navBtnContainer = document.querySelector('.nav-btns');
+            if (navBtnContainer && !navBtnContainer.querySelector('a[href="/admin"]')) {
+                const adminBtn = document.createElement('a');
+                adminBtn.href = '/admin';
+                adminBtn.className = 'nav-btn';
+                adminBtn.style.background = 'linear-gradient(135deg, #1a237e, #3949ab)';
+                adminBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin';
+                navBtnContainer.insertBefore(adminBtn, navBtnContainer.firstChild);
+            }
+
+            // Add to bottom nav
+            const bottomNav = document.querySelector('.bottom-nav');
+            if (bottomNav && !bottomNav.querySelector('a[href="/admin"]')) {
+                const adminLink = document.createElement('a');
+                adminLink.href = '/admin';
+                adminLink.className = 'nav-item';
+                adminLink.innerHTML = '<i class="fas fa-user-shield"></i><span>Admin</span>';
+                bottomNav.appendChild(adminLink);
             }
         }
 

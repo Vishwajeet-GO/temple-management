@@ -1463,8 +1463,50 @@
             createParticles();
             setDefaultDate();
             loadFestivalDropdowns();
+            checkAuth();
             fetchExpenses();
         });
+
+        async function checkAuth() {
+            const t = getToken();
+            if (!t) return;
+            try {
+                const r = await fetch(`${API_BASE}/auth/check`, { headers: { 'Authorization': 'Bearer ' + t } });
+                const res = await r.json();
+                if (res.authenticated && res.user.role === 'admin') {
+                    updateNavForAdmin();
+                }
+            } catch (e) { console.error('Auth check failed:', e); }
+        }
+
+        function updateNavForAdmin() {
+            // Add to top nav
+            const navBtnContainer = document.querySelector('.nav-buttons');
+            if (navBtnContainer && !navBtnContainer.querySelector('a[href="/admin"]')) {
+                const adminBtn = document.createElement('a');
+                adminBtn.href = '/admin';
+                adminBtn.className = 'nav-btn';
+                adminBtn.style.background = 'linear-gradient(135deg, #1a237e, #3949ab)';
+                adminBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin';
+                navBtnContainer.insertBefore(adminBtn, navBtnContainer.firstChild);
+            }
+
+            // Update bottom nav Login to Admin
+            const bottomNav = document.querySelector('.bottom-nav');
+            if (bottomNav) {
+                const loginItem = Array.from(bottomNav.querySelectorAll('.nav-item')).find(item => item.href.includes('/login'));
+                if (loginItem) {
+                    loginItem.href = '/admin';
+                    loginItem.innerHTML = '<i class="fas fa-user-shield"></i><span>Admin</span>';
+                } else if (!bottomNav.querySelector('a[href="/admin"]')) {
+                    const adminLink = document.createElement('a');
+                    adminLink.href = '/admin';
+                    adminLink.className = 'nav-item';
+                    adminLink.innerHTML = '<i class="fas fa-user-shield"></i><span>Admin</span>';
+                    bottomNav.appendChild(adminLink);
+                }
+            }
+        }
 
         function getToken() {
             return localStorage.getItem('authToken');

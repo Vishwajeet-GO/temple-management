@@ -781,6 +781,15 @@
             </div>
         </nav>
 
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <a href="/" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="/donate" class="nav-item"><i class="fas fa-heart"></i><span>Donate</span></a>
+            <a href="/festivals" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Festivals</span></a>
+            <a href="/donations" class="nav-item"><i class="fas fa-indian-rupee-sign"></i><span>History</span></a>
+            <a href="/reports" class="nav-item active"><i class="fas fa-chart-bar"></i><span>Reports</span></a>
+        </nav>
+
         <!-- Festival Selector -->
         <div class="selector-section">
             <div class="selector-card">
@@ -989,6 +998,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
             loadFestivals();
+            checkAuth();
 
             // Check if festival_id passed in URL
             const params = new URLSearchParams(window.location.search);
@@ -1001,6 +1011,43 @@
                 }, 500);
             }
         });
+
+        async function checkAuth() {
+            const token = getToken();
+            if (!token) return;
+            try {
+                const r = await fetch(`${API}/auth/check`, { headers: { 'Authorization': 'Bearer ' + token } });
+                const res = await r.json();
+                if (res.authenticated && res.user.role === 'admin') {
+                    updateNavForAdmin();
+                }
+            } catch (e) { }
+        }
+
+        function updateNavForAdmin() {
+            // Add to top nav
+            const navBtnContainer = document.querySelector('.nav-btns');
+            if (navBtnContainer && !navBtnContainer.querySelector('a[href="/admin"]')) {
+                const adminBtn = document.createElement('a');
+                adminBtn.href = '/admin';
+                adminBtn.className = 'nav-btn';
+                adminBtn.style.background = 'linear-gradient(135deg, #00695c, #26a69a)';
+                adminBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin';
+                navBtnContainer.insertBefore(adminBtn, navBtnContainer.firstChild);
+            }
+
+            // Sync bottom nav Admin
+            const bottomNav = document.querySelector('.bottom-nav');
+            if (bottomNav && !bottomNav.querySelector('a[href="/admin"]')) {
+                const adminLink = document.createElement('a');
+                adminLink.href = '/admin';
+                adminLink.className = 'nav-item';
+                adminLink.innerHTML = '<i class="fas fa-user-shield"></i><span>Admin</span>';
+                bottomNav.appendChild(adminLink);
+            }
+        }
+
+        function getToken() { return localStorage.getItem('authToken'); }
 
         // ==================== PARTICLES ====================
         function createParticles() {

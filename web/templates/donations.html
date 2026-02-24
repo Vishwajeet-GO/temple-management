@@ -331,10 +331,10 @@
                         id="fDonor" placeholder="Enter donor name"></div>
                 <div class="fg"><label>Amount (₹) <span class="req">*</span></label><input type="number" class="fi"
                         id="fAmount" placeholder="Enter amount" step="0.01" min="0"></div>
-                <div class="fg"><label>Payment Screenshot</label>
+                <div class="fg">
+                    <label>Payment Screenshot</label>
                     <div class="file-input-wrap">
-                        <label class="file-input-label" id="fileLabel"><i class="fas fa-camera"></i><span
-                                id="fileName">Choose file...</span></label>
+                        <input type="file" class="form-input" id="formFile" placeholder="Upload Payment Screenshot">
                         <input type="file" id="fImage" accept="image/*" capture="environment"
                             onchange="previewFile(this)">
                     </div>
@@ -391,9 +391,36 @@
             try {
                 const r = await fetch(`${API}/auth/check`, { headers: { 'Authorization': 'Bearer ' + t } });
                 const res = await r.json();
-                if (res.authenticated && res.user.role === 'admin') { isAdmin = true; document.getElementById('addBtn').style.display = 'flex' }
+                if (res.authenticated && res.user.role === 'admin') {
+                    isAdmin = true;
+                    document.getElementById('addBtn').style.display = 'flex';
+                    updateNavForAdmin();
+                }
                 else { document.getElementById('addBtn').style.display = 'none' }
             } catch (e) { document.getElementById('addBtn').style.display = 'none' }
+        }
+
+        function updateNavForAdmin() {
+            // Add to top nav
+            const navBtnContainer = document.querySelector('.nav-btns');
+            if (navBtnContainer && !navBtnContainer.querySelector('a[href="/admin"]')) {
+                const adminBtn = document.createElement('a');
+                adminBtn.href = '/admin';
+                adminBtn.className = 'nav-btn';
+                adminBtn.style.background = 'linear-gradient(135deg, #1a237e, #3949ab)';
+                adminBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin';
+                navBtnContainer.insertBefore(adminBtn, navBtnContainer.firstChild);
+            }
+
+            // Add to bottom nav
+            const bottomNav = document.querySelector('.bottom-nav');
+            if (bottomNav && !bottomNav.querySelector('a[href="/admin"]')) {
+                const adminLink = document.createElement('a');
+                adminLink.href = '/admin';
+                adminLink.className = 'nav-item';
+                adminLink.innerHTML = '<i class="fas fa-user-shield"></i><span>Admin</span>';
+                bottomNav.appendChild(adminLink);
+            }
         }
 
         async function loadFestivals() {
