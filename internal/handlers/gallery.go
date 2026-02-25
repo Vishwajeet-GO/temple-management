@@ -58,10 +58,10 @@ func UploadGallery(c *gin.Context) {
 		return
 	}
 
-	// Validate file size (20MB max for videos, 5MB for photos)
-	maxSize := int64(5 * 1024 * 1024)
+	// Validate file size (2048MB max for videos, 50MB for photos)
+	maxSize := int64(50 * 1024 * 1024)
 	if itemType == "video" {
-		maxSize = 20 * 1024 * 1024
+		maxSize = 2048 * 1024 * 1024
 	}
 	if file.Size > maxSize {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "File too large"})
