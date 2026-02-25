@@ -2225,6 +2225,24 @@
 
         // ==================== AUDIO PLAYER ====================
         const tracks = [
+            // {
+            //     name: 'Faahhhhhh',
+            //     artist: 'Unknown',
+            //     icon: 'fas fa-om',
+            //     url: 'static/audio/faahhhh.mp3'
+            // },
+            // {
+            //     name: 'Dil ka Bhanwar kare pukar',
+            //     artist: 'Mohd Rafi',
+            //     icon: 'fas fa-om',
+            //     url: 'static/audio/Dil ka bhanwar.m4a'
+            // },
+            {
+                name: 'SitaRam SitaRam',
+                artist: 'Rajan ji maharaj',
+                icon: 'fas fa-om',
+                url: 'static/audio/sitaram-sitaram.mp3'
+            },
             {
                 name: 'ॐ जय शिव ओमकारा',
                 artist: 'शिव आरती',
@@ -2414,15 +2432,20 @@
             const overlay = document.getElementById('bellOverlay');
             // Play bell sound
             try {
-                const bellAudio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
+                const bellAudio = new Audio('static/audio/faahhhhhh.mp3');
                 bellAudio.volume = 0.4;
                 bellAudio.play().catch(() => { });
+                // const faahAudio = new Audio('static/audio/faahhhh.mp3');
+                // faahAudio.volume = 0.4;
+                // faahAudio.play().catch(() => { });
             } catch (e) { }
 
             overlay.style.opacity = '0';
             overlay.style.transition = 'opacity 0.5s';
             setTimeout(() => {
                 overlay.style.display = 'none';
+                // Start background music
+                playTrack(0);
                 // Start petals after entering
                 startPetals();
             }, 500);
