@@ -392,13 +392,17 @@
             try {
                 const r = await fetch(`${API}/auth/check`, { headers: { 'Authorization': 'Bearer ' + t } });
                 const res = await r.json();
+                console.log('Auth check response:', res);
                 if (res.authenticated && res.user.role === 'admin') {
                     isAdmin = true;
                     document.getElementById('addBtn').style.display = 'flex';
                     updateNavForAdmin();
                 }
                 else { document.getElementById('addBtn').style.display = 'none' }
-            } catch (e) { document.getElementById('addBtn').style.display = 'none' }
+            } catch (e) {
+                console.error('Auth check error:', e);
+                document.getElementById('addBtn').style.display = 'none'
+            }
         }
 
         function updateNavForAdmin() {
@@ -543,10 +547,31 @@
                 const token = localStorage.getItem('authToken') || '';
                 let url = `${API}/donations`, method = 'POST';
                 if (editId) { url += `/${editId}`; method = 'PUT' }
-                const r = await fetch(url, { method, headers: { 'Authorization': 'Bearer ' + token }, body: fd });
-                const res = await r.json(); if (!res.success) throw new Error(res.error || 'Failed');
-                toast(res.message || 'Saved!', 'success'); closeModal(); fetchData();
-            } catch (e) { toast('Error: ' + e.message, 'error') }
+
+                console.log(`Sending ${method} request to ${url}...`);
+
+                const r = await fetch(url, {
+                    method,
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: fd
+                });
+
+                if (!r.ok) {
+                    const errTxt = await r.text();
+                    console.error('Server error:', errTxt);
+                    throw new Error(`HTTP ${r.status}: ${errTxt}`);
+                }
+
+                const res = await r.json();
+                if (!res.success) throw new Error(res.error || 'Failed');
+
+                toast(res.message || 'Saved!', 'success');
+                closeModal();
+                fetchData();
+            } catch (e) {
+                console.error('Save error:', e);
+                toast('Error: ' + e.message, 'error');
+            }
         }
 
         async function toggleStatus(id) {

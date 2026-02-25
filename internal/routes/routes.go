@@ -16,10 +16,14 @@ func Setup() *gin.Engine {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://temple-management-o0yq.onrender.com"},
-		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		MaxAge:       12 * time.Hour,
+		AllowOriginFunc: func(origin string) bool {
+			return true // Allow all origins to prevent browser blocks on Render
+		},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 	}))
 
 	os.MkdirAll("./uploads/donations", 0755)
@@ -55,7 +59,7 @@ func Setup() *gin.Engine {
 
 		// Donations
 		v1.GET("/donations", handlers.GetDonations)
-		v1.POST("/donations", handlers.CreateDonation)
+		v1.POST("/donations", middleware.AuthRequired("admin"), handlers.CreateDonation)
 		v1.PUT("/donations/:id", middleware.AuthRequired("admin"), handlers.UpdateDonation)
 		v1.DELETE("/donations/:id", middleware.AuthRequired("admin"), handlers.DeleteDonation)
 		v1.PATCH("/donations/:id/toggle", middleware.AuthRequired("admin"), handlers.ToggleDonation)
