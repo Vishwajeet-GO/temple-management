@@ -333,6 +333,10 @@
         </div>
     </div>
 
+    <!-- Translations -->
+    <script src="/static/js/translations.js"></script>
+    <script src="/static/js/lang.js"></script>
+
     <script>
 
         // Om Loader - Hide after page loads
@@ -342,6 +346,7 @@
                 if (el) el.style.display = 'none';
             }, 600);
         });
+
 
         const API = window.location.origin + '/api/v1';
 
@@ -428,7 +433,9 @@
         function showAlert(msg, type) {
             const a = document.getElementById('alertBox');
             a.className = `alert ${type}`;
-            a.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${msg}`;
+            a.innerHTML = `<i
+        class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+    ${msg}`;
             a.style.display = 'flex';
         }
     </script>

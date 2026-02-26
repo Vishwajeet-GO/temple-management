@@ -334,8 +334,10 @@
                 <div class="fg">
                     <label>Payment Screenshot</label>
                     <div class="file-input-wrap">
-                        <span id="fileName" class="file-name" style="margin-left: 10px; color: #888;">Choose
-                            file...</span>
+                        <label for="fImage" class="file-input-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span id="fileName">Choose file...</span>
+                        </label>
                         <input type="file" id="fImage" accept="image/*" capture="environment"
                             onchange="previewFile(this)">
                     </div>
@@ -366,6 +368,10 @@
         <a href="/donations" class="nav-item active"><i class="fas fa-indian-rupee-sign"></i><span>History</span></a>
         <a href="/expenses" class="nav-item"><i class="fas fa-file-invoice-dollar"></i><span>Expenses</span></a>
     </nav>
+
+    <!-- Translations -->
+    <script src="/static/js/translations.js"></script>
+    <script src="/static/js/lang.js"></script>
 
     <script>
 
