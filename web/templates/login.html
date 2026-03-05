@@ -419,15 +419,26 @@
             }
         }
 
-        function doLogout() {
+        async function doLogout() {
             const token = localStorage.getItem('authToken');
-            fetch(`${API}/logout`, {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + token }
-            });
+
+            try {
+                if (token) {
+                    await fetch(`${API}/logout`, {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                }
+            } catch (e) {
+                console.error("Logout API error:", e);
+            }
+
+            // Clear everything
             localStorage.removeItem('authToken');
             localStorage.removeItem('userRole');
-            location.reload();
+
+            // Force reload from server
+            window.location.href = "/login";
         }
 
         function showAlert(msg, type) {

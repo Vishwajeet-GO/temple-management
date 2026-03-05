@@ -27,6 +27,7 @@ type Donation struct {
 	Festival    *Festival `json:"festival,omitempty" gorm:"foreignKey:FestivalID"`
 	Date        string    `json:"date"`
 	Donor       string    `json:"donor"`
+	Phone       string    `json:"phone"`
 	Amount      float64   `json:"amount"`
 	Status      string    `json:"status" gorm:"default:pending"`
 	PaymentMode string    `json:"payment_mode" gorm:"default:cash"`

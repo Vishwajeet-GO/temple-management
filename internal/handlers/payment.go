@@ -22,6 +22,7 @@ func SubmitDonation(c *gin.Context) {
 
 	if strings.Contains(ct, "multipart") {
 		donation.Donor = c.PostForm("donor")
+		donation.Phone = c.PostForm("phone")
 		donation.PaymentMode = c.PostForm("payment_mode")
 		donation.Link = c.PostForm("link")
 		donation.Date = time.Now().Format("2006-01-02")
@@ -64,6 +65,10 @@ func SubmitDonation(c *gin.Context) {
 	// Validate
 	if donation.Donor == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Donor name is required"})
+		return
+	}
+	if donation.Phone == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Phone number is required"})
 		return
 	}
 	if donation.Amount <= 0 {

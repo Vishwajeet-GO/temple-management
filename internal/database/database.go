@@ -9,6 +9,7 @@ import (
 	"newapp/internal/config"
 	"newapp/internal/models"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -86,13 +87,22 @@ func Initialize(cfg *config.Config) {
 	// }
 
 	// Force reset admin password (remove this after first deploy)
+	// Create or reset admin with hashed password
+	// TEMPORARY: Delete old admin user (remove after first run)
+
 	var adminUser models.User
 	if DB.Where("username = ?", "admin").First(&adminUser).Error == nil {
-		DB.Model(&adminUser).Update("password", "admin123")
-		log.Println("✅ Admin password reset to: admin123")
+		hashed, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+		DB.Model(&adminUser).Update("password", string(hashed))
+		log.Println("✅ Admin password reset (hashed)")
 	} else {
-		DB.Create(&models.User{Username: "admin", Password: "admin123", Role: "admin"})
-		log.Println("✅ Default admin created: admin / admin123")
+		hashed, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+		DB.Create(&models.User{
+			Username: "admin",
+			Password: string(hashed),
+			Role:     "admin",
+		})
+		log.Println("✅ Admin created with hashed password")
 	}
 
 	// Default temple

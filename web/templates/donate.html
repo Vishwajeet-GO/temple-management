@@ -1045,7 +1045,7 @@
 
                 <!-- Form Body -->
                 <div class="donate-form-card">
-                    <input type="hidden" id="dMode" value="cash">
+                    <input type="hidden" id="dMode" value="upi">
 
                     <!-- Festival Selection -->
                     <div class="donate-fg">
@@ -1062,6 +1062,13 @@
                             autocomplete="name">
                     </div>
 
+                    <!-- Phone Number -->
+                    <div class="donate-fg">
+                        <label>Phone Number <span class="req">*</span></label>
+                        <input type="tel" class="donate-input" id="dPhone"
+                            placeholder="Enter correct number to get payment receipt" maxlength="10" inputmode="numeric"
+                            pattern="[0-9]{10}" required>
+                    </div>
                     <!-- Quick Amount -->
                     <div class="section-label"><i class="fas fa-bolt"></i> Quick Select Amount</div>
                     <div class="quick-amounts">
@@ -1085,11 +1092,7 @@
                     <!-- Payment Method -->
                     <div class="section-label"><i class="fas fa-credit-card"></i> Payment Method</div>
                     <div class="pm-grid">
-                        <div class="pm-btn active" onclick="selectMode(this, 'cash')">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <span>Cash</span>
-                        </div>
-                        <div class="pm-btn" onclick="selectMode(this, 'upi')">
+                        <div class="pm-btn active" onclick="selectMode(this, 'upi')">
                             <i class="fas fa-mobile-alt"></i>
                             <span>UPI</span>
                         </div>
@@ -1314,9 +1317,6 @@
         <a href="/expenses" class="nav-item"><i class="fas fa-file-invoice-dollar"></i><span>Expenses</span></a>
     </nav>
 
-    <!-- Translations -->
-    <script src="/static/js/translations.js"></script>
-    <script src="/static/js/lang.js"></script>
 
     <script>
 
@@ -1572,14 +1572,22 @@
         // ==================== SUBMIT DONATION ====================
         async function submitDonation() {
             const name = document.getElementById('dName').value.trim();
+            const phone = document.getElementById('dPhone').value.trim();
+            const cleanPhone = phone.replace(/\D/g, '');
             const amount = parseFloat(document.getElementById('dAmount').value);
             const mode = document.getElementById('dMode').value;
             const festivalId = document.getElementById('dFestival').value;
             const btn = document.getElementById('submitBtn');
 
+
             if (!name) {
                 toast('Please enter your name', 'error');
                 document.getElementById('dName').focus();
+                return;
+            }
+            if (cleanPhone.length !== 10) {
+                toast('Phone number must be exactly 10 digits', 'error');
+                document.getElementById('dPhone').focus();
                 return;
             }
             if (!amount || amount <= 0) {
@@ -1593,6 +1601,7 @@
 
             const fd = new FormData();
             fd.append('donor', name);
+            fd.append('phone', cleanPhone);
             fd.append('amount', amount);
             fd.append('payment_mode', mode);
             if (festivalId && festivalId !== '0') {
@@ -1626,6 +1635,7 @@
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-heart"></i> Donate Now';
             }
+
         }
 
         // ==================== CONFETTI ====================
@@ -1708,6 +1718,14 @@
         document.addEventListener('keydown', e => {
             if (e.key === 'Enter' && document.getElementById('donateForm').style.display !== 'none') {
                 submitDonation();
+            }
+        });
+
+        // Show UPI section by default
+        document.addEventListener('DOMContentLoaded', function () {
+            const upiBtn = document.querySelector(".pm-btn.active");
+            if (upiBtn) {
+                selectMode(upiBtn, 'upi');
             }
         });
     </script>

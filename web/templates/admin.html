@@ -886,6 +886,7 @@
                     <div class="admin-card-body" id="recentExpBody">Loading...</div>
                 </div>
             </div>
+            <!-- <button onclick="downloadReceipt(${d.id})">Receipt</button> -->
 
             <!-- Reports Tab (Updated with Festival Filter) -->
             <div class="tab-content" id="tab-reports">
@@ -1061,9 +1062,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Translations -->
-    <script src="/static/js/translations.js"></script>
-    <script src="/static/js/lang.js"></script>
 
     <script>
 
@@ -1074,6 +1072,20 @@
                 if (el) el.style.display = 'none';
             }, 600);
         });
+
+        function authFetch(url, options = {}) {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                console.error("No auth token");
+                return Promise.reject("No token");
+            }
+
+            options.headers = options.headers || {};
+            options.headers['Authorization'] = 'Bearer ' + token;
+            options.headers['Content-Type'] = 'application/json';
+
+            return fetch(url, options);
+        }
 
         // 1. Global Variables & Setup
         const API = window.location.origin + '/api/v1';
@@ -1086,6 +1098,7 @@
             checkAuth();
             loadFestivalsForDropdown();
         });
+
 
         // 3. Particles Animation
         function createParticles() {
@@ -1152,34 +1165,64 @@
         // 6. Dashboard Data Loading
         async function loadAdminDashboard() {
             try {
-                const token = getToken();
-                const r = await fetch(`${API}/admin/dashboard`, {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const res = await r.json();
+                const token = localStorage.getItem('authToken');
 
-                if (!res.success) throw new Error(res.error || 'Failed to load data');
+                if (!token) {
+                    console.error("No auth token found");
+                    showNotAuth();
+                    return;
+                }
+
+                const response = await fetch(`${API}/admin/dashboard`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    console.error("HTTP error:", response.status);
+                    showNotAuth();
+                    return;
+                }
+
+                const res = await response.json();
+
+                if (!res.success) {
+                    console.error("API error:", res.error);
+                    return;
+                }
+
                 const d = res.data;
 
-                // Update Stats text
-                setText('adTotalDon', '₹' + fmt(d.total_donations));
-                setText('adTotalExp', '₹' + fmt(d.total_expenses));
-                setText('adBalance', '₹' + fmt(d.balance));
-                setText('adFestCount', d.festival_count);
+                document.getElementById('adTotalDon').textContent = '₹' + fmt(d.total_donations);
+                document.getElementById('adTotalExp').textContent = '₹' + fmt(d.total_expenses);
+                document.getElementById('adBalance').textContent = '₹' + fmt(d.balance);
+                document.getElementById('adFestCount').textContent = d.festival_count;
+
+                // This Month stats
                 setText('adMonthDon', '₹' + fmt(d.month_donations));
                 setText('adMonthExp', '₹' + fmt(d.month_expenses));
                 setText('adMonthBal', '₹' + fmt(d.month_balance));
 
-                // Charts & Lists
-                renderMonthlyChart(d.monthly_chart || []);
-                renderCategoryChart(d.category_expenses || []);
+                // Charts
+                if (d.monthly_chart && d.monthly_chart.length) renderMonthlyChart(d.monthly_chart);
+                if (d.category_expenses && d.category_expenses.length) renderCategoryChart(d.category_expenses);
+
+                // Top Donors & Festival Breakdown
                 renderTopDonors(d.top_donors || []);
                 renderFestBreakdown(d.festival_breakdown || []);
+
+                // Activity Tab - Recent Donations & Expenses
                 renderActivity(d.recent_donations || [], d.recent_expenses || []);
 
-            } catch (e) {
-                console.error(e);
-                toast('Failed to load dashboard', 'error');
+                // Pending badges
+                setText('pendingDonBadge', (d.pending_donations || 0) + ' pending');
+                setText('pendingExpBadge', (d.pending_expenses || 0) + ' pending');
+
+            } catch (err) {
+                console.error("Dashboard load error:", err);
             }
         }
 
@@ -1426,13 +1469,63 @@
             </div>`).join('');
         }
 
-        function renderActivity(don, exp) {
-            // Implementation remains similar to before, simplified here to prevent errors
-            const donBody = document.getElementById('recentDonBody');
-            if (donBody) donBody.innerHTML = don.length ? don.map(d => `<div class="activity-item"><div class="activity-info">${esc(d.donor)}</div><div class="activity-amount green">₹${fmt(d.amount)}</div></div>`).join('') : 'No donations';
+        function renderActivity(donations, expenses) {
 
+            const donBody = document.getElementById('recentDonBody');
             const expBody = document.getElementById('recentExpBody');
-            if (expBody) expBody.innerHTML = exp.length ? exp.map(e => `<div class="activity-item"><div class="activity-info">${esc(e.title)}</div><div class="activity-amount red">₹${fmt(e.amount)}</div></div>`).join('') : 'No expenses';
+
+            // ✅ Render Donations
+            if (donBody) {
+                donBody.innerHTML = donations.length ? donations.map(d => `
+            <div class="activity-item">
+                <div class="activity-icon don">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+
+                <div class="activity-info">
+                    <div class="activity-title">${esc(d.donor)}</div>
+                    <div class="activity-sub">
+                        ${fmtDate(d.date)} 
+                        ${d.festival ? '• ' + esc(d.festival.name) : ''} 
+                        • ${d.status}
+                    </div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                    <div class="activity-amount green">₹${fmt(d.amount)}</div>
+
+                    ${d.status === 'paid' ? `
+                        <button 
+                            style="padding:6px 12px;border:none;border-radius:8px;background:linear-gradient(135deg,#1a237e,#5c6bc0);color:#fff;font-size:0.65rem;font-weight:700;cursor:pointer;"
+                            onclick="downloadReceipt(${d.id})"
+                        >
+                            <i class="fas fa-file-pdf"></i> Receipt
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('') : '<div style="padding:20px;text-align:center;opacity:0.5">No donations</div>';
+            }
+
+            // ✅ Render Expenses
+            if (expBody) {
+                expBody.innerHTML = expenses.length ? expenses.map(e => `
+            <div class="activity-item">
+                <div class="activity-icon exp">
+                    <i class="fas fa-receipt"></i>
+                </div>
+
+                <div class="activity-info">
+                    <div class="activity-title">${esc(e.title)}</div>
+                    <div class="activity-sub">
+                        ${fmtDate(e.date)} • ${e.status}
+                    </div>
+                </div>
+
+                <div class="activity-amount red">₹${fmt(e.amount)}</div>
+            </div>
+        `).join('') : '<div style="padding:20px;text-align:center;opacity:0.5">No expenses</div>';
+            }
         }
 
         // Add Placeholder functions for Settings (kept minimal for now)
@@ -1523,6 +1616,39 @@
             }
         }
 
+        async function downloadReceipt(id) {
+            try {
+                const token = localStorage.getItem('authToken');
+
+                const response = await fetch(`/api/v1/receipt/${id}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    toast(err.error || "Failed to generate receipt", "error");
+                    return;
+                }
+
+                const blob = await response.blob();
+
+                // Create temporary download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Receipt_${id}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+            } catch (e) {
+                console.error(e);
+                toast("Error downloading receipt", "error");
+            }
+        }
     </script>
 </body>
 

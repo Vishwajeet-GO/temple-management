@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(c *gin.Context) {
@@ -22,7 +23,13 @@ func Login(c *gin.Context) {
 	}
 
 	var user models.User
-	if database.DB.Where("username = ? AND password = ?", req.Username, req.Password).First(&user).Error != nil {
+	if database.DB.Where("username = ?", req.Username).First(&user).Error != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Invalid credentials"})
+		return
+	}
+
+	// Compare hashed password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Invalid credentials"})
 		return
 	}

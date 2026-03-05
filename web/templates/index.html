@@ -2044,10 +2044,6 @@
         </a>
     </nav>
 
-    <!-- Translations -->
-    <script src="/static/js/translations.js"></script>
-    <script src="/static/js/lang.js"></script>
-
     <script>
 
         // Om Loader - Hide after page loads
@@ -2147,11 +2143,23 @@
         }
 
         async function logout() {
+            const token = localStorage.getItem('authToken');
+
             try {
-                await fetch(`${API}/logout`, { method: 'POST', credentials: 'include' });
-            } catch (e) { }
-            document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            location.reload();
+                if (token) {
+                    await fetch(`${API}/logout`, {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                }
+            } catch (e) {
+                console.error("Logout error:", e);
+            }
+
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+
+            window.location.href = "/login";
         }
 
         async function loadDashboard() {

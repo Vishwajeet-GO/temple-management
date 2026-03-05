@@ -86,6 +86,7 @@ func Setup() *gin.Engine {
 		// Public donation (from donate page)
 		v1.POST("/submit-donation", handlers.SubmitDonation)
 		v1.GET("/payment-info", handlers.GetPaymentInfo)
+		v1.GET("/receipt/:id", middleware.AuthRequired("admin"), handlers.GenerateReceipt)
 	}
 
 	// Admin

@@ -8,6 +8,7 @@ import (
 	"newapp/internal/models"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func GetDashboardSummary(c *gin.Context) {
@@ -191,10 +192,15 @@ func UpdatePassword(c *gin.Context) {
 	user, _ := c.Get("user")
 	u := user.(*models.User)
 
-	// Verify old password
 	var dbUser models.User
-	if database.DB.Where("id = ? AND password = ?", u.ID, req.OldPassword).First(&dbUser).Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Current password is incorrect"})
+	if database.DB.Where("id = ?", u.ID).First(&dbUser).Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "User not found"})
+		return
+	}
+
+	// Compare old password
+	if err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(req.OldPassword)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Current password incorrect"})
 		return
 	}
 
@@ -203,6 +209,8 @@ func UpdatePassword(c *gin.Context) {
 		return
 	}
 
-	database.DB.Model(&dbUser).Update("password", req.NewPassword)
+	hashed, _ := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	database.DB.Model(&dbUser).Update("password", string(hashed))
+
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Password updated successfully"})
 }
