@@ -8,6 +8,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Temple Management</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/images/icon-192.png">
+    <meta name="theme-color" content="#ff9800">
     <!-- <link rel="stylesheet" href="/static/css/base.css"> -->
     <!-- <link rel="stylesheet" href="/static/css/index.css"> -->
     <style>
@@ -1712,6 +1715,16 @@
                 opacity: 1
             }
         }
+
+        .install-btn {
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+        }
     </style>
 </head>
 
@@ -1756,6 +1769,9 @@
             <div class="nav-buttons" id="navButtons">
                 <a href="/donate" class="nav-btn donate"><i class="fas fa-heart"></i> Donate Now</a>
                 <!-- Login/Logout button injected by JS -->
+                <button class="nav-btn install-btn" id="installBtn" style="display:none;">
+                    <i class="fas fa-download"></i> Install App
+                </button>
             </div>
         </nav>
 
@@ -2753,6 +2769,47 @@
         setTimeout(() => {
             startPetals();
         }, 2000);
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/static/sw.js")
+                .then(() => console.log("Service Worker Registered"))
+                .catch(err => console.log("SW registration failed", err));
+        }
+
+        // ==================== PWA INSTALL BUTTON ====================
+        let deferredPrompt;
+        const installBtn = document.getElementById("installBtn");
+
+        window.addEventListener("beforeinstallprompt", (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBtn) {
+                installBtn.style.display = "flex";
+            }
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener("click", async () => {
+                if (!deferredPrompt) return;
+
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+
+                if (outcome === "accepted") {
+                    console.log("User installed the app");
+                }
+
+                deferredPrompt = null;
+                installBtn.style.display = "none";
+            });
+        }
+
+        window.addEventListener("appinstalled", () => {
+            console.log("App Installed");
+            if (installBtn) {
+                installBtn.style.display = "none";
+            }
+        });
 
     </script>
 </body>

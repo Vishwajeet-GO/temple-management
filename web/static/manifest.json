@@ -1,34 +1,21 @@
 {
-    "name": "Temple Management System",
-    "short_name": "Temple App",
-    "description": "Manage temple donations, expenses, and festivals",
+    "name": "Sri Gauri Shankar Mandir",
+    "short_name": "Temple",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#FF6B35",
-    "orientation": "portrait-primary",
+    "background_color": "#0a0a1a",
+    "theme_color": "#ff9800",
+    "orientation": "portrait",
     "icons": [
         {
-            "src": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple@14.0.0/img/apple/64/1f6d5.png",
-            "sizes": "64x64",
+            "src": "/static/images/icon-192.png",
+            "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple@14.0.0/img/apple/64/1f6d5.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple@14.0.0/img/apple/64/1f6d5.png",
+            "src": "/static/images/icon-512.png",
             "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/png"
         }
-    ],
-    "screenshots": [],
-    "categories": [
-        "finance",
-        "utilities"
     ]
 }
